@@ -1,0 +1,21 @@
+# Ignore system-specific files
+.DS_Store       # macOS
+Thumbs.db       # Windows
+desktop.ini     # Windows
+.idea/          # JetBrains IDEs (e.g., PyCharm, IntelliJ)
+.vscode/        # VS Code workspace settings
+
+# Ignore temporary and lock files
+*lock*          # General lock files
+
+# Ignore logs and temp files
+*.log           # Log files
+*.tmp           # Temporary files
+*.swp           # Vim swap files
+*.bak           # Backup files
+
+# Ignore Git-specific files
+.gitignore      # Ignore itself (not needed, but safe)
+
+# User Archive folder
+*rchive\*

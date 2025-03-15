@@ -1,0 +1,15 @@
+ITEM#,Description,Mfg,Partnumber,Qty,Cost
+1,16-Core, 3.4GHz AM4 Processor (No Heatsink),AMD,Ryzen 9 5950X,1,$359.99
+2,CPU Air Cooler,DeepCool,AK620,1,$52.99
+3,2x32GB DDR4-3200 Desktop Memory,Crucial,Pro 64GB,1,$114.99
+4,ATX Mid-Tower Case (Black),Corsair,4000D Airflow,1,$89.99
+5,ATX AM4 Motherboard,ASRock,X570 Taichi,1,$239.99
+6,6-Core, 3.7GHz AM4 Processor (Wraith Stealth Cooler),AMD,Ryzen 5 5600X,1,$149.99
+7,2GB DDR3 PCIe Graphics Card,MSI,GeForce GT 710,1,$32.96
+8,AM4 microATX Motherboard,Gigabyte,B550M K,1,$84.99
+9,2x8GB DDR4-3200 Desktop Memory,Crucial,16GB,1,$39.99
+10,80+ Bronze Semi-Modular PSU,PowerSpec,650W,1,$49.99
+11,8-Core, 3.8GHz AM4 Processor (Wraith Stealth Cooler),AMD,Ryzen 7 5700G,1,$159.99
+12,AM4 microATX Motherboard,Gigabyte,B450M DS3H WiFi,1,$79.99
+13,5400RPM SATA III 3.5" HDD,WD,Blue 4TB (x2 units),2,$99.98
+

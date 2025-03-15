@@ -5,15 +5,15 @@
   tasks:
     - name: Read Proxmox server IP and details from ip.yml
       set_fact:
-        pve_config: "{{ lookup('file', 'ip.yml') | from_yaml }}"
-
+        pve_config: "{{ lookup('file', '../../config/ip.yml') | from_yaml }}"
+ 
     - name: Print Proxmox server details
       debug:
         msg: "Proxmox server details: {{ pve_config.server }}"
 
     - name: Get the Proxmox server IP address
       set_fact:
-        pve_ip: "{{ pve_config.server.pve_ip }}"
+        pve_ip: "{{ pve_config.server.ip_address }}"
 
     - name: Ensure log file exists
       ansible.builtin.file:

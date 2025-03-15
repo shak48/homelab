@@ -1,0 +1,88 @@
+- name: Copy the latest Proxmox VE ISO to Proxmox Server
+  hosts: localhost
+  gather_facts: yes
+  vars:
+    log_path: "/var/log/usr_logs"
+    iso_dir: "/rpool1/share/Common/Softwares/ISO files"
+    proxmox_iso_dir: "/var/lib/vz/template/iso"
+    ip_config_path: "../../config/ip.yml"
+  
+  tasks:
+    - name: Read Proxmox server IP and details from ip.yml
+      set_fact:
+        pve_config: "{{ lookup('file', ip_config_path) | from_yaml }}"
+
+    - name: Print Proxmox server details
+      debug:
+        msg: "Proxmox server details: {{ pve_config.server }}"
+
+    - name: Get the Proxmox server IP address
+      set_fact:
+        pve_ip: "{{ pve_config.server.ip_address }}"
+
+    - name: Ensure log file exists
+      ansible.builtin.file:
+        path: "{{ log_path }}"
+        state: touch
+        mode: '0644'
+
+    - name: Find all ISO files
+      ansible.builtin.find:
+        paths: "{{ iso_dir }}"
+        patterns: "*.iso"
+        recurse: no
+        file_type: file
+      register: iso_files
+
+    - name: Fail if no ISO file is found
+      ansible.builtin.fail:
+        msg: "No ISO files found in the specified directory!"
+      when: iso_files.matched == 0
+
+    - name: Check if the latest ISO already exists on Proxmox
+      ansible.builtin.stat:
+        path: "{{ proxmox_iso_dir }}/{{ iso_files.files[0].path | basename }}"
+      delegate_to: "{{ pve_ip }}"
+      register: existing_iso
+
+    - name: Copy the latest ISO file to the Proxmox server
+      ansible.builtin.copy:
+        src: "{{ iso_files.files[0].path }}"
+        dest: "{{ proxmox_iso_dir }}/"
+        owner: root
+        group: root
+        mode: '0644'
+      delegate_to: "{{ pve_ip }}"
+      when: not existing_iso.stat.exists
+      register: copy_result
+      notify:
+        - Log success or failure
+
+    - name: Notify if the ISO already exists
+      ansible.builtin.debug:
+        msg: "The latest ISO {{ iso_files.files[0].path | basename }} is already present on Proxmox. Skipping copy."
+      when: existing_iso.stat.exists
+
+    - name: Log if ISO already exists
+      ansible.builtin.lineinfile:
+        path: "{{ log_path }}"
+        line: "{{ ansible_date_time.iso8601 }} - INFO: ISO {{ iso_files.files[0].path | basename }} already exists on Proxmox."
+        create: yes
+      when: existing_iso.stat.exists
+
+    - name: Log success or failure
+      ansible.builtin.lineinfile:
+        path: "{{ log_path }}"
+        line: "{{ ansible_date_time.iso8601 }} - {{ 'SUCCESS: ISO copied' if copy_result is succeeded else 'ERROR: Failed to copy ISO' }}"
+        create: yes
+
+    - name: Log task completion
+      ansible.builtin.debug:
+        msg: "Ansible task completed successfully on {{ ansible_date_time.iso8601 }}"
+
+  handlers:
+    - name: Log success or failure
+      ansible.builtin.lineinfile:
+        path: "{{ log_path }}"
+        line: "{{ ansible_date_time.iso8601 }} - {{ 'SUCCESS: ISO copied' if copy_result is succeeded else 'ERROR: Failed to copy ISO' }}"
+        create: yes

@@ -2,6 +2,6 @@
 server:
   name: PVE
   ip_address: 192.168.0.111
-    details:
+  details:
     host: pve-lan
     description: Proxmox VE server for virtualization and testing

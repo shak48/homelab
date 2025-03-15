@@ -6,7 +6,7 @@ desktop.ini     # Windows
 .vscode/        # VS Code workspace settings
 
 # Ignore temporary and lock files
-*lock*          # General lock files
+*~lock*          # General lock files
 
 # Ignore logs and temp files
 *.log           # Log files
@@ -19,3 +19,4 @@ desktop.ini     # Windows
 
 # User Archive folder
 *rchive\*
+

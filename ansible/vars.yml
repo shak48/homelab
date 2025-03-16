@@ -1,0 +1,3 @@
+# Directory for latest PVE ISO file
+iso_dir: "/rpool1/share/Common/Softwares/iso-files/proxmox"
+proxmox_iso_dir: "/var/lib/vz/template/iso"

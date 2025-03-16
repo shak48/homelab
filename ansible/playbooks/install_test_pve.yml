@@ -1,10 +1,8 @@
 - name: Copy the latest Proxmox VE ISO to Proxmox Server
   hosts: pve-lan  #From inventory file.
   gather_facts: yes
-  vars:
-    log_path: "/var/log/ansible.log"
-    iso_dir: "/rpool1/share/Common/Softwares/ISO files"
-    proxmox_iso_dir: "/var/lib/vz/template/iso"
+  vars_files:
+    - ../vars.yml
 
   tasks:
     - name: Find all ISO files

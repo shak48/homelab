@@ -1,25 +1,12 @@
 - name: Copy the latest Proxmox VE ISO to Proxmox Server
-  hosts: localhost
+  hosts: pve-lan  #From inventory file.
   gather_facts: yes
   vars:
     log_path: "/var/log/ansible.log"
     iso_dir: "/rpool1/share/Common/Softwares/ISO files"
     proxmox_iso_dir: "/var/lib/vz/template/iso"
-    ip_config_path: "../../config/ip.yml"
-  
+
   tasks:
-    - name: Read Proxmox server IP and details from ip.yml
-      set_fact:
-        pve_config: "{{ lookup('file', ip_config_path) | from_yaml }}"
-
-    - name: Print Proxmox server details
-      debug:
-        msg: "Proxmox server details: {{ pve_config.server }}"
-
-    - name: Get the Proxmox server IP address
-      set_fact:
-        pve_ip: "{{ pve_config.server.ip_address }}"
-
     - name: Find all ISO files
       ansible.builtin.find:
         paths: "{{ iso_dir }}"
@@ -36,7 +23,6 @@
     - name: Check if the latest ISO already exists on Proxmox
       ansible.builtin.stat:
         path: "{{ proxmox_iso_dir }}/{{ iso_files.files[0].path | basename }}"
-      delegate_to: "{{ pve_ip }}"
       register: existing_iso
 
     - name: Copy the latest ISO file to the Proxmox server
@@ -46,7 +32,6 @@
         owner: root
         group: root
         mode: '0644'
-      delegate_to: "{{ pve_ip }}"
       when: not existing_iso.stat.exists
       register: copy_result
 

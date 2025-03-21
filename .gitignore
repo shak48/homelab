@@ -22,4 +22,5 @@ desktop.ini     # Windows
 
 # User files
 BOM.txt 
+wsl2-move.ps1
 

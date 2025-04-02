@@ -1,0 +1,15 @@
+---
+- name: Create admin users
+  user:
+    name: "{{ item.username }}"
+    shell: /bin/bash
+    state: present
+    groups: sudo
+  loop: "{{ admin_users }}"
+
+- name: Set authorized keys
+  authorized_key:
+    user: "{{ item.username }}"
+    key: "{{ item.pubkey }}"
+    state: present
+  loop: "{{ admin_users }}"

@@ -1,0 +1,30 @@
+---
+- name: Install fail2ban
+  apt:
+    name: fail2ban
+    state: present
+    update_cache: yes
+
+- name: Ensure SSH is installed
+  apt:
+    name: openssh-server
+    state: present
+
+- name: Harden SSH configuration
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+    create: yes
+  loop:
+    - { regexp: '^PermitRootLogin', line: 'PermitRootLogin no' }
+    - { regexp: '^PasswordAuthentication', line: 'PasswordAuthentication no' }
+    - { regexp: '^MaxAuthTries', line: 'MaxAuthTries 3' }
+    - { regexp: '^LoginGraceTime', line: 'LoginGraceTime 30' }
+    - { regexp: '^PermitEmptyPasswords', line: 'PermitEmptyPasswords no' }
+
+- name: Restart SSH
+  service:
+    name: ssh
+    state: restarted

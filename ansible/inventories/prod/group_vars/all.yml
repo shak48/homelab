@@ -1,0 +1,3 @@
+admin_users:
+  - username: prodadmin
+    pubkey: "ssh-ed25519 AAAA...dev-user-key... dev@control-node"

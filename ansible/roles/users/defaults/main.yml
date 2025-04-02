@@ -1,0 +1,4 @@
+---
+admin_users:
+  - username: prodadmin
+    pubkey: "ssh-ed25519 AAAA...replace_this_with_your_key... ansible@control-node"

@@ -1,0 +1,8 @@
+---
+- name: Harden servers and manage users
+  hosts: web
+  become: true
+
+  roles:
+    - harden
+    - users

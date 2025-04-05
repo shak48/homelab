@@ -1,15 +1,40 @@
 ---
+- name: "Log user to be created"
+  debug:
+    msg: "Creating user: {{ item.username }}"
+  loop: "{{ admin_users }}"
+
 - name: Create admin users
   user:
     name: "{{ item.username }}"
     shell: /bin/bash
-    state: present
     groups: sudo
+    append: yes
+    create_home: yes
+    state: present
   loop: "{{ admin_users }}"
 
-- name: Set authorized keys
+- name: Create .ssh directory
+  file:
+    path: "/home/{{ item.username }}/.ssh"
+    state: directory
+    owner: "{{ item.username }}"
+    group: "{{ item.username }}"
+    mode: '0700'
+  loop: "{{ admin_users }}"
+
+- name: Add authorized key
   authorized_key:
     user: "{{ item.username }}"
     key: "{{ item.pubkey }}"
     state: present
+  loop: "{{ admin_users }}"
+
+- name: Set home directory permissions
+  file:
+    path: "/home/{{ item.username }}"
+    state: directory
+    owner: "{{ item.username }}"
+    group: "{{ item.username }}"
+    mode: '0755'
   loop: "{{ admin_users }}"

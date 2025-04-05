@@ -1,0 +1,13 @@
+---
+- name: Confirm target hosts
+  hosts: all
+  gather_facts: false
+  tasks:
+    - debug:
+        msg: "Running on {{ inventory_hostname }}"
+
+- name: Create admin users
+  hosts: all
+  become: true
+  roles:
+    - { role: users, tags: [users] }

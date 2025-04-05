@@ -1,10 +1,13 @@
 ---
-- name: "Log user to be created"
+- name: Log users to be created
   debug:
-    msg: "Creating user: {{ item.username }}"
+    msg: "Preparing to create user: {{ item.username }}"
   loop: "{{ admin_users }}"
+  loop_control:
+    label: "{{ item.username }}"
 
-- name: Create admin users
+- name: Ensure admin users exist
+  become: true
   user:
     name: "{{ item.username }}"
     shell: /bin/bash
@@ -13,8 +16,11 @@
     create_home: yes
     state: present
   loop: "{{ admin_users }}"
+  loop_control:
+    label: "{{ item.username }}"
 
-- name: Create .ssh directory
+- name: Ensure .ssh directory exists
+  become: true
   file:
     path: "/home/{{ item.username }}/.ssh"
     state: directory
@@ -22,15 +28,30 @@
     group: "{{ item.username }}"
     mode: '0700'
   loop: "{{ admin_users }}"
+  loop_control:
+    label: "{{ item.username }}"
 
-- name: Add authorized key
+- name: Check if home directory exists
+  become: true
+  stat:
+    path: "/home/{{ item.username }}"
+  loop: "{{ admin_users }}"
+  register: homestats
+  loop_control:
+    label: "{{ item.username }}"
+
+- name: Add authorized SSH keys
+  become: true
   authorized_key:
     user: "{{ item.username }}"
     key: "{{ item.pubkey }}"
     state: present
   loop: "{{ admin_users }}"
+  loop_control:
+    label: "{{ item.username }}"
 
-- name: Set home directory permissions
+- name: Set home directory permissions (optional hardening)
+  become: true
   file:
     path: "/home/{{ item.username }}"
     state: directory
@@ -38,3 +59,5 @@
     group: "{{ item.username }}"
     mode: '0755'
   loop: "{{ admin_users }}"
+  loop_control:
+    label: "{{ item.username }}"

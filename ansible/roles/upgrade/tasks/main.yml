@@ -38,11 +38,25 @@
     update_cache: yes
     upgrade: dist
 
-- name: Cleanup Unused Packages
+
+- name: Cleanup unused packages
   apt:
     autoremove: yes
     purge: yes
 
+- name: Cleanup leftover dpkg-dist enterprise repo file (if exists)
+  file:
+    path: /etc/apt/sources.list.d/pve-enterprise.list.dpkg-dist
+    state: absent
+
 - name: Notify Manual Reboot
   debug:
-    msg: "Proxmox VE system upgraded — please reboot manually."
+    msg: "Proxmox VE upgrade complete — reboot manually to finalize."
+
+- name: Show active apt sources for review
+  command: grep -r '^deb ' /etc/apt/
+  register: apt_sources
+
+- name: Print active apt sources
+  debug:
+    var: apt_sources.stdout_lines

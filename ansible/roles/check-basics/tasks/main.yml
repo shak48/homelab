@@ -1,0 +1,151 @@
+---
+- name: Get Hostname
+  command: hostname
+  register: hostname_output
+
+- name: Show Hostname
+  debug:
+    msg: "OK: Hostname is {{ hostname_output.stdout }}"
+
+####################################################
+# PVE VERSION CHECKS
+####################################################
+
+- name: Check PVE version
+  command: pveversion
+  register: pve_version
+
+- name: Confirm PVE version is 8.x
+  debug:
+    msg: "OK: PVE Version detected: {{ pve_version.stdout }}"
+  failed_when: "'pve-manager/8' not in pve_version.stdout"
+
+####################################################
+# DEBIAN VERSION
+####################################################
+
+- name: Check Debian version
+  command: cat /etc/debian_version
+  register: debian_version
+
+- name: Confirm Debian version is 12.x
+  debug:
+    msg: "OK: Debian version detected: {{ debian_version.stdout }}"
+  failed_when: "'12.' not in debian_version.stdout"
+
+####################################################
+# SSH CHECKS
+####################################################
+
+- name: Ensure SSH service is active
+  command: systemctl is-active ssh
+  register: ssh_status
+
+- name: Confirm SSH service is active
+  debug:
+    msg: "OK: SSH service is active."
+  failed_when: ssh_status.stdout != "active"
+
+- name: Check SSH PasswordAuthentication setting
+  command: grep '^PasswordAuthentication no' /etc/ssh/sshd_config
+  register: ssh_harden
+  ignore_errors: yes
+
+- name: Confirm SSH PasswordAuthentication is disabled
+  debug:
+    msg: "OK: SSH PasswordAuthentication is disabled."
+  failed_when: ssh_harden.rc != 0
+
+####################################################
+# USER CHECKS
+####################################################
+
+- name: Check that required users exist
+  command: id {{ item }}
+  loop:
+    - prodadmin
+    - devadmin
+  register: check_users
+  ignore_errors: yes
+
+- name: Confirm user exists
+  debug:
+    msg: "OK: User {{ item.item }} exists."
+  loop: "{{ check_users.results }}"
+  failed_when: item.rc != 0
+
+####################################################
+# APT SOURCES CHECKS
+####################################################
+
+- name: Check active APT sources
+  command: grep -r '^deb ' /etc/apt/
+  register: apt_sources
+
+- name: Confirm APT sources correct
+  debug:
+    msg: "OK: APT sources contain bookworm and pve repos."
+  failed_when: "'bookworm' not in apt_sources.stdout or 'pve' not in apt_sources.stdout"
+
+####################################################
+# AUTO-UPDATES CHECK
+####################################################
+
+- name: Check for auto-upgrades setting
+  command: grep 'Unattended-Upgrade::Allowed-Origins' /etc/apt/apt.conf.d/50unattended-upgrades
+  register: auto_upgrade
+  ignore_errors: yes
+
+- name: Confirm auto-upgrades are enabled
+  debug:
+    msg: "OK: Auto-upgrades enabled for security updates."
+  failed_when: auto_upgrade.rc != 0
+
+####################################################
+# FIREWALL DETECTION & CHECKS
+####################################################
+
+- name: Check if Proxmox firewall is enabled
+  command: pve-firewall status
+  register: pve_fw_status
+  ignore_errors: yes
+
+- name: Confirm Proxmox firewall is active
+  debug:
+    msg: "OK: Proxmox built-in firewall is active."
+  when:
+    - pve_fw_status is defined
+    - "'enabled' in pve_fw_status.stdout"
+
+- name: Confirm nftables is active
+  debug:
+    msg: "OK: nftables firewall is active."
+  when:
+    - nftables_status is defined
+    - nftables_status.stdout is defined
+    - nftables_status.stdout == "active"
+
+
+- name: Check if iptables has rules
+  command: iptables -L
+  register: iptables_status
+  ignore_errors: yes
+  when: pve_fw_status.rc != 0 and nftables_status is defined and nftables_status.rc != 0
+
+- name: Confirm iptables has active rules
+  debug:
+    msg: "OK: iptables has active rules."
+  when:
+    - iptables_status is defined
+    - iptables_status.stdout is defined
+    - iptables_status.stdout is search('Chain')
+
+
+- name: Fail if no firewall is active
+  fail:
+    msg: "CRITICAL: No firewall detected (pve-firewall, nftables, or iptables)!"
+  when: >
+    pve_fw_status is defined and pve_fw_status.rc != 0
+    and (nftables_status is not defined or nftables_status.stdout != 'active')
+    and (iptables_status is not defined or iptables_status.stdout is not search('Chain'))
+

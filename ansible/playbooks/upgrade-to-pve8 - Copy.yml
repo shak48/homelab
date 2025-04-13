@@ -1,8 +1,0 @@
----
-
-- name: Test setup-users, harden, upgrade-to-pve8
-  hosts: all
-  become: true
-  gather_facts: false
-  roles:
-    - check-basics

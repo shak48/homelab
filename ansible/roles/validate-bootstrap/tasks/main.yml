@@ -1,54 +1,25 @@
 ---
-- name: Check sudo version
-  command: sudo -V
-  register: sudo_output
+# Validate presence of required bootstrap packages
+
+- name: Check for required packages
+  command: "which {{ item }}"
+  loop: "{{ bootstrap_packages }}"
+  register: check_packages
   changed_when: false
+  ignore_errors: true  # We will handle missing packages explicitly
 
-- name: Show sudo version
+- name: Fail if any package was not found
+  fail:
+    msg: "Package '{{ item.item }}' is missing (not found by 'which')."
+  when: item.rc != 0
+  loop: "{{ check_packages.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Show detected package paths
   debug:
-    msg: "{{ sudo_output.stdout_lines[0] }}"
+    msg: "{{ item.item }} => {{ item.stdout }}"
+  when: item.rc == 0
+  loop: "{{ check_packages.results }}"
 
-- name: Check vim version
-  command: vim --version
-  register: vim_output
-  changed_when: false
 
-- name: Show vim version
-  debug:
-    msg: "{{ vim_output.stdout_lines[0] }}"
-
-- name: Check curl version
-  command: curl --version
-  register: curl_output
-  changed_when: false
-
-- name: Show curl version
-  debug:
-    msg: "{{ curl_output.stdout_lines[0] }}"
-
-- name: Check python3 version
-  command: python3 --version
-  register: python_output
-  changed_when: false
-
-- name: Show python3 version
-  debug:
-    msg: "{{ python_output.stdout }}"
-
-- name: Check pip3 version
-  command: pip3 --version
-  register: pip_output
-  changed_when: false
-
-- name: Show pip3 version
-  debug:
-    msg: "{{ pip_output.stdout }}"
-
-- name: Check tmux version
-  command: tmux -V
-  register: tmux_output
-  changed_when: false
-
-- name: Show tmux version
-  debug:
-    msg: "{{ tmux_output.stdout }}"

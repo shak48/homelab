@@ -36,8 +36,18 @@ ansible-playbook playbooks/bootstrap.yml \
 
 ### Apply Changes for Real
 
-ansible-playbook playbooks/bootstrap.yml \
-  -l pve_main \
-  -u rumie \
-  --private-key ~/.ssh/id_rsa \
-  --ask-become-pass
+  ansible-playbook playbooks/bootstrap.yml \
+    -l pve_main \
+    -u rumie \
+    --private-key ~/.ssh/id_ed25519 \
+    --ask-become-pass
+
+
+
+###Run validation script
+
+ansible-playbook playbooks/validate-bootstrap.yml -l pve_main
+
+
+### TODO
+-Take the variables out 

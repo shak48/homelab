@@ -1,0 +1,54 @@
+---
+- name: Check sudo version
+  command: sudo -V
+  register: sudo_output
+  changed_when: false
+
+- name: Show sudo version
+  debug:
+    msg: "{{ sudo_output.stdout_lines[0] }}"
+
+- name: Check vim version
+  command: vim --version
+  register: vim_output
+  changed_when: false
+
+- name: Show vim version
+  debug:
+    msg: "{{ vim_output.stdout_lines[0] }}"
+
+- name: Check curl version
+  command: curl --version
+  register: curl_output
+  changed_when: false
+
+- name: Show curl version
+  debug:
+    msg: "{{ curl_output.stdout_lines[0] }}"
+
+- name: Check python3 version
+  command: python3 --version
+  register: python_output
+  changed_when: false
+
+- name: Show python3 version
+  debug:
+    msg: "{{ python_output.stdout }}"
+
+- name: Check pip3 version
+  command: pip3 --version
+  register: pip_output
+  changed_when: false
+
+- name: Show pip3 version
+  debug:
+    msg: "{{ pip_output.stdout }}"
+
+- name: Check tmux version
+  command: tmux -V
+  register: tmux_output
+  changed_when: false
+
+- name: Show tmux version
+  debug:
+    msg: "{{ tmux_output.stdout }}"

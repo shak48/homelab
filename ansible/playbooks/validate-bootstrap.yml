@@ -1,0 +1,8 @@
+---
+- name: Validate Bootstrap Requirements
+  hosts: all
+  become: false
+
+  roles:
+    - validate-bootstrap
+

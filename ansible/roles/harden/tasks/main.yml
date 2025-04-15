@@ -1,45 +1,36 @@
 ---
-- name: Install fail2ban
-  apt:
+- name: Install fail2ban (if enabled)
+  ansible.builtin.apt:
     name: fail2ban
     state: present
     update_cache: yes
+  when: fail2ban_enabled
 
-- name: Ensure SSH is installed
-  apt:
-    name: openssh-server
+- name: Ensure SSH server is installed
+  ansible.builtin.apt:
+    name: "{{ ssh_server_package }}"
     state: present
 
 - name: Harden SSH configuration
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
     state: present
-    create: yes
-  loop:
-    - { regexp: '^PermitRootLogin', line: 'PermitRootLogin no' }
-    - { regexp: '^PasswordAuthentication', line: 'PasswordAuthentication no' }
-    - { regexp: '^MaxAuthTries', line: 'MaxAuthTries 3' }
-    - { regexp: '^LoginGraceTime', line: 'LoginGraceTime 30' }
-    - { regexp: '^PermitEmptyPasswords', line: 'PermitEmptyPasswords no' }
+    create: true
+    backrefs: true
+  loop: "{{ harden_ssh_settings }}"
+  notify: Restart SSH
 
-- name: Restart SSH
-  service:
-    name: ssh
-    state: restarted
-
-# === Enable unattended security updates ===
-- name: Install unattended-upgrades
-  become: true
-  apt:
+- name: Install unattended-upgrades (if enabled)
+  ansible.builtin.apt:
     name: unattended-upgrades
     state: present
     update_cache: yes
+  when: unattended_upgrades_enabled
 
-- name: Enable automatic updates
-  become: true
-  copy:
+- name: Enable automatic updates (if enabled)
+  ansible.builtin.copy:
     dest: /etc/apt/apt.conf.d/20auto-upgrades
     content: |
       APT::Periodic::Update-Package-Lists "1";
@@ -47,17 +38,18 @@
     owner: root
     group: root
     mode: '0644'
+  when: unattended_upgrades_enabled
 
-- name: Configure unattended-upgrades for security only
-  become: true
-  copy:
+- name: Configure unattended-upgrades (if enabled)
+  ansible.builtin.copy:
     dest: /etc/apt/apt.conf.d/50unattended-upgrades
     content: |
       Unattended-Upgrade::Allowed-Origins {
           "${distro_id}:${distro_codename}-security";
       };
-      Unattended-Upgrade::Automatic-Reboot "true";
+      Unattended-Upgrade::Automatic-Reboot "{{ unattended_upgrade_reboot | lower }}"
       Unattended-Upgrade::Remove-Unused-Dependencies "true";
     owner: root
     group: root
     mode: '0644'
+  when: unattended_upgrades_enabled

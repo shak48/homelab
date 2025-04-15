@@ -1,0 +1,10 @@
+---
+- name: Test Connectivity to PVE Main Nodes
+  hosts: pve_main
+  gather_facts: false
+  become: false
+
+  tasks:
+    - name: Ping test
+      ansible.builtin.ping:
+

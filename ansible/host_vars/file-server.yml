@@ -1,0 +1,4 @@
+env: production
+tags:
+  - samba
+  - fileshare

@@ -1,0 +1,5 @@
+env: production
+tags:
+  - pve
+  - ssd
+  - critical

@@ -1,0 +1,33 @@
+all:
+  hosts:
+    pve-main:
+      ansible_host: 192.168.0.111
+    pve-test:
+      ansible_host: 192.168.0.112
+    file-server:
+      ansible_host: 192.168.0.120
+    print-server:
+      ansible_host: 192.168.0.121
+    scan-server:
+      ansible_host: 192.168.0.122
+
+  children:
+    pve_main:
+      hosts:
+        pve-main:
+    pve_test:
+      hosts:
+        pve-test:
+    file_server:
+      hosts:
+        file-server:
+    print_server:
+      hosts:
+        print-server:
+    scan_server:
+      hosts:
+        scan-server:
+    pve:
+      children:
+        pve_main: {}
+        pve_test: {}

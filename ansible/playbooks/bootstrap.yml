@@ -1,0 +1,7 @@
+---
+- name: Bootstrap PVE Main hosts
+  hosts: pve_main
+  become: true
+
+  roles:
+    - bootstrap

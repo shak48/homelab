@@ -15,7 +15,7 @@
 # Create the ansible user with sudo access
 - name: Create ansible user
   ansible.builtin.user:
-    name: "{{ ansible_user }}"
+    name: "{{ bootstrap_user }}"
     shell: /bin/bash
     groups: sudo
     append: yes
@@ -25,15 +25,15 @@
 # Add public SSH key to the ansible user
 - name: Add SSH key for ansible user
   ansible.posix.authorized_key:
-    user: "{{ ansible_user }}"
+    user: "{{ bootstrap_user }}"
     state: present
     key: "{{ lookup('file', 'files/ansible_id_rsa_ansible-user.pub') }}"
 
 # Allow the ansible user to sudo without password
 - name: Allow ansible user passwordless sudo
   ansible.builtin.copy:
-    dest: "/etc/sudoers.d/{{ ansible_user }}"
-    content: "{{ ansible_user }} ALL=(ALL) NOPASSWD:ALL"
+    dest: "/etc/sudoers.d/{{ bootstrap_user }}"
+    content: "{{ bootstrap_user }} ALL=(ALL) NOPASSWD:ALL"
     owner: root
     group: root
     mode: '0440'

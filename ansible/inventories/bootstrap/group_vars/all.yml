@@ -1,5 +1,0 @@
-admin_users:
-  - username: prodadmin
-    pubkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINYpxBhT+jt0GY0Cpk4RTwhpzGanbOYzd2KFhpFQ8cN4 ansible@control-node"
-  - username: devadmin
-    pubkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINYpxBhT+jt0GY0Cpk4RTwhpzGanbOYzd2KFhpFQ8cN4 ansible@control-node"

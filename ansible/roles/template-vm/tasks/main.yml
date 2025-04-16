@@ -1,0 +1,94 @@
+---
+
+- name: Ensure cloud image destination directory exists
+  file:
+    path: "/var/lib/vz/template"
+    state: directory
+    mode: '0755'
+
+- name: Download Ubuntu Cloud Image
+  get_url:
+    url: "{{ template_image_url }}"
+    dest: "/var/lib/vz/template/{{ template_image_file }}"
+    mode: '0644'
+    force: yes
+
+- name: Rename cloud image to .qcow2 if needed
+  command: >
+    mv "/var/lib/vz/template/{{ template_image_file }}" "/var/lib/vz/template/{{ template_image_file | regex_replace('\\.img$', '.qcow2') }}"
+  args:
+    removes: "/var/lib/vz/template/{{ template_image_file }}"
+    creates: "/var/lib/vz/template/{{ template_image_file | regex_replace('\\.img$', '.qcow2') }}"
+  when: template_image_file is search(".img")
+
+- name: Resize cloud image disk
+  command: >
+    qemu-img resize "/var/lib/vz/template/{{ template_image_file | regex_replace('\\.img$', '.qcow2') }}" {{ template_disk_size }}
+
+- name: Create base VM shell
+  command: >
+    qm create {{ template_vm_id }}
+    --name {{ template_vm_name }}
+    --memory {{ template_memory }}
+    --net0 virtio,bridge={{ template_net_bridge }}
+    --agent 1
+    --bios ovmf
+    --ostype l26
+    --scsihw virtio-scsi-pci
+  args:
+    creates: "/etc/pve/qemu-server/{{ template_vm_id }}.conf"
+
+- name: Import disk into Proxmox
+  command: >
+    qm importdisk {{ template_vm_id }} "/var/lib/vz/template/{{ template_image_file | regex_replace('\\.img$', '.qcow2') }}" {{ template_storage }}
+
+- name: Attach imported disk to VM
+  command: >
+    qm set {{ template_vm_id }} --scsi0 {{ template_storage }}:vm-{{ template_vm_id }}-disk-0
+
+- name: Remove existing cloud-init drive if it exists
+  command: >
+    qm set {{ template_vm_id }} --delete ide2
+  ignore_errors: true
+
+- name: Add cloud-init drive
+  command: >
+    qm set {{ template_vm_id }} --ide2 {{ template_storage }}:cloudinit
+
+- name: Configure boot order
+  command: >
+    qm set {{ template_vm_id }} --boot order=scsi0
+
+- name: Set root user and password only
+  command: >
+    qm set {{ template_vm_id }}
+    --ciuser root
+    --cipassword {{ template_password }}
+
+- name: Configure DHCP networking
+  command: >
+    qm set {{ template_vm_id }} --ipconfig0 ip=dhcp
+
+- name: Regenerate SSH host keys (inside VM - optional pre-template)
+  shell: "dpkg-reconfigure openssh-server"
+  delegate_to: "{{ template_node }}"
+  ignore_errors: true
+
+- name: Set VM to start at boot
+  command: >
+    qm set {{ template_vm_id }} --onboot 1
+
+- name: Remove all unused disks (cleanup)
+  shell: >
+    qm set {{ template_vm_id }} {{ item }}
+  loop:
+    - --delete local-zfs:vm-{{ template_vm_id }}-disk-1
+    - --delete local-zfs:vm-{{ template_vm_id }}-disk-2
+    - --delete local-zfs:vm-{{ template_vm_id }}-disk-3
+    - --delete local-zfs:vm-{{ template_vm_id }}-disk-4
+    - --delete local-zfs:vm-{{ template_vm_id }}-disk-5
+  ignore_errors: true
+
+- name: Convert VM to template
+  command: >
+    qm template {{ template_vm_id }}

@@ -1,0 +1,7 @@
+---
+- name: Create Cloud VM Template
+  hosts: pve_main
+  become: true
+
+  roles:
+    - template-vm

@@ -40,16 +40,16 @@
     mode: '0644'
   when: unattended_upgrades_enabled
 
-- name: Configure unattended-upgrades (if enabled)
-  ansible.builtin.copy:
+- name: Configure unattended-upgrades for security only
+  copy:
     dest: /etc/apt/apt.conf.d/50unattended-upgrades
     content: |
       Unattended-Upgrade::Allowed-Origins {
           "${distro_id}:${distro_codename}-security";
       };
-      Unattended-Upgrade::Automatic-Reboot "{{ unattended_upgrade_reboot | lower }}"
+      Unattended-Upgrade::Automatic-Reboot "true";
       Unattended-Upgrade::Remove-Unused-Dependencies "true";
     owner: root
     group: root
     mode: '0644'
-  when: unattended_upgrades_enabled
+

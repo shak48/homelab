@@ -1,94 +1,87 @@
----
+- name: Check if template VM already exists
+  stat:
+    path: "/etc/pve/qemu-server/{{ template_vm_id }}.conf"
+  register: template_vm_stat
 
-- name: Ensure cloud image destination directory exists
-  file:
-    path: "/var/lib/vz/template"
-    state: directory
-    mode: '0755'
+- name: Skip if template already exists
+  debug:
+    msg: "Template VM {{ template_vm_id }} already exists. Skipping creation."
+  when: template_vm_stat.stat.exists
 
-- name: Download Ubuntu Cloud Image
-  get_url:
-    url: "{{ template_image_url }}"
-    dest: "/var/lib/vz/template/{{ template_image_file }}"
-    mode: '0644'
-    force: yes
+- name: Create cloud-init template VM
+  block:
 
-- name: Rename cloud image to .qcow2 if needed
-  command: >
-    mv "/var/lib/vz/template/{{ template_image_file }}" "/var/lib/vz/template/{{ template_image_file | regex_replace('\\.img$', '.qcow2') }}"
-  args:
-    removes: "/var/lib/vz/template/{{ template_image_file }}"
-    creates: "/var/lib/vz/template/{{ template_image_file | regex_replace('\\.img$', '.qcow2') }}"
-  when: template_image_file is search(".img")
+    - name: Ensure image and snippet directories exist
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - "/var/lib/vz/template"
+        - "/var/lib/vz/snippets"
+      delegate_to: "{{ template_node }}"
 
-- name: Resize cloud image disk
-  command: >
-    qemu-img resize "/var/lib/vz/template/{{ template_image_file | regex_replace('\\.img$', '.qcow2') }}" {{ template_disk_size }}
+    - name: Download official Ubuntu cloud image (.qcow2)
+      get_url:
+        url: "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
+        dest: "/var/lib/vz/template/jammy-server-cloudimg-amd64.qcow2"
+        mode: '0644'
+        force: yes
+      delegate_to: "{{ template_node }}"
 
-- name: Create base VM shell
-  command: >
-    qm create {{ template_vm_id }}
-    --name {{ template_vm_name }}
-    --memory {{ template_memory }}
-    --net0 virtio,bridge={{ template_net_bridge }}
-    --agent 1
-    --bios ovmf
-    --ostype l26
-    --scsihw virtio-scsi-pci
-  args:
-    creates: "/etc/pve/qemu-server/{{ template_vm_id }}.conf"
+    - name: Convert qcow2 image to raw for ZFS
+      command: >
+        qemu-img convert -f qcow2 -O raw
+        /var/lib/vz/template/jammy-server-cloudimg-amd64.qcow2
+        /var/lib/vz/template/jammy-server-cloudimg-amd64.raw
+      args:
+        creates: "/var/lib/vz/template/jammy-server-cloudimg-amd64.raw"
+      delegate_to: "{{ template_node }}"
 
-- name: Import disk into Proxmox
-  command: >
-    qm importdisk {{ template_vm_id }} "/var/lib/vz/template/{{ template_image_file | regex_replace('\\.img$', '.qcow2') }}" {{ template_storage }}
+    - name: Resize raw image disk
+      command: >
+        qemu-img resize /var/lib/vz/template/jammy-server-cloudimg-amd64.raw {{ template_disk_size }}
+      delegate_to: "{{ template_node }}"
 
-- name: Attach imported disk to VM
-  command: >
-    qm set {{ template_vm_id }} --scsi0 {{ template_storage }}:vm-{{ template_vm_id }}-disk-0
+    - name: Copy cloud-init user-data
+      template:
+        src: "files/user-data.yml.j2"
+        dest: "/var/lib/vz/snippets/user-data.yml"
+      delegate_to: "{{ template_node }}"
 
-- name: Remove existing cloud-init drive if it exists
-  command: >
-    qm set {{ template_vm_id }} --delete ide2
-  ignore_errors: true
+    - name: Create base VM
+      command: >
+        qm create {{ template_vm_id }}
+        --name {{ template_vm_name }}
+        --memory {{ template_memory }}
+        --cores {{ template_cores }}
+        --sockets {{ template_sockets }}
+        --net0 virtio,bridge={{ template_net_bridge }}
+        --agent 1
+        --ostype l26
+        --scsihw virtio-scsi-single
+        --serial0 socket
+        --vga serial0
+      delegate_to: "{{ template_node }}"
 
-- name: Add cloud-init drive
-  command: >
-    qm set {{ template_vm_id }} --ide2 {{ template_storage }}:cloudinit
+    - name: Import raw disk into Proxmox (ZFS)
+      command: >
+        qm importdisk {{ template_vm_id }} /var/lib/vz/template/jammy-server-cloudimg-amd64.raw {{ template_storage }}
+      delegate_to: "{{ template_node }}"
 
-- name: Configure boot order
-  command: >
-    qm set {{ template_vm_id }} --boot order=scsi0
+    - name: Final VM configuration
+      command: >
+        qm set {{ template_vm_id }}
+        --scsi0 {{ template_storage }}:vm-{{ template_vm_id }}-disk-0,ssd=1,discard=on
+        --ide2 {{ template_storage }}:cloudinit
+        --boot order=scsi0;ide2;net0
+        --cicustom "user=local:snippets/user-data.yml"
+        --ipconfig0 ip=dhcp
+      delegate_to: "{{ template_node }}"
 
-- name: Set root user and password only
-  command: >
-    qm set {{ template_vm_id }}
-    --ciuser root
-    --cipassword {{ template_password }}
+    - name: Convert VM to template
+      command: >
+        qm template {{ template_vm_id }}
+      delegate_to: "{{ template_node }}"
 
-- name: Configure DHCP networking
-  command: >
-    qm set {{ template_vm_id }} --ipconfig0 ip=dhcp
-
-- name: Regenerate SSH host keys (inside VM - optional pre-template)
-  shell: "dpkg-reconfigure openssh-server"
-  delegate_to: "{{ template_node }}"
-  ignore_errors: true
-
-- name: Set VM to start at boot
-  command: >
-    qm set {{ template_vm_id }} --onboot 1
-
-- name: Remove all unused disks (cleanup)
-  shell: >
-    qm set {{ template_vm_id }} {{ item }}
-  loop:
-    - --delete local-zfs:vm-{{ template_vm_id }}-disk-1
-    - --delete local-zfs:vm-{{ template_vm_id }}-disk-2
-    - --delete local-zfs:vm-{{ template_vm_id }}-disk-3
-    - --delete local-zfs:vm-{{ template_vm_id }}-disk-4
-    - --delete local-zfs:vm-{{ template_vm_id }}-disk-5
-  ignore_errors: true
-
-- name: Convert VM to template
-  command: >
-    qm template {{ template_vm_id }}
+  when: not template_vm_stat.stat.exists

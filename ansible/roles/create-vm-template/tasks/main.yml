@@ -21,10 +21,10 @@
         - "/var/lib/vz/snippets"
       delegate_to: "{{ template_node }}"
 
-    - name: Download official Ubuntu cloud image (.qcow2)
+    - name: Download official Ubuntu cloud image
       get_url:
-        url: "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
-        dest: "/var/lib/vz/template/jammy-server-cloudimg-amd64.qcow2"
+        url: "{{ template_image_url }}"
+        dest: "/var/lib/vz/template/{{ template_image_file }}"
         mode: '0644'
         force: yes
       delegate_to: "{{ template_node }}"

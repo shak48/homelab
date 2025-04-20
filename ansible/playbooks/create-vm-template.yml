@@ -4,4 +4,4 @@
   become: true
 
   roles:
-    - template-vm
+    - create-vm-template

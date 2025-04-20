@@ -6,5 +6,4 @@
 
   tasks:
     - name: Ping test
-      ansible.builtin.ping:
-
+      ansible.builtin.ping: 

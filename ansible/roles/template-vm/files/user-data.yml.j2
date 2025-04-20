@@ -1,0 +1,12 @@
+#cloud-config
+users:
+  - name: {{ template_user }}
+    shell: /bin/bash
+    groups: sudo
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: true
+    ssh_authorized_keys:
+      - {{ template_ssh_key }}
+
+disable_root: true
+ssh_pwauth: false

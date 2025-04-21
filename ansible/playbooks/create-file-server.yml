@@ -1,0 +1,10 @@
+---
+- name: Create a file server
+  hosts: file_servers
+  become: true
+
+  roles:
+    - role: create-file-server
+      tags:
+        - samba
+        - fileshare

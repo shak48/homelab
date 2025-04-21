@@ -53,3 +53,26 @@
     group: root
     mode: '0644'
 
+- name: Set fallback root password only if it is unset or disabled
+  ansible.builtin.shell: |
+    if grep -q '^root:[*!]:' /etc/shadow; then
+      echo 'root:{{ fallback_root_password }}' | chpasswd && echo "Password set."
+    else
+      echo "Root password already set. Skipping."
+    fi
+  args:
+    executable: /bin/bash
+  when: fallback_root_password is defined
+  register: root_pw_output
+
+- name: Show root password set result
+  ansible.builtin.debug:
+    var: root_pw_output.stdout_lines
+  when: fallback_root_password is defined
+
+
+- name: Enable TTY1 console login for fallback access
+  ansible.builtin.systemd:
+    name: getty@tty1.service
+    enabled: true
+    state: started

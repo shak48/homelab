@@ -18,7 +18,7 @@ all:
     pve_test:
       hosts:
         pve-test:
-    file_server:
+    file_servers:
       hosts:
         file-server:
     print_server:

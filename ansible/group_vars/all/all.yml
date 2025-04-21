@@ -1,1 +1,2 @@
-
+fallback_root_password: "{{ vault_root_password }}"
+samba_users: "{{ vault_samba_users }}"

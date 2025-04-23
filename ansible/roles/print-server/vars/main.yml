@@ -1,6 +1,4 @@
 #vars/main
-
-print_server_vm_id: 201
 cups_allow_network: "Allow @LOCAL"
 cups_listen: Listen 0.0.0.0:631
 cups_browsing: "Browsing On"

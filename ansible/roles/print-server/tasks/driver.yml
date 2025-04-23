@@ -1,0 +1,12 @@
+# --- Install printer driver ---
+- name: Copy Epson ESC/P-R driver to remote system
+  copy:
+    src: epson-inkjet-printer-escpr_1.8.6-1_amd64.deb
+    dest: /tmp/epson-escpr.deb
+    mode: '0644'
+  tags: [cups, driver]
+
+- name: Install Epson ESC/P-R driver
+  apt:
+    deb: "/tmp/epson-escpr.deb"
+  tags: [cups, driver]

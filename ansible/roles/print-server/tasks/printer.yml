@@ -1,0 +1,37 @@
+# --- Printer configuration ---
+- name: Wait for driverless printer queue to appear
+  command: lpstat -p EPSON_ET_2850_Series_USB
+  register: printer_status
+  retries: 10
+  delay: 5
+  until: printer_status.rc == 0
+  ignore_errors: true
+  tags: [cups, printer]
+
+- name: Remove broken raw printer if present
+  command: lpadmin -x EPSON_ET_2850_Series_USB
+  ignore_errors: true
+  tags: [cups, printer]
+
+- name: Ensure printer queue is shared
+  command: lpadmin -p EPSON_ET_2850_Series_USB -o printer-is-shared=true
+  ignore_errors: true
+  tags: [cups, printer]
+
+- name: Set printer default options (grayscale + duplex)
+  command: >
+    lpadmin -p EPSON_ET_2850_Series_USB \
+    -o Duplex=DuplexNoTumble \
+    -o ColorModel=Gray \
+    -o PageSize=A4
+  ignore_errors: true
+  tags: [cups, printer]
+
+- name: Set user-wide printer defaults
+  command: >
+    lpoptions -p EPSON_ET_2850_Series_USB \
+    -o Duplex=DuplexNoTumble \
+    -o ColorModel=Gray \
+    -o PageSize=A4
+  ignore_errors: true
+  tags: [cups, printer]

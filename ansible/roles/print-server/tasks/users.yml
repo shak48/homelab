@@ -1,0 +1,11 @@
+# --- User creation ---
+- name: Create fallback printer admin users
+  user:
+    name: "{{ item.name }}"
+    groups: lpadmin
+    shell: /bin/bash
+    password: "{{ item.password | password_hash('sha512') }}"
+    update_password: on_create
+  loop: "{{ cups_admins }}"
+  no_log: true
+  tags: [cups, users]

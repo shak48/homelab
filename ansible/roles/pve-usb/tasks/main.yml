@@ -1,13 +1,9 @@
+---
 # roles/proxmox-usb/tasks/main.yml
+# USB passthrough for Epson ET-2850 to target VM
 
-- name: Attach USB devices to VM {{ target_vm_id }}
-  command: >
-    qm set {{ print_server_vm_id }}
-    -usb{{ item.1 }} host={{ item.0.vendor_id }}:{{ item.0.product_id }}
-  loop: "{{ usb_devices | zip(range(usb_devices | length)) | list }}"
-  loop_control:
-    label: "usb{{ item.1 }} ({{ item.0.vendor_id }}:{{ item.0.product_id }})"
-  args:
-    creates: "/etc/pve/qemu-server/{{ target_vm_id }}.conf"
-  when: inventory_hostname == proxmox_host
+- name: Ensure Epson ET-2850 is passed through to print VM
+  command: "qm set {{ print_server_vm_id }} -usb0 host=04b8:118b"
   become: true
+  when: ansible_hostname == 'pve'
+  tags: [cups, usb, et2850, proxmox]

@@ -1,0 +1,16 @@
+# --- Install core CUPS packages ---
+- name: Install CUPS and required packages
+  apt:
+    name:
+      - cups
+    state: present
+    update_cache: yes
+  tags: [cups, install]
+  
+# CUPS dependencies
+- name: Install CUPS driver dependencies
+  apt:
+    name:
+      - libcupsimage2
+    state: present
+  tags: [cups, install]

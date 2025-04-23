@@ -1,0 +1,7 @@
+# --- Manage CUPS service ---
+- name: Enable and start CUPS service
+  systemd:
+    name: cups
+    enabled: true
+    state: started
+  tags: [cups, service]

@@ -1,0 +1,3 @@
+cups_allow_network: "Allow @LOCAL"
+cups_listen: "Listen *:631"
+cups_browsing: "Browsing On"

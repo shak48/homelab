@@ -24,20 +24,27 @@
   changed_when: false
   no_log: true
 
+  - name: Add Samba users to samba_common group
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    groups: samba_common
+    append: yes
+  loop: "{{ samba_users }}"
+
 - name: Create Samba share directories
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
     owner: root
-    group: root
-    mode: '0775'
+    group: samba_common
+    mode: '0770'
   loop: "{{ samba_shares }}"
 
 - name: Set folder ownership to match first valid user
   ansible.builtin.file:
     path: "{{ item.path }}"
     owner: "{{ item.valid_users.split(',')[0] | trim }}"
-    group: root
+    group: samba_common
     recurse: true
   loop: "{{ samba_shares }}"
   when: ansible_check_mode == false

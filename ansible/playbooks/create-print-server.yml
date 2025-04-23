@@ -1,0 +1,14 @@
+---
+- name: Configure CUPS print server
+  hosts: print_servers
+  become: true
+
+  vars_files:
+    - roles/cups_server/vars/main.yml
+
+  roles:
+    - cups_server
+  tags:
+    - cups
+    - printer
+    - shared printer

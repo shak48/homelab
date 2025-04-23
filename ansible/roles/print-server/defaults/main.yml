@@ -1,0 +1,14 @@
+env: production
+
+samba_users: "{{ vault_samba_users | default([]) }}"
+
+samba_shares:
+  - name: Shahriar
+    path: /srv/samba/Shahriar
+    valid_users: "shahriar,smbuser"
+  - name: Tahia
+    path: /srv/samba/Tahia
+    valid_users: "tahia,smbuser"
+  - name: Common
+    path: /srv/samba/Common
+    valid_users: "shahriar,tahia,smbuser"

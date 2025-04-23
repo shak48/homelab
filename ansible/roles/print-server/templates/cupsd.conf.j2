@@ -1,0 +1,29 @@
+# CUPS Configuration
+
+LogLevel warn
+PageLogFormat
+
+Listen localhost:631
+{{ cups_listen }}
+
+Browsing {{ cups_browsing }}
+BrowseLocalProtocols dnssd
+
+DefaultAuthType Basic
+
+<Location />
+  Order allow,deny
+  {{ cups_allow_network }}
+</Location>
+
+<Location /admin>
+  Order allow,deny
+  {{ cups_allow_network }}
+</Location>
+
+<Location /admin/conf>
+  AuthType Default
+  Require user @SYSTEM
+  Order allow,deny
+  {{ cups_allow_network }}
+</Location>

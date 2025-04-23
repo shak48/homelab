@@ -1,9 +1,21 @@
+#tasks/main
+
+- name: Set system hostname to print-server
+  hostname:
+    name: print-server
+
 - name: Install CUPS and required packages
   apt:
     name:
       - cups
     state: present
     update_cache: yes
+
+- name: Install CUPS driver dependencies
+  apt:
+    name:
+      - libcupsimage2
+    state: present
 
 - name: Enable and start CUPS service
   systemd:
@@ -13,46 +25,48 @@
 
 - name: Configure CUPS daemon settings
   template:
-    src: cups/cupsd.conf.j2
+    src: cupsd.conf.j2
     dest: /etc/cups/cupsd.conf
     mode: '0644'
   notify: Restart CUPS
 
-- name: Download Epson ESC/P-R driver (ET-2850)
-  get_url:
-    url: "https://download3.epson.biz/pub/epson/inkjet/escpr/debian/epson-inkjet-printer-escpr_1.8.6-1_amd64.deb"
-    dest: "/tmp/epson-escpr.deb"
+- name: Copy Epson ESC/P-R driver to remote system
+  copy:
+    src: epson-inkjet-printer-escpr_1.8.6-1_amd64.deb
+    dest: /tmp/epson-escpr.deb
     mode: '0644'
 
 - name: Install Epson ESC/P-R driver
   apt:
     deb: "/tmp/epson-escpr.deb"
 
-- name: Add Epson ET-2850 printer using ESC/P-R model
+
+- name: Wait for driverless printer queue to appear
+  command: lpstat -p EPSON_ET_2850_Series_USB
+  register: printer_status
+  retries: 10
+  delay: 5
+  until: printer_status.rc == 0
+  ignore_errors: true
+
+- name: Ensure printer queue is shared
+  command: lpadmin -p EPSON_ET_2850_Series_USB -o printer-is-shared=true
+  ignore_errors: true
+
+- name: Set printer default options (grayscale + duplex)
   command: >
-    lpadmin -p Epson_ET2850
-    -E
-    -v usb://EPSON/ET-2850_Series
-    -m epson-inkjet-printer-escpr:Epson-ET-2850_Series-epson-driver.ppd
-  args:
-    creates: /etc/cups/ppd/Epson_ET2850.ppd
+    lpadmin -p EPSON_ET_2850_Series_USB \
+      -o PageSize=A4 \
+      -o media=A4 \
+      -o PageRegion=A4 \
+      -o InputSlot=Auto \
+      -o Duplex=DuplexNoTumble \
+      -o ColorModel=Gray
 
-- name: Set Epson ET-2850 as default printer
-  command: lpadmin -d Epson_ET2850
-
-- name: Set Epson ET-2850 as default printer
-  command: lpadmin -d Epson_ET2850
-
-- name: Set printer default options (PageSize, Duplex, ColorModel)
-  command: >
-    lpadmin -p Epson_ET2850
-    -o PageSize=A4
-    -o Duplex=DuplexNoTumble
-    -o ColorModel=Gray
-
-- name: Set system-wide default user options for Epson ET-2850
-  command: >
-    lpoptions -p Epson_ET2850
-    -o PageSize=A4
-    -o Duplex=DuplexNoTumble
-    -o ColorModel=Gray
+- name: Create fallback printer admin user (cupsadmin)
+  user:
+    name: cupsadmin
+    groups: lpadmin
+    shell: /bin/bash
+    password: "{{ 'cupsadmin' | password_hash('sha512') }}"
+    update_password: on_create

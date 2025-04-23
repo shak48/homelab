@@ -4,11 +4,8 @@
   become: true
 
   vars_files:
-    - roles/cups_server/vars/main.yml
+    - ../roles/print-server/vars/main.yml  # correct relative path from 'playbooks/'
 
   roles:
-    - cups_server
-  tags:
-    - cups
-    - printer
-    - shared printer
+    - harden
+    - print-server  # must match folder name under 'roles/'

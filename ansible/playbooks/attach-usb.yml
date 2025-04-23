@@ -1,0 +1,11 @@
+---
+- name: Attach USB devices to VMs via Proxmox
+  hosts: pve-main  # or your Proxmox node group
+  roles:
+    - role: pve-usb
+      vars:
+        target_vm_id: 201
+        usb_vendor_id: "04b8"
+        usb_product_id: "118b"
+        usb_port: 0
+        proxmox_host: pve-main

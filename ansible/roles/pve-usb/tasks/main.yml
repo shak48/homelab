@@ -1,0 +1,13 @@
+# roles/proxmox-usb/tasks/main.yml
+
+- name: Attach USB devices to VM {{ target_vm_id }}
+  command: >
+    qm set {{ print_server_vm_id }}
+    -usb{{ item.1 }} host={{ item.0.vendor_id }}:{{ item.0.product_id }}
+  loop: "{{ usb_devices | zip(range(usb_devices | length)) | list }}"
+  loop_control:
+    label: "usb{{ item.1 }} ({{ item.0.vendor_id }}:{{ item.0.product_id }})"
+  args:
+    creates: "/etc/pve/qemu-server/{{ target_vm_id }}.conf"
+  when: inventory_hostname == proxmox_host
+  become: true

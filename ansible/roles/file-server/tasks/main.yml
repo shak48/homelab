@@ -1,6 +1,5 @@
----
 # roles/samba/tasks/main.yml
-
+---
 - name: Install Samba server
   ansible.builtin.apt:
     name: samba
@@ -24,10 +23,10 @@
   changed_when: false
   no_log: true
 
-  - name: Add Samba users to samba_common group
+- name: Add Samba users to samba_common group
   ansible.builtin.user:
     name: "{{ item.name }}"
-    groups: samba_common
+    groups: smbuser
     append: yes
   loop: "{{ samba_users }}"
 
@@ -36,7 +35,7 @@
     path: "{{ item.path }}"
     state: directory
     owner: root
-    group: samba_common
+    group: smbuser
     mode: '0770'
   loop: "{{ samba_shares }}"
 
@@ -44,7 +43,7 @@
   ansible.builtin.file:
     path: "{{ item.path }}"
     owner: "{{ item.valid_users.split(',')[0] | trim }}"
-    group: samba_common
+    group: smbuser
     recurse: true
   loop: "{{ samba_shares }}"
   when: ansible_check_mode == false

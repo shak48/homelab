@@ -21,7 +21,7 @@ all:
     file_servers:
       hosts:
         file-server:
-    print_server:
+    print_servers:
       hosts:
         print-server:
     scan_server:

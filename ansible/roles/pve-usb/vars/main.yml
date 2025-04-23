@@ -1,0 +1,6 @@
+#vars/main
+
+print_server_vm_id: 201
+usb_devices:
+   - vendor_id: "04b8"
+     product_id: "118b"

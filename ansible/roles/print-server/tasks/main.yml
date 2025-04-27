@@ -1,30 +1,67 @@
----
-# roles/print-server/tasks/main.yml
+- name: Set system hostname to print-server
+  hostname:
+    name: print-server
 
-- name: Include hostname setup
-  import_tasks: hostname.yml
-  tags: [cups, setup]
+- name: Install CUPS and required packages
+  apt:
+    name:
+      - cups
+    state: present
+    update_cache: yes
 
-- name: Include package installation
-  import_tasks: install.yml
-  tags: [cups, install]
+- name: Install CUPS driver dependencies
+  apt:
+    name:
+      - libcupsimage2
+    state: present
 
-- name: Include service management
-  import_tasks: service.yml
-  tags: [cups, service]
+- name: Enable and start CUPS service
+  systemd:
+    name: cups
+    enabled: true
+    state: started
 
-- name: Include CUPS configuration
-  import_tasks: config.yml
-  tags: [cups, config]
+- name: Configure CUPS daemon settings
+  template:
+    src: cupsd.conf.j2
+    dest: /etc/cups/cupsd.conf
+    mode: '0644'
+  notify: Restart CUPS
 
-- name: Include printer driver tasks
-  import_tasks: driver.yml
-  tags: [cups, driver]
+- name: Copy Epson ESC/P-R driver to remote system
+  copy:
+    src: epson-inkjet-printer-escpr_1.8.6-1_amd64.deb
+    dest: /tmp/epson-escpr.deb
+    mode: '0644'
 
-- name: Include printer setup tasks
-  import_tasks: printer.yml
-  tags: [cups, printer]
+- name: Install Epson ESC/P-R driver
+  apt:
+    deb: "/tmp/epson-escpr.deb"
 
-- name: Include fallback user creation
-  import_tasks: users.yml
-  tags: [cups, users]
+
+- name: Wait for driverless printer queue to appear
+  command: lpstat -p EPSON_ET_2850_Series_USB
+  register: printer_status
+  retries: 10
+  delay: 5
+  until: printer_status.rc == 0
+  ignore_errors: true
+
+- name: Ensure printer queue is shared
+  command: lpadmin -p EPSON_ET_2850_Series_USB -o printer-is-shared=true
+  ignore_errors: true
+
+- name: Set printer default options (grayscale + duplex)
+  command: >
+    lpadmin -p EPSON_ET_2850_Series_USB \
+      -o Duplex=DuplexNoTumble \
+      -o ColorModel=Gray
+
+- name: Create fallback printer admin users
+  user:
+    name: "{{ item.name }}"
+    groups: lpadmin
+    shell: /bin/bash
+    password: "{{ item.password | password_hash('sha512') }}"
+    update_password: on_create
+  loop: "{{ cups_admins }}"

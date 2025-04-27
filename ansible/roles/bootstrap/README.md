@@ -37,11 +37,21 @@ ansible-playbook playbooks/bootstrap.yml \
 ### Apply Changes for Real
 
   ansible-playbook playbooks/bootstrap.yml \
-    -l pve_main \
+    -l pve-backup \
     -u rumie \
     --private-key ~/.ssh/id_ed25519 \
-    --ask-become-pass
+    --ask-become-pass \
+    --ask-vault-pass
 
+
+login issues:
+Might need to manually insall sudo package.
+
+# You will have to become root first
+su -
+# then install sudo
+apt update
+apt install sudo
 
 
 ###Run validation script

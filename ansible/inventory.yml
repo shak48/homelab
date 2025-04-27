@@ -2,6 +2,8 @@ all:
   hosts:
     pve-main:
       ansible_host: 192.168.0.111
+    pve-backup:
+      ansible_host: 192.168.0.222
     pve-test:
       ansible_host: 192.168.0.112
     file-server:
@@ -15,6 +17,7 @@ all:
     pve_main:
       hosts:
         pve-main:
+        pve-backup:
     pve_test:
       hosts:
         pve-test:

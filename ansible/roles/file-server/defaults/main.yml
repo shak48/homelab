@@ -4,11 +4,11 @@ samba_users: "{{ vault_samba_users | default([]) }}"
 
 samba_shares:
   - name: Shahriar
-    path: /srv/samba/Shahriar
+    path: /mnt/share/Shahriar
     valid_users: "shahriar,smbuser"
   - name: Tahia
-    path: /srv/samba/Tahia
+    path: /mnt/share/Tahia
     valid_users: "tahia,smbuser"
   - name: Common
-    path: /srv/samba/Common
+    path: /mnt/share/Common
     valid_users: "shahriar,tahia,smbuser"

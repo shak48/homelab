@@ -1,5 +1,9 @@
 # roles/samba/tasks/main.yml
 ---
+- name: Set system hostname
+  hostname:
+    name: samba-file-server
+
 - name: Install Samba server
   ansible.builtin.apt:
     name: samba

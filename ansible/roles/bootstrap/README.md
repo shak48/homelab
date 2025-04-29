@@ -1,5 +1,8 @@
 ## Bootstrap Role — Ansible Usage (with `--check` mode)
 
+
+Need to run as root.
+
 This playbook bootstraps new machines by:
 
 - Creating `ansible-user`

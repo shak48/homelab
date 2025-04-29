@@ -1,6 +1,4 @@
 ---
-
-
 # Install essential system packages
 - name: Ensure required packages are installed
   ansible.builtin.apt:
@@ -39,3 +37,4 @@
     owner: root
     group: root
     mode: '0440'
+    notify: Restart sshd

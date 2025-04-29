@@ -20,7 +20,7 @@
     create: true
     backrefs: true
   loop: "{{ harden_ssh_settings }}"
-  notify: Restart SSH
+  notify: Restart SSH service
 
 - name: Install unattended-upgrades (if enabled)
   ansible.builtin.apt:

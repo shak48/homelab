@@ -1,0 +1,5 @@
+#playbooks/shibernate.yml
+- hosts: pve_main
+  become: true
+  roles:
+    - shibernate

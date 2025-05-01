@@ -1,0 +1,23 @@
+#roles/tasks/main.yml
+- name: Deploy systemd hibernate service
+  template:
+    src: shibernate.service.j2
+    dest: "/etc/systemd/system/{{ shibernate_service_name }}.service"
+    mode: '0644'
+
+- name: Deploy systemd hibernate timer
+  template:
+    src: shibernate.timer.j2
+    dest: "/etc/systemd/system/{{ shibernate_service_name }}.timer"
+    mode: '0644'
+
+- name: Reload systemd to register new unit files
+  systemd:
+    daemon_reload: true
+
+- name: Enable and start hibernate timer
+  systemd:
+    name: "{{ shibernate_service_name }}.timer"
+    enabled: true
+    state: started
+    

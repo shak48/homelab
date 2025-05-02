@@ -13,14 +13,13 @@ This playbook bootstraps new machines by:
 
 ---
 
-## SSH Key Generation for `ansible-user`
+## SSH Key Generation for `ansible`
 
 Generate a dedicated SSH key pair on your control node (Ansible machine):
 
-```bash
-ssh-keygen -t rsa -b 4096 -f ~/.ssh/ansible_id_rsa_ansible-user -C "ansible-user@control_node"
-
-cp ~/.ssh/ansible_id_rsa_ansible-user.pub <project_directory>/roles/bootstrap/files/ansible_id_rsa.pub
+###bash
+Run this to create keys. must do this shenever changing machine
+(../../../bash-scripts/ansible-control-node/bootstrap.sh)
 
 
 ---
@@ -29,10 +28,10 @@ cp ~/.ssh/ansible_id_rsa_ansible-user.pub <project_directory>/roles/bootstrap/fi
 
 Use `--check` to preview what Ansible *would* do, without applying changes:
 
-```bash
+### bash
 ansible-playbook playbooks/bootstrap.yml \
   -l pve_main \
-  -u rumie \
+  -u <local_user_name> \
   --private-key ~/.ssh/id_rsa \
   --ask-become-pass \
   --check
@@ -40,11 +39,11 @@ ansible-playbook playbooks/bootstrap.yml \
 ### Apply Changes for Real
 
   ansible-playbook playbooks/bootstrap.yml \
-    -l pve-backup \
-    -u rumie \
-    --private-key ~/.ssh/id_ed25519 \
+    -l pve-main \
+    -u <local_user_name> \
     --ask-become-pass \
-    --ask-vault-pass
+    --ask-vault-pass \
+
 
 
 login issues:

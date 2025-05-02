@@ -1,0 +1,6 @@
+# tasks/update_apt.yml
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  when: ansible_facts is defined and ansible_os_family == 'Debian'

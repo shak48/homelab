@@ -16,4 +16,5 @@
         autoclean: yes
 
   roles:
-    - role: harden
+    - common
+    - harden

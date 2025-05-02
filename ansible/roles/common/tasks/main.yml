@@ -1,0 +1,16 @@
+# roles/common/tasks/main.yml
+- name: Include apt update task
+  ansible.builtin.import_tasks: update_apt.yml
+- name: Upgrade all packages
+  ansible.builtin.import_tasks: upgrade_apt.yml
+- name: Ensure common packages are installed
+  ansible.builtin.apt:
+    name:
+      - curl
+      - wget
+      - vim
+      - htop
+    state: present
+    update_cache: yes
+- name: PURGE apt cache
+  ansible.builtin.import_tasks: purge_apt.yml

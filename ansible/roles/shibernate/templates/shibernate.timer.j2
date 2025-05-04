@@ -1,8 +1,8 @@
 [Unit]
-Description=Run hibernate daily
+Description=Run hibernate-wakeup cycle every 4 minutes
 
 [Timer]
-OnCalendar={{ shibernate_oncalendar }}
+OnCalendar=*-*-* *:0/4:00
 Persistent=true
 
 [Install]

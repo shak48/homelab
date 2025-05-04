@@ -2,3 +2,7 @@
 fallback_root_password: "{{ vault_root_password }}"
 samba_users: "{{ vault_samba_users }}"
 cups_admins: "{{vault_cups_admins}}"
+
+#Template default/fallback user configuration
+template_default_user : "{{ vault_default_user }}"
+template_default_password : "{{ vault_root_password }}"

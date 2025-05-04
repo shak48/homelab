@@ -1,3 +1,3 @@
 ---
 bootstrap_user: ansible
-
+bootstrap_user_key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_ansible_ed25519.pub') }}"

@@ -11,4 +11,5 @@ bootstrap_packages:
   - python3-pip
   - rsync
   - gnupg
+  - qemu-guest-agent
 bootstrap_timezone: America/New_York

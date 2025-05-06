@@ -22,14 +22,14 @@
     create_home: yes
     state: present
 
-# Add public SSH key to the ansible user
-- name: Ensure .ssh directory exists for ansible user
-  file:
-    path: "/home/{{ bootstrap_user }}/.ssh"
-    state: directory
+# Install public SSH key for ansible user
+- name: Install public SSH key for ansible user
+  copy:
+    content: "{{ bootstrap_user_key }}"
+    dest: "/home/{{ bootstrap_user }}/.ssh/authorized_keys"
     owner: "{{ bootstrap_user }}"
     group: "{{ bootstrap_user }}"
-    mode: '0700'
+    mode: '0600'
 
 
 - name: Allow ansible user passwordless sudo

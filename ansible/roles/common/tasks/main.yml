@@ -9,6 +9,7 @@
       - curl
       - wget
       - vim
+      - nano
       - htop
     state: present
     update_cache: yes

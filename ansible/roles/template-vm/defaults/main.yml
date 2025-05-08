@@ -1,0 +1,28 @@
+# roles/template-vm/defaults/main.yml
+
+# Template VM Settings
+template_vm_id: 900   
+template_vm_name: ubuntu-2404-template
+template_node: pve-main
+template_storage: local-zfs
+template_disk_size: 32G
+template_memory: 1024
+template_cores: 1
+template_sockets: 1
+template_net_bridge: vmbr0
+
+
+
+
+# Cloud-Init Image Info
+template_image_url: "https://cloud-images.ubuntu.com/minimal/releases/noble/release-20240423/ubuntu-24.04-minimal-cloudimg-amd64.img"
+template_image_file: ubuntu-24.04-minimal-cloudimg-amd64.img
+template_qcow2_name: ubuntu-24.04.qcow2
+
+
+# Cloud-Init User
+template_user: "{{ template_default_user }}"
+template_password: "{{ template_default_password }}"
+template_ssh_key_file: "{{ template_user }}.pub"
+template_ssh_key: "{{ lookup('file', playbook_dir + '/../files/' + template_ssh_key_file) }}"
+

@@ -6,7 +6,7 @@ all:
       ansible_host: 192.168.0.222
     pve-test:
       ansible_host: 192.168.0.112
-    file-server:
+    samba-server:
       ansible_host: 192.168.0.120
     print-server:
       ansible_host: 192.168.0.121
@@ -17,13 +17,13 @@ all:
     pve_main:
       hosts:
         pve-main:
-        pve-backup:
+        pve-backup: 
     pve_test:
       hosts:
         pve-test:
     file_servers:
       hosts:
-        file-server:
+        samba-server:
     print_servers:
       hosts:
         print-server:

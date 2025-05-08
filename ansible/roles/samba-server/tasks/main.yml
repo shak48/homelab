@@ -1,0 +1,71 @@
+# roles/samba-server/tasks/main.yml
+---
+- name: Include NFS mount tasks
+  include_tasks: nfs-mount.yml
+
+- name: Set system hostname
+  hostname:
+    name: samba-file-server
+
+- name: Install Samba server
+  ansible.builtin.apt:
+    name: samba
+    state: present
+    update_cache: yes
+
+- name: Ensure Samba users exist
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    shell: /usr/sbin/nologin
+    state: present
+    create_home: no
+  loop: "{{ samba_users }}"
+
+- name: Add Samba user only if not exists
+  ansible.builtin.shell: |
+    pdbedit -L | grep -q '^{{ item.name }}:' || (echo '{{ item.password }}'; echo '{{ item.password }}') | smbpasswd -s -a {{ item.name }}
+  args:
+    executable: /bin/bash
+  loop: "{{ samba_users }}"
+  changed_when: false
+  no_log: true
+
+- name: Add Samba users to samba_common group
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    groups: smbuser
+    append: yes
+  loop: "{{ samba_users }}"
+
+- name: Create Samba share directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: root
+    group: smbuser
+    mode: '0770'
+  loop: "{{ samba_shares }}"
+
+- name: Set folder ownership to match first valid user
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: "{{ item.valid_users.split(',')[0] | trim }}"
+    group: smbuser
+    recurse: true
+  loop: "{{ samba_shares }}"
+  when: ansible_check_mode == false
+
+- name: Apply smb.conf template
+  ansible.builtin.template:
+    src: smb.conf.j2
+    dest: /etc/samba/smb.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart smbd
+
+- name: Ensure Samba service is enabled and started
+  ansible.builtin.service:
+    name: smbd
+    state: started
+    enabled: yes

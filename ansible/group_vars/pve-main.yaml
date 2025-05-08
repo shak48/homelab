@@ -1,0 +1,4 @@
+# group_vars/pve-main.yml
+---
+nfs_export_subnet: 192.168.0.0/24
+nfs_export_options: rw,sync,no_subtree_check,no_root_squash

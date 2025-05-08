@@ -1,0 +1,20 @@
+#roles/samba-server/tasks/nfs-export.yml
+- name: Ensure nfs-kernel-server is installed
+  apt:
+    name: nfs-kernel-server
+    state: present
+    update_cache: yes
+
+- name: Ensure NFS export entries exist
+  lineinfile:
+    path: /etc/exports
+    line: "{{ item }} {{ nfs_export_subnet }}({{ nfs_export_options }})"
+    state: present
+  loop:
+    - /tankmirror/share
+  vars:
+    nfs_export_subnet: 192.168.0.0/24
+    nfs_export_options: rw,sync,no_subtree_check,no_root_squash
+
+- name: Reload NFS exports
+  command: exportfs -ra

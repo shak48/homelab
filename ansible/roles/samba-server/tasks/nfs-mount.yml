@@ -1,0 +1,37 @@
+#/roles/samba-server/tasks/nfs-mount.yml
+
+- name: Install NFS client tools
+  apt:
+    name: nfs-common
+    state: present
+    update_cache: yes
+
+- name: Ensure /mnt/share exists
+  file:
+    path: /mnt/share
+    state: directory
+
+
+- name: Check if /mnt/share is already mounted
+  shell: mountpoint -q /mnt/share
+  register: share_already_mounted
+  failed_when: false
+  changed_when: false
+
+- name: Persist NFS mount in /etc/fstab if not already present
+  lineinfile:
+    path: /etc/fstab
+    line: "{{ nfs_host_ip }}:/tankmirror/share /mnt/share nfs defaults,vers=4.2 0 0"
+    state: present
+  when: share_already_mounted.rc != 0
+
+- name: Mount NFS share manually only if not already mounted
+  shell: "timeout 10 mount -v -t nfs -o vers=4.2,rw {{ nfs_host_ip }}:/tankmirror/share /mnt/share"
+  when: share_already_mounted.rc != 0
+  register: manual_mount
+  ignore_errors: false
+  changed_when: manual_mount.rc == 0
+
+- name: Show mount output for debug
+  debug:
+    var: manual_mount

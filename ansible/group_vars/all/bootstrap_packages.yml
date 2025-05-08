@@ -1,8 +1,6 @@
 ---
 bootstrap_packages:
   - sudo
-  - vim
-  - curl
   - wget
   - zip
   - unzip
@@ -11,5 +9,5 @@ bootstrap_packages:
   - python3-pip
   - rsync
   - gnupg
-  - qemu-guest-agent
+  - nfs-kernel-server
 bootstrap_timezone: America/New_York

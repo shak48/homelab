@@ -1,0 +1,14 @@
+---
+# roles/file-server/tasks/fix-permissions.yml
+
+- name: Ensure /tankmirror/share exists
+  file:
+    path: /tankmirror/share
+    state: directory
+    mode: '0777'
+    recurse: yes
+
+- name: Set global write permission on all contents (temporary insecure fix)
+  ansible.builtin.command: chmod -R 777 /tankmirror/share
+  args:
+    warn: false

@@ -1,1 +1,0 @@
-ansible-playbook playbooks/create-cloud-template.yml --check

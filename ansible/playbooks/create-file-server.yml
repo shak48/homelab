@@ -1,10 +1,14 @@
 ---
-- name: Create a file server
-  hosts: file_servers
-  become: true
+# playbook/create-file-server.yml
 
+- name: Configure NFS exports on Proxmox host
+  hosts: pve-main
+  become: yes
   roles:
-    - role: file-server
-      tags:
-        - samba
-        - fileshare
+    - file-server
+
+- name: Configure Samba file share VM
+  hosts: samba-server
+  become: yes
+  roles:
+    - samba-server

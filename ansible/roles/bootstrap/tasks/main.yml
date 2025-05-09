@@ -6,13 +6,11 @@
     state: present
     update_cache: yes
 
-# Set system timezone
 - name: Set timezone
   community.general.timezone:
     name: "{{ bootstrap_timezone }}"
 
 
-# Create the ansible user with sudo access
 - name: Create ansible user
   ansible.builtin.user:
     name: "{{ bootstrap_user }}"
@@ -22,7 +20,14 @@
     create_home: yes
     state: present
 
-# Install public SSH key for ansible user
+- name: Ensure .ssh directory exists
+  file:
+    path: "/home/{{ bootstrap_user }}/.ssh"
+    state: directory
+    owner: "{{ bootstrap_user }}"
+    group: "{{ bootstrap_user }}"
+    mode: '0700'
+
 - name: Install public SSH key for ansible user
   copy:
     content: "{{ bootstrap_user_key }}"
@@ -30,6 +35,7 @@
     owner: "{{ bootstrap_user }}"
     group: "{{ bootstrap_user }}"
     mode: '0600'
+
 
 
 - name: Allow ansible user passwordless sudo

@@ -24,3 +24,4 @@ desktop.ini     # Windows
 BOM.txt 
 wsl2-move.ps1
 *.code-workspace
+ansible/ansible.log

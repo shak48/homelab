@@ -1,11 +1,6 @@
 ---
 # playbook/create-file-server.yml
 
-- name: Configure NFS exports on Proxmox host
-  hosts: pve-main
-  become: yes
-  roles:
-    - file-server
 
 - name: Configure Samba file share VM
   hosts: samba-server

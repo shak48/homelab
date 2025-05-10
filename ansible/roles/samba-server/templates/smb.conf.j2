@@ -20,8 +20,9 @@
    obey pam restrictions = yes
    unix password sync = no
    pam password change = yes
-   map to guest = bad user
-   guest ok = no
+
+   guest account = nobody
+   disable spoolss = yes
    min protocol = SMB2
    server min protocol = SMB2
 

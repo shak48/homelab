@@ -1,7 +1,6 @@
 # roles/samba-server/tasks/main.yml
 ---
-- name: Include NFS mount tasks
-  include_tasks: nfs-mount.yml
+
 
 - name: Set system hostname
   hostname:
@@ -69,3 +68,4 @@
     name: smbd
     state: started
     enabled: yes
+

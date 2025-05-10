@@ -1,7 +1,0 @@
-# roles/file-server/tasks/main.yml
----
-- name: Include NFS export tasks
-  include_tasks: nfs-export.yml
-
-- name: Include permission fix tasks
-  include_tasks: fix-permissions.yml

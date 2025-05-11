@@ -58,7 +58,3 @@ sudo anything...
 will treat `~` as `/root`.
 
 **Fix**: Avoid `sudo` unless explicitly required.
-
----
-
-Let me know if you'd like this committed as `README.md` next to your script.

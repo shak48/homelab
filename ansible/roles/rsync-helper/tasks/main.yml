@@ -1,0 +1,37 @@
+---
+# tasks file for ansible/roles/rsync-helper/
+
+- name: Fail early if rsync source doesn't exist
+  stat:
+    path: "{{ rsync_src }}"
+  register: rsync_src_check
+
+- name: Stop if rsync source is missing
+  fail:
+    msg: "Source directory {{ rsync_src }} does not exist!"
+  when: not rsync_src_check.stat.exists
+
+
+- name: Perform rsync with logging
+  shell: >
+    rsync -avh --progress --partial --inplace {{ rsync_src }}/ {{ rsync_dest }}/ | tee -a {{ rsync_log }}
+  register: rsync_result
+  async: 1800
+  poll: 0
+
+
+- name: Wait for rsync to complete
+  async_status:
+    jid: "{{ rsync_result.ansible_job_id }}"
+  register: rsync_async_poll
+  until: rsync_async_poll.finished
+  retries: 100
+  delay: 15
+
+- name: Show tail of rsync log
+  shell: "tail -n 20 {{ rsync_log }}"
+  register: rsync_tail
+  when: rsync_log is defined
+
+- debug:
+    msg: "{{ rsync_tail.stdout_lines }}"

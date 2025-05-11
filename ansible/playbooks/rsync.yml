@@ -1,0 +1,9 @@
+---
+- name: Run rsync transfer
+  hosts: all
+  become: true
+  roles:
+    - role: rsync-helper
+      vars:
+        rsync_src: "<place/holder>"
+        rsync_dest: "<place/holder>"

@@ -6,6 +6,31 @@
   hostname:
     name: samba-file-server
 
+- name: Ensure mount point directory exists
+  ansible.builtin.file:
+    path: /mnt/share
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Add virtiofs mount entry to fstab if not present
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    line: "hdd-share /mnt/share virtiofs defaults 0 0"
+    state: present
+    insertafter: EOF
+    create: yes
+    regexp: '^hdd-share\s+/mnt/share\s+virtiofs'
+
+- name: Mount the share (virtiofs)
+  ansible.builtin.mount:
+    path: /mnt/share
+    src: hdd-share
+    fstype: virtiofs
+    state: mounted
+
+
 - name: Install Samba server
   ansible.builtin.apt:
     name: samba

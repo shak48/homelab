@@ -6,4 +6,4 @@
   hosts: samba-server
   become: yes
   roles:
-    - samba-server
+    - samba-file-server

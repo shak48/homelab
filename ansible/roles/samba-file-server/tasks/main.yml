@@ -1,7 +1,5 @@
-# roles/samba-server/tasks/main.yml
+# roles/samba-file-server/tasks/main.yml
 ---
-
-
 - name: Set system hostname
   hostname:
     name: samba-file-server
@@ -78,6 +76,16 @@
     recurse: true
   loop: "{{ samba_shares }}"
   when: ansible_check_mode == false
+
+- name: Force recursive chown for all share paths
+  ansible.builtin.command: >
+    chown -R {{ item.valid_users.split(',')[0] | trim }}:smbuser {{ item.path }}
+  loop: "{{ samba_shares }}"
+
+- name: Force chmod for all user shares
+  ansible.builtin.command: >
+    chmod -R 770 {{ item.path }}
+  loop: "{{ samba_shares }}"
 
 - name: Apply smb.conf template
   ansible.builtin.template:

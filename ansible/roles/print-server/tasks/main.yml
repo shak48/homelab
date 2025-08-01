@@ -65,3 +65,7 @@
     password: "{{ item.password | password_hash('sha512') }}"
     update_password: on_create
   loop: "{{ cups_admins }}"
+
+- name: Configure dynamic weekly test print job
+  import_tasks: test-print.yml
+  tags: testprint

@@ -1,5 +1,0 @@
-#roles/vars/main.yml
-#shibernate_service_name: shibernate
-#shibernate_oncalendar: "*-*-* 23:30:00"
-shibernate_service_name: shibernate
-shibernate_wakeup_offset: 120  # 2 minutes

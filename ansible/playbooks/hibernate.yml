@@ -1,0 +1,6 @@
+#playbooks/hibernate.yml
+---
+- hosts: pve_main
+  become: true
+  roles:
+    - hibernate

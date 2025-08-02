@@ -1,6 +1,0 @@
-[Unit]
-Description=Hibernate the system and wake after {{ shibernate_wakeup_offset }} seconds
-
-[Service]
-Type=oneshot
-ExecStart=/usr/sbin/rtcwake -m disk -s {{ shibernate_wakeup_offset }}

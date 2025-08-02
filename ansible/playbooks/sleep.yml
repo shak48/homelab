@@ -3,4 +3,4 @@
 - hosts: pve_main
   become: true
   roles:
-    - hibernate
+    - sleep

@@ -1,0 +1,19 @@
+#/roles/sleep/defaults/main.yml
+sleep_suspend_wake_hours: 8
+sleep_poweroff_wake_hours: 8
+
+sleep_poweroff_timer_seconds: 300
+sleep_suspend_timer_seconds: 60
+
+sleep_suspend_cron_minute: "00"
+sleep_suspend_cron_hour: "08"
+sleep_suspend_cron_weekday: "1-5"
+
+sleep_poweroff_cron_minute: "30"
+sleep_poweroff_cron_hour: "22"
+
+sleep_suspend_script_path: "/usr/local/bin/suspend.sh"
+sleep_poweroff_script_path: "/usr/local/bin/poweroff.sh"
+
+sleep_suspend_log_file: "/var/log/suspend-wake.log"
+sleep_poweroff_log_file: "/var/log/poweroff-wake.log"

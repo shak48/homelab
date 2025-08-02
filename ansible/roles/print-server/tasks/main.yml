@@ -69,3 +69,6 @@
 - name: Configure dynamic weekly test print job
   import_tasks: test-print.yml
   tags: testprint
+
+- name: Include validate tasks
+  include_tasks: scan.yml

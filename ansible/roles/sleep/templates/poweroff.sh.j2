@@ -13,7 +13,6 @@ echo "[$(date)] Clearing RTC alarm." >> "$LOG_FILE"
 echo "[$(date)] Scheduling RTC wake in ${WAKE_HOURS} hours (= ${WAKE_SECONDS} sec)" >> "$LOG_FILE"
 /usr/sbin/rtcwake -m no -s "${WAKE_SECONDS}" >> "$LOG_FILE" 2>&1
 
-# Send alert
 wall "The system will power off in $((${DELAY_SECONDS} / 60)) minutes. Please save your work now!"
 
 (

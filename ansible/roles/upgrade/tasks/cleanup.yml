@@ -1,0 +1,13 @@
+#/roles/upgrade/tasks/cleanup.yml
+---
+- name: Cleanup unused packages
+  apt:
+    autoremove: yes
+    purge: yes
+  tags: [cleanup]
+
+- name: Cleanup leftover dpkg-dist enterprise repo file (if exists)
+  file:
+    path: /etc/apt/sources.list.d/pve-enterprise.list.dpkg-dist
+    state: absent
+  tags: [cleanup] 

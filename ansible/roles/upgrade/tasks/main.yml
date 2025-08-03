@@ -1,62 +1,37 @@
+#/roles/upgrade/tasks/main.yml
 ---
+- name: Disable enterprise repo
+  ansible.builtin.import_tasks: disable_enterprise.yml
+  tags: [disable_enterprise]
 
-- name: Disable Enterprise Repo if exists
-  lineinfile:
-    path: /etc/apt/sources.list.d/pve-enterprise.list
-    regexp: '^deb'
-    state: absent
-  ignore_errors: true
+- name: Backup PVE config
+  import_tasks: backup_config.yml
+  tags: [backup_config]
 
-- name: Backup Current Config (safe for any version)
-  shell: |
-    mkdir -p /root/backup-pve-config
-    cp -a /etc/apt /root/backup-pve-config/
-    cp -a /etc/pve /root/backup-pve-config/
+- name: Configure sources
+  import_tasks: configure_sources.yml
+  tags: [configure_sources]
 
-- name: Configure Debian 12 Bookworm Sources
-  copy:
-    dest: /etc/apt/sources.list
-    content: |
-      deb http://deb.debian.org/debian bookworm main contrib
-      deb http://deb.debian.org/debian bookworm-updates main contrib
-      deb http://security.debian.org/debian-security bookworm-security main contrib
+- name: Install Bookworm keyring
+  import_tasks: install_keyring.yml
+  tags: [install_keyring]
 
-- name: Configure PVE 8 No-Subscription Repo
-  copy:
-    dest: /etc/apt/sources.list.d/pve-no-subscription.list
-    content: |
-      deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
+- name: Run full upgrade
+  import_tasks: dist_upgrade.yml
+  tags: [upgrade]
 
-- name: Install Bookworm Keyring (safe to re-run)
-  apt:
-    name: debian-archive-keyring
-    state: present
-    update_cache: yes
+- name: Cleanup packages and leftover files
+  import_tasks: cleanup.yml
+  tags: [cleanup]
 
-- name: Perform Full System Upgrade
-  apt:
-    update_cache: yes
-    upgrade: dist
+- name: Patch no-subscription popup
+  import_tasks: no_subscription_popup.yml
+  tags: [no_subscription_popup]
 
+- name: Notify reboot
+  import_tasks: notify_reboot.yml
+  tags: [notify_reboot]
 
-- name: Cleanup unused packages
-  apt:
-    autoremove: yes
-    purge: yes
-
-- name: Cleanup leftover dpkg-dist enterprise repo file (if exists)
-  file:
-    path: /etc/apt/sources.list.d/pve-enterprise.list.dpkg-dist
-    state: absent
-
-- name: Notify Manual Reboot
-  debug:
-    msg: "Proxmox VE upgrade complete — reboot manually to finalize."
-
-- name: Show active apt sources for review
-  command: grep -r '^deb ' /etc/apt/
-  register: apt_sources
-
-- name: Print active apt sources
-  debug:
-    var: apt_sources.stdout_lines
+- name: Validate active APT sources
+  import_tasks: validate.yml
+  tags: [validate]

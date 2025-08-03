@@ -1,0 +1,29 @@
+#roles/upgrade/tasks/validate.yml
+---
+- name: Show active apt sources for review
+  command: grep -r '^deb ' /etc/apt/
+  register: apt_sources
+  tags: [validate, apt_sources]
+
+- name: Print active apt sources
+  debug:
+    var: apt_sources.stdout_lines
+  tags: [validate, apt_sources]
+
+- name: Verify popup block was patched
+  ansible.builtin.shell: grep -q '//Ext.Msg.show({' /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+  register: patch_status
+  ignore_errors: true
+  changed_when: false
+  tags: [no_subscription_popup, validate]
+   
+
+- name: Confirm patch status
+  ansible.builtin.debug:
+    msg: >-
+      {{
+        'Proxmox subscription popup successfully disabled.'
+        if patch_status.rc == 0 else
+        'Subscription popup patch missing or failed.'
+      }}
+  tags: [no_subscription_popup, validate]

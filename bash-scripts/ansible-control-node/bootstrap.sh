@@ -28,3 +28,8 @@ echo "SSH key generated:"
 echo "  Private: $KEY_PATH"
 echo "  Public : ${KEY_PATH}.pub"
 echo "  Archived keys stored in: $ARCHIVE_DIR"
+
+#For wake-on-LAN functionality
+echo "Install wakeonlan package if not already installed"
+sudo apt install wakeonlan
+

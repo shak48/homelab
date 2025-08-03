@@ -1,0 +1,8 @@
+#/roles/upgrade/tasks/install_keyring.yml
+---
+- name: Install Bookworm Keyring (safe to re-run)
+  apt:
+    name: debian-archive-keyring
+    state: present
+    update_cache: yes
+  tags: [install_keyring]

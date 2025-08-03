@@ -1,0 +1,29 @@
+# roles/tasks/create-vms/workstation-ubuntu.yml
+
+- name: Clone VM from template
+  command: >
+    qm clone {{ template_vm_id }} {{ vm_id }} --name {{ vm_name }}
+  args:
+    creates: "/etc/pve/qemu-server/{{ vm_id }}.conf"
+  tags: ws-ubuntu
+
+- name: Resize disk
+  command: >
+    qm resize {{ vm_id }} scsi0 {{ vm_disk_size }}
+  tags: ws-ubuntu
+
+- name: Set CPU cores
+  command: >
+    qm set {{ vm_id }} --cores {{ vm_cores }}
+  tags: ws-ubuntu
+
+- name: Set memory
+  command: >
+    qm set {{ vm_id }} --memory {{ vm_memory }}
+  tags: ws-ubuntu
+
+
+- name: Configure static IP via cloud-init
+  command: >
+    qm set {{ vm_id }} --ipconfig0 ip={{ vm_ip }}
+  tags: ws-ubuntu

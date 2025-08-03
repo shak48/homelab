@@ -1,6 +1,6 @@
----
 # tasks file for ansible/roles/create-vm-desktop/
----
+
+
 - name: Install Ubuntu Desktop Environment
   apt:
     name: ubuntu-desktop

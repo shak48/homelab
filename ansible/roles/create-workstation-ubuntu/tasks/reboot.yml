@@ -1,5 +1,5 @@
 # roles/create-vm-desktop/tasks/remote-desktop.yml
----
+
 - name: Ensure reboot after desktop install
   reboot:
     msg: "Rebooting after installing Ubuntu desktop environment and Brave browser"

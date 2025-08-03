@@ -1,6 +1,6 @@
-#playbooks/hibernate.yml
+#playbooks/sleep.yml
 ---
-- hosts: pve_main
+- hosts: pve-servers
   become: true
   roles:
     - sleep

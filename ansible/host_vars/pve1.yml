@@ -1,0 +1,9 @@
+# host_vars/pve1.yml
+
+#Default template ID to be used for creating new VMs 
+template_vm_id: 900  
+
+# Default VM settings for creating new VMs
+vm_ip : dhcp
+vm_gateway: pve1
+vm_net_bridge: vmbr0

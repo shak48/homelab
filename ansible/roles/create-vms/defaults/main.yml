@@ -1,0 +1,7 @@
+
+# defaults file for roles/create-vms
+vm_id: 1000
+vm_name: ws-ubuntu
+vm_disk_size: 128G  # in GB (for qm resize)
+vm_cores: 4
+vm_memory: 4096     # in MB

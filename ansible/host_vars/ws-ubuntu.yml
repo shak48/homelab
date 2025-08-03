@@ -1,0 +1,6 @@
+# host_vars/workstation-ubuntu.yml
+
+
+## New desktop VM settings
+vm_id: 115 
+vm_name: ws-ubuntu

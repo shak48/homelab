@@ -1,4 +1,4 @@
-#host_vars/print-server.yml
+#host_vars/cups1.yml
 env: production
 tags:
   - print

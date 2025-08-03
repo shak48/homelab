@@ -1,9 +1,6 @@
----
 # playbook/create-file-server.yml
-
-
 - name: Configure Samba file share VM
-  hosts: samba-server
+  hosts: samba1
   become: yes
   roles:
-    - samba-file-server
+    - create-samba-file-server

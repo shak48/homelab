@@ -1,6 +1,6 @@
 ---
 - name: Upgrade Proxmox VE from 7.x to 8.x
-  hosts: all
+  hosts: pve-servers
   become: true
   gather_facts: false
   roles:

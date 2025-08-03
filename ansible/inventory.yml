@@ -1,36 +1,49 @@
 all:
   hosts:
-    pve-main:
+    pve1:
       ansible_host: 192.168.0.111
-    pve-backup:
-      ansible_host: 192.168.0.222
-    pve-test:
+      hostname: pve1
+    pve-test1:
       ansible_host: 192.168.0.112
-    samba-server:
+      hostname: pve-test1
+    ws-ubuntu:  # This is the workstation VM
+      ansible_host: 192.168.0.115
+      hostname: ws-ubuntu
+    samba1:
       ansible_host: 192.168.0.120
-    print-server:
+      hostname: samba1
+    cups1:
       ansible_host: 192.168.0.121
-    scan-server:
-      ansible_host: 192.168.0.122
+      hostname: cups1
+    cloud1:
+      ansible_host: 192.168.0.124
+      hostname: cloud1
+    pbe1:
+      ansible_host: 192.168.0.222
+      hostname: pbe1
+    pbe-test1:
+      ansible_host: 192.168.0.223
+      hostname: pbe-test1
 
   children:
-    pve_main:
+    pve_servers:
       hosts:
-        pve-main:
-        pve-backup: 
-    pve_test:
+        pve1:
+        pve-test1:
+    workstation_servers:
       hosts:
-        pve-test:
+        workstation-ubuntu:
+    pbe_servers:
+      hosts:
+        pbe1:
+        pbe-test1:
     file_servers:
       hosts:
-        samba-server:
+        samba1:
+        cloud1:
     print_servers:
       hosts:
-        print-server:
-    scan_server:
+        cups1:
+    scan_servers:
       hosts:
-        scan-server:
-    pve:
-      children:
-        pve_main: {}
-        pve_test: {}
+        cups1:

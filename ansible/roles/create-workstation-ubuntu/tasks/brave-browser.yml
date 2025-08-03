@@ -1,5 +1,4 @@
 #/roles/create-vm-desktop/tasks/brave-browser.yml
----
 - name: Add Brave browser GPG key
   apt_key:
     url: https://brave.com/static-assets/repo/pubkey.gpg

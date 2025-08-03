@@ -1,3 +1,0 @@
-# group_vars/samba-server.yml
----
-nfs_host_ip: 192.168.0.111

@@ -1,0 +1,12 @@
+#/roles/create-vm-desktop/tasks/remote-desktop.yml
+---
+- name: Install xrdp for Remote Desktop
+  apt:
+    name: xrdp
+    state: present
+
+- name: Enable and start xrdp service
+  systemd:
+    name: xrdp
+    enabled: true
+    state: started

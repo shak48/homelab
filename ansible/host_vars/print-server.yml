@@ -1,6 +1,5 @@
+#host_vars/print-server.yml
 env: production
 tags:
   - print
   - cups
-
-

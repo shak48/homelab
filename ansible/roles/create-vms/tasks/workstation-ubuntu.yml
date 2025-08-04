@@ -1,8 +1,14 @@
 # roles/tasks/create-vms/workstation-ubuntu.yml
 
+- name: Set facts for Workstation VM
+  set_fact:
+    vm_ip: "{{ hostvars['ws-ubuntu'].ansible_host }}/24"
+    vm_id: "{{ ws_ubuntu_vm_id }}"
+    vm_name: "{{ hostvars['ws-ubuntu'].hostname }}"
+
 - name: Clone VM from template
   command: >
-    qm clone {{ template_vm_id }} {{ vm_id }} --name {{ vm_name }}
+    qm clone {{ template_vm_id }} {{ vm_id }} --name {{ vm_name | default('change-me') }}
   args:
     creates: "/etc/pve/qemu-server/{{ vm_id }}.conf"
   tags: ws-ubuntu
@@ -22,8 +28,18 @@
     qm set {{ vm_id }} --memory {{ vm_memory }}
   tags: ws-ubuntu
 
-
-- name: Configure static IP via cloud-init
+- name: Set static IP via cloud-init
   command: >
-    qm set {{ vm_id }} --ipconfig0 ip={{ vm_ip }}
-  tags: ws-ubuntu
+    qm set {{ vm_id }}
+    --ipconfig0 ip={{ vm_ip }},gw={{ vm_gateway }}
+    --nameserver {{ vm_dns }}
+
+- name: Regenerate cloud-init image
+  command: qm cloudinit update {{ vm_id }}
+
+
+- name: Enable autostart for workstation VM
+  command: qm set {{ vm_id }} --onboot 1
+
+- name: Start workstation VM
+  command: qm start {{ vm_id }}

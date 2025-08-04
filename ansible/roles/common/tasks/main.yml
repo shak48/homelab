@@ -4,7 +4,7 @@
 - name: Upgrade all packages
   include_tasks: upgrade_apt.yml
 - name: Ensure common packages are installed
-  ansible.builtin.apt:
+  apt:
     name:
       - curl
       - wget

@@ -1,6 +1,6 @@
 # playbook/create-workstation-ubuntu.yml
 - name: Configure Workstation Ubuntu
-  hosts: pve_servers
+  hosts: ws-ubuntu
   become: yes
   roles:
     - create-workstation-ubuntu

@@ -3,7 +3,11 @@
 #Default template ID to be used for creating new VMs 
 template_vm_id: 900  
 
+# Workstation VM ID
+ws_ubuntu_vm_id: 115  # VM ID for the workstation Ubuntu VM
+
 # Default VM settings for creating new VMs
 vm_ip : dhcp
-vm_gateway: pve1
+vm_gateway: 192.168.0.1
 vm_net_bridge: vmbr0
+vm_dns: 8.8.8.8

@@ -1,9 +1,8 @@
----
 - name: Bootstrap PVE Main hosts
   hosts: all
   become: true
 
   roles:
-    - common
     - bootstrap
     - harden
+    - common

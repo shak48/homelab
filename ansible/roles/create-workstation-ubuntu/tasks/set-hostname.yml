@@ -1,0 +1,6 @@
+# tasks file for ansible/roles/create-workstation-ubuntu/tasks/set-hostname.yml
+- name: Set hostname from inventory
+  hostname:
+    name: "{{ hostvars[inventory_hostname].hostname }}"
+  when: hostvars[inventory_hostname].hostname is defined
+  

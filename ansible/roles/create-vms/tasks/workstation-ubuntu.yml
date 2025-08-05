@@ -5,10 +5,11 @@
     vm_ip: "{{ hostvars['ws-ubuntu'].ansible_host }}/24"
     vm_id: "{{ ws_ubuntu_vm_id }}"
     vm_name: "{{ hostvars['ws-ubuntu'].hostname }}"
+  tags: ws-ubuntu
 
 - name: Clone VM from template
   command: >
-    qm clone {{ template_vm_id }} {{ vm_id }} --name {{ vm_name | default('change-me') }}
+    qm clone {{ ws_ubuntu_template_vm_id }} {{ vm_id }} --name {{ vm_name | default('change-me') }}
   args:
     creates: "/etc/pve/qemu-server/{{ vm_id }}.conf"
   tags: ws-ubuntu
@@ -33,13 +34,16 @@
     qm set {{ vm_id }}
     --ipconfig0 ip={{ vm_ip }},gw={{ vm_gateway }}
     --nameserver {{ vm_dns }}
+  tags: ws-ubuntu
 
 - name: Regenerate cloud-init image
   command: qm cloudinit update {{ vm_id }}
-
+  tags: ws-ubuntu
 
 - name: Enable autostart for workstation VM
   command: qm set {{ vm_id }} --onboot 1
+  tags: ws-ubuntu
 
 - name: Start workstation VM
   command: qm start {{ vm_id }}
+  tags: ws-ubuntu

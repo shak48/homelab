@@ -1,5 +1,59 @@
 # roles/create-workstation-ubuntu/defaults/main.yml
 
+# roles/create-workstation-ubuntu/defaults/main.yml
+# Base system and utilities
+base_packages:
+  - wget
+  - curl
+  - gnupg
+  - vim
+  - git
+  - htop
+  - unzip
+  - zip
+  - tmux
+  - tree
+  - net-tools
+  - openssh-server
+  - openssh-client
+  - python3
+  - python3-pip
+  - software-properties-common
+  - apt-transport-https
+  - build-essential
+  - linux-headers-generic
+  - dkms
+
+# Desktop environment essentials
+gui_packages:
+  - firefox
+  - gnome-terminal
+  - nautilus
+  - gedit
+
+# Productivity and office tools
+office_packages:
+  - libreoffice
+  - filezilla
+  - gparted
+  - synaptic
+  - remmina
+
+# Creative/media tools
+media_packages:
+  - vlc
+  - gimp
+  - inkscape
+  - audacity
+
+# Engineering tools
+engineering_packages:
+  - kicad
+  - freecad
+  - blender
+  
+# Development tools
+development_packages:
 
 
 

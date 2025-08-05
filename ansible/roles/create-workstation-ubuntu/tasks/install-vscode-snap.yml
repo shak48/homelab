@@ -1,0 +1,23 @@
+- name: Ensure snapd is installed
+  apt:
+    name: snapd
+    state: present
+    update_cache: yes
+
+- name: Ensure snapd service is started
+  systemd:
+    name: snapd
+    enabled: true
+    state: started
+
+- name: Wait for snap to become available
+  shell: snap version
+  register: snap_check
+  retries: 5
+  delay: 5
+  until: snap_check.rc == 0
+
+- name: Install Visual Studio Code via snap
+  shell: snap install --classic code
+  args:
+    creates: /snap/bin/code

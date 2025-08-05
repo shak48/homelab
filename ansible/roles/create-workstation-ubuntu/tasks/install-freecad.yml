@@ -1,0 +1,15 @@
+# tasks file for ansible/roles/create-workstation-ubuntu/tasks/install-freecad.yml
+- name: Add FreeCAD PPA via shell
+
+  shell: add-apt-repository -y ppa:freecad-maintainers/freecad-stable
+  args:
+    creates: /etc/apt/sources.list.d/freecad-maintainers-ubuntu-freecad-stable*
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install FreeCAD
+  apt:
+    name: freecad
+    state: present

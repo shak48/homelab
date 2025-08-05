@@ -1,3 +1,4 @@
 # tasks file for roles/create-vms
 - name: Include tasks for creating VMs
   include_tasks: workstation-ubuntu.yml
+  tags: ws-ubuntu

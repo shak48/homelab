@@ -1,98 +1,34 @@
-# tasks file for ansible/roles/create-vm-desktop/
+# main.yml — Dispatcher for create-vm-desktop role with global tag
 
-- name: Set hostname from inventory
-  hostname:
-    name: "{{ hostvars[inventory_hostname].hostname }}"
+- name: Set system hostname
+  import_tasks: set-hostname.yml
+  tags: create_vm_desktop
 
-# - name: Install Ubuntu Desktop Environment
-#   apt:
-#     name: ubuntu-desktop
-#     state: present
-#     update_cache: true
+- name: Install system packages and base tools
+  import_tasks: packages-base.yml
+  tags: create_vm_desktop
 
-- name: Set systemd default target to graphical
-  file:
-    src: /lib/systemd/system/graphical.target
-    dest: /etc/systemd/system/default.target
-    state: link
-    force: true
+- name: Install Visual Studio Code via Snap
+  import_tasks: install-vscode-snap.yml
+  tags: create_vm_desktop
 
-- name: Install additional GUI tools
-  apt:
-    name:
-      - firefox
-      - gnome-terminal
-      - nautilus
-      - gedit
-    state: present
+- name: Install Brave browser
+  import_tasks: install-brave.yml
+  tags: create_vm_desktop
 
-- name: Ensure apt cache is updated
-  apt:
-    update_cache: true
-    cache_valid_time: 3600
+- name: Install FreeCAD
+  import_tasks: install-freecad.yml
+  tags: create_vm_desktop
 
-- name: Install required dependencies for 3rd-party apps
-  apt:
-    name:
-      - wget
-      - software-properties-common
-      - apt-transport-https
-      - gnupg
-    state: present
+- name: Install Microsoft Edge browser
+  import_tasks: install-edge.yml
+  tags: create_vm_desktop
 
-# Microsoft Edge
-- name: Download Microsoft Edge .deb package
-  get_url:
-    url: https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_{{ edge_version | default('latest') }}_amd64.deb
-    dest: /tmp/edge.deb
-    mode: '0644'
+- name: Clean up temp installer files
+  import_tasks: cleanup-temp-files.yml
+  tags: create_vm_desktop
 
-- name: Install Microsoft Edge
-  apt:
-    deb: /tmp/edge.deb
-
-# KiCad
-- name: Install KiCad
-  apt:
-    name: kicad
-    state: present
-
-# Visual Studio Code
-- name: Add VS Code GPG key
-  apt_key:
-    url: https://packages.microsoft.com/keys/microsoft.asc
-    state: present
-
-- name: Add VS Code repository
-  apt_repository:
-    repo: deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main
-    state: present
-    filename: vscode
-
-- name: Install VS Code
-  apt:
-    name: code
-    state: present
-
-# LibreOffice
-- name: Install LibreOffice
-  apt:
-    name: libreoffice
-    state: present
-
-# Notepad++ via Wine
-- name: Ensure Wine is installed
-  apt:
-    name: wine64
-    state: present
-
-- name: Download Notepad++ installer
-  get_url:
-    url: https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.6.5/npp.8.6.5.Installer.exe
-    dest: /tmp/npp_installer.exe
-
-- name: Install Notepad++ using Wine
-  command: wine /tmp/npp_installer.exe /S
-  args:
-    creates: ~/.wine/drive_c/Program\ Files/Notepad++/notepad++.exe
-  become: false
+- name: Trigger reboot if needed after applications install
+  debug:
+    msg: "GUI installed, requesting reboot"
+  notify: Ensure reboot after desktop install

@@ -1,0 +1,34 @@
+# tasks file for ansible/roles/create-workstation-ubuntu/tasks/install-edge.yml
+- name: Download and dearmor Microsoft GPG key on remote
+  shell: >
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc |
+    gpg --dearmor -o /tmp/microsoft.gpg
+  args:
+    creates: /tmp/microsoft.gpg
+
+- name: Move Microsoft GPG key to trusted.gpg.d
+  copy:
+    src: /tmp/microsoft.gpg
+    dest: /etc/apt/trusted.gpg.d/microsoft.gpg
+    owner: root
+    group: root
+    mode: '0644'
+    remote_src: true
+
+- name: Add Microsoft Edge APT repository
+  copy:
+    dest: /etc/apt/sources.list.d/microsoft-edge-dev.list
+    content: |
+      deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install Microsoft Edge
+  apt:
+    name: microsoft-edge-stable
+    state: present

@@ -32,3 +32,5 @@
   debug:
     msg: "GUI installed, requesting reboot"
   notify: Ensure reboot after desktop install
+  tags: create_vm_desktop
+

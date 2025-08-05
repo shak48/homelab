@@ -1,4 +1,5 @@
-# tasks file for ansible/roles/create-workstation-ubuntu/tasks/install-edge.yml
+# tasks file for install-edge
+
 - name: Download and dearmor Microsoft GPG key on remote
   shell: >
     curl -fsSL https://packages.microsoft.com/keys/microsoft.asc |
@@ -17,12 +18,21 @@
 
 - name: Add Microsoft Edge APT repository
   copy:
-    dest: /etc/apt/sources.list.d/microsoft-edge-dev.list
+    dest: "{{ edge_repo_file }}"
     content: |
       deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main
     owner: root
     group: root
     mode: '0644'
+
+- name: Remove duplicate Microsoft Edge sources if present
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/apt/sources.list.d/microsoft-edge-dev.list
+    - /etc/apt/sources.list.d/microsoft-edge.list
+  when: item != edge_repo_file
 
 - name: Update apt cache
   apt:

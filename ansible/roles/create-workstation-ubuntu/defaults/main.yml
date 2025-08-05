@@ -55,6 +55,9 @@ engineering_packages:
 # Development tools
 development_packages:
 
+edge_repo_file: /etc/apt/sources.list.d/microsoft-edge.list
+
+
 
 
 

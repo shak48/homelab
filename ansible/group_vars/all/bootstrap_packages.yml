@@ -2,12 +2,10 @@
 bootstrap_packages:
   - sudo
   - wget
-  - zip
   - unzip
   - tmux
   - python3
   - python3-pip
   - rsync
   - gnupg
-  - nfs-kernel-server
 bootstrap_timezone: America/New_York

@@ -29,16 +29,6 @@
     qm set {{ vm_id }} --memory {{ vm_memory }}
   tags: ws-ubuntu
 
-- name: Set static IP via cloud-init
-  command: >
-    qm set {{ vm_id }}
-    --ipconfig0 ip={{ vm_ip }},gw={{ vm_gateway }}
-    --nameserver {{ vm_dns }}
-  tags: ws-ubuntu
-
-- name: Regenerate cloud-init image
-  command: qm cloudinit update {{ vm_id }}
-  tags: ws-ubuntu
 
 - name: Enable autostart for workstation VM
   command: qm set {{ vm_id }} --onboot 1
@@ -47,3 +37,16 @@
 - name: Start workstation VM
   command: qm start {{ vm_id }}
   tags: ws-ubuntu
+
+
+### Does not work with cloud-init, so manually configure IP.
+# - name: Set static IP via cloud-init
+#   command: >
+#     qm set {{ vm_id }}
+#     --ipconfig0 ip={{ vm_ip }},gw={{ vm_gateway }}
+#     --nameserver {{ vm_dns }}
+#   tags: ws-ubuntu
+
+# - name: Regenerate cloud-init image
+#   command: qm cloudinit update {{ vm_id }}
+#   tags: ws-ubuntu

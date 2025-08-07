@@ -1,6 +1,6 @@
 # playbook/create-vms.yml
 - name: Create VMs
-  hosts: pve1
+  hosts: pve
   become: true
 
   roles:

@@ -1,0 +1,21 @@
+# roles/create-vms/tasks/main.yml
+
+- name: Set VM facts
+  include_tasks: set-facts-vm.yml
+
+- name: Clone VM from template
+  include_tasks: clone-vm.yml
+
+- name: Remove old SSH key
+  include_tasks: remove-old-key.yml
+
+- name: Provision VM
+  include_tasks: provision-vm.yml
+
+- name: Start VM if not running
+  include_tasks: check-status-vm.yml
+
+# - name: Set hostname
+#   include_tasks: set-hostname.yml 
+#   tags: set_hostname
+

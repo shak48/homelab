@@ -1,8 +1,8 @@
 all:
   hosts:
-    pve1:
+    pve:
       ansible_host: 192.168.0.111
-      hostname: pve1
+      hostname: pve
     pve-test1:
       ansible_host: 192.168.0.112
       hostname: pve-test1
@@ -15,6 +15,9 @@ all:
     cups1:
       ansible_host: 192.168.0.121
       hostname: cups1
+    docker1:
+      ansible_host: 192.168.0.122
+      hostname: docker1
     cloud1:
       ansible_host: 192.168.0.124
       hostname: cloud1
@@ -26,13 +29,16 @@ all:
       hostname: pbe-test1
 
   children:
+    bootstrap_servers:
+      hosts:
+        bootstrap1:
     pve_servers:
       hosts:
-        pve1:
+        pve:
         pve-test1:
     workstation_servers:
       hosts:
-        workstation-ubuntu:
+        ws-ubuntu:
     pbe_servers:
       hosts:
         pbe1:
@@ -47,3 +53,7 @@ all:
     scan_servers:
       hosts:
         cups1:
+    # guest_vms:
+    #   hosts:
+    #     docker1:
+    #     cloud1: # This is the cloud VM

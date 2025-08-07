@@ -1,0 +1,28 @@
+# playbooks/provision.yml
+
+## To override the default VM settings, you can set the following variables in your host_vars file:
+### ansible-playbook playbooks/provision.yml \
+### -e "target_hosts=pve2" \
+### -e "target_vm=devvm1"
+
+- name: Create VM(s) on Proxmox
+  hosts: "{{ target_hosts | default('pve') }}"
+  become: true
+  gather_facts: false
+
+  roles:
+    - create-vm
+
+- name: Bootstrap and Harden VM
+  hosts: "{{ target_vm | default('docker1') }}"
+  become: true
+  gather_facts: true
+
+  vars:
+    ansible_user: "{{vault_default_user}}"
+    ansible_ssh_private_key_file: "{{vault_ssh_private_key_file}}"
+  roles:
+    - bootstrap
+    - common
+    - harden
+

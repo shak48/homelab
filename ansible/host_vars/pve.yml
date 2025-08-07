@@ -1,15 +1,17 @@
-# host_vars/pve1.yml
+# host_vars/pve.yml
 
 #Default template ID to be used for creating new VMs 
 template_vm_id: 900
 ws_ubuntu_template_vm_id: 1000
 
 
-# Workstation VM ID
-ws_ubuntu_vm_id: 115  # VM ID for the workstation Ubuntu VM
+# Define VM IDs for specific VMs
+#TODO others
+ws_ubuntu_vm_id: 115 
+docker1_vm_id: 122
 
 # Default VM settings for creating new VMs
-vm_ip : dhcp
 vm_gateway: 192.168.0.1
 vm_net_bridge: vmbr0
 vm_dns: 8.8.8.8
+ 

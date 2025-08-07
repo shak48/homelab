@@ -8,3 +8,15 @@ cups_admins: "{{vault_cups_admins}}"
 template_default_user : "{{ vault_default_user }}"
 template_default_password : "{{ vault_root_password }}"
 
+#VM configuration
+vm_gateway: 192.168.0.1
+vm_dns: 1.1.1.1
+
+# Bootstrap user configuration
+#bootstrap_user: "{{ vault_default_user }}"
+#ansible_default_user: ansible
+#bootstrap_password: "{{ vault_default_password }}" 
+#bootstrap_ssh_private_key_file: ~/.ssh/id_ed25519
+
+
+old_key_file_path_on_localhost: /home/rumie/.ssh/known_hosts

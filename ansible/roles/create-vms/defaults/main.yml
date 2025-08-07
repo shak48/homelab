@@ -1,4 +1,0 @@
-# ansible/roles/create-vms/defaults/main.yml
-vm_disk_size: 128G  # in GB (for qm resize)
-vm_cores: 4
-vm_memory: 8192     # in MB

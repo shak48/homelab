@@ -23,7 +23,7 @@
 - name: Install Microsoft Edge browser
   import_tasks: install-edge.yml
   tags: create_vm_desktop
-
+  
 - name: Clean up temp installer files
   import_tasks: cleanup-temp-files.yml
   tags: create_vm_desktop

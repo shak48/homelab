@@ -1,0 +1,19 @@
+# ansible/roles/create-vms/tasks/set-facts-vm.yml
+
+
+- name: Set facts
+  set_fact:
+    template_vm_id:   "{{ hostvars[inventory_hostname].template_vm_id}}"
+    old_key_file_path_on_localhost: "{{ hostvars[inventory_hostname].old_key_file_path_on_localhost }}"
+    vm_gateway:       "{{ hostvars[inventory_hostname].vm_gateway }}"
+    vm_dns:           "{{ hostvars[inventory_hostname].vm_dns }}"
+    vm_net_bridge:    "{{ hostvars[inventory_hostname].vm_net_bridge }}"
+    
+    vm_id:            "{{ hostvars[target_vm].vm_id }}"
+    vm_ip:            "{{ hostvars[target_vm].ansible_host }}"
+    vm_hostname:      "{{ hostvars[target_vm].hostname }}"
+    vm_name:          "{{ hostvars[target_vm].vm_name }}"
+    vm_disk_size:     "{{ hostvars[target_vm].vm_disk_size }}"
+    vm_cores:         "{{ hostvars[target_vm].vm_cores }}"
+    vm_memory:        "{{ hostvars[target_vm].vm_memory }}"
+ 

@@ -1,0 +1,22 @@
+  # ansible/roles/create-vms/tasks/clone-vm.yml
+
+- name: Clone VM from template
+  command: >
+    qm clone {{ template_vm_id }} {{ vm_id }} --name {{ vm_name | default('change-me') }}
+  args:
+    creates: "/etc/pve/qemu-server/{{ vm_id }}.conf"
+
+- name: Resize disk
+  command: >
+    qm resize {{ vm_id }} scsi0 {{ vm_disk_size }}
+
+- name: Set CPU cores
+  command: >
+    qm set {{ vm_id }} --cores {{ vm_cores }}
+
+- name: Set memory
+  command: >
+    qm set {{ vm_id }} --memory {{ vm_memory }}
+
+
+

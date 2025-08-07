@@ -1,0 +1,5 @@
+# roles/create-vms/handlers/main.yml
+
+# - name: start vm if stopped
+#   command: qm start {{ vm_id }}
+#   when: "'status: stopped' in vm_status.stdout"

@@ -1,0 +1,16 @@
+version: "3.5"
+
+services:
+  minecraft-server:
+    container_name: minecraft-server
+    imageK itzg/minecraft-server
+    ports:
+      - 25565:25565
+    environment:
+        - TYPE=forge
+        - EULA=true
+    volumes:
+        - "./userdata/docker-volumes/minecraft:/opt/userdata"
+    stdin_open:true
+    tty:true
+    restart: unless_stopped

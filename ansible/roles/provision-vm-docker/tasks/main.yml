@@ -1,2 +1,32 @@
----
-# tasks file for provision-docker-vm
+# role/provision-vm-docker/tasks/main.yml
+
+- name: Change hostname
+  hostname:
+    name: "{{ hostname | default(inventory_hostname) }}"
+    use: systemd
+
+
+- name: Install Docker
+  include_tasks: install-docker.yml
+
+- name: Deploy Portainer
+  include_tasks: deploy-portainer.yml
+
+- name: Deploy Portainer CE Agent
+  include_tasks: deploy-portainerce-agent.yml
+
+- name: Deploy Containers
+  include_tasks: deploy-nginx-rpm.yml
+
+- name: Deploy Containers
+  include_tasks: deploy-rustdesk.yml
+
+# - name: Deploy Minecraft container
+#   include_tasks: deploy-minecraft.yml
+
+- name: Deploy CS:GO container
+  include_tasks: deploy-counterstrike.yml
+
+- name: Deploy Veloren container
+  include_tasks: deploy-veloren.yml
+

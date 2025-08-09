@@ -1,2 +1,7 @@
----
-# defaults file for provision-docker-vm
+
+docker_compose_file: "docker_compose_file.yml.j2"
+
+rustdesk_root: /opt/rustdesk
+
+veloren_root: /opt/veloren
+#rustdesk_server_ip: " {{target_vm | default=ansible_host }}"

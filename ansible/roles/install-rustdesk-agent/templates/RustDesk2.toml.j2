@@ -1,0 +1,14 @@
+[options]
+# Direct IP path (fastest on LAN). Client will try this first.
+direct_ip = "{{ rustdesk_server_ip }}"
+
+# Leave these set for fallback / future WAN use:
+id_server = "{{ rustdesk_server_ip }}
+relay_server = "{{ rustdesk_server_ip }}"
+
+#rustdesk_server_pubkey = 
+
+# If you want to pin the server's public key (recommended), paste it here:
+{% if rustdesk_server_pubkey is defined and rustdesk_server_pubkey|length > 0 -%}
+key = "{{ rustdesk_server_pubkey }}"
+{%- endif %}

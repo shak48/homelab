@@ -1,0 +1,16 @@
+- name: Deploy CS:GO LAN server
+  community.docker.docker_container:
+    name: csgo-lan
+    image: cm2network/csgo:latest
+    state: started
+    restart_policy: unless-stopped
+    published_ports:
+      - "27015:27015/udp"
+    env:
+      SRCDS_LAN: "1"         # LAN mode (no token needed)
+      SRCDS_TOKEN: ""        # leave empty for LAN
+      SRCDS_PW: ""           # optional server password
+      SRCDS_MAXPLAYERS: "10" # adjust
+      SRCDS_STARTMAP: "de_dust2"
+      SRCDS_REGION: "3"      # (EU=3, change as you like)
+      SRCDS_TICKRATE: "128"  # optional: 128-tick

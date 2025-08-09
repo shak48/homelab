@@ -28,6 +28,10 @@
   import_tasks: cleanup-temp-files.yml
   tags: create_vm_desktop
 
+- name: Install RustDesk agent
+  import_tasks: install-rustdesk-agent.yml
+  tags: rustdesk_agent
+
 - name: Trigger reboot if needed after applications install
   debug:
     msg: "GUI installed, requesting reboot"

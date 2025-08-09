@@ -1,0 +1,22 @@
+
+- name: Deploy nginx-proxy
+  community.docker.docker_container:
+    name: nginx-rpm
+    image: nginxproxy/nginx-proxy:1.8
+    state: started
+    restart_policy: unless-stopped
+    detach: true
+    published_ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+- name: Deploy proxied nginx app
+  community.docker.docker_container:
+    name: nginx-rpm-app
+    image: nginx:latest
+    state: started
+    restart_policy: unless-stopped
+    detach: true
+    env:
+      VIRTUAL_HOST: "nginx.example.com"

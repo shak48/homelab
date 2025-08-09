@@ -1,0 +1,18 @@
+# provision-vm-docker playbook
+- hosts: docker1
+  become: true
+  gather_facts: false
+
+  roles:
+    - role: provision-vm-docker
+
+
+# - name: Install RustDesk agent
+#   hosts: "{{ target_vm | default('ws-ubuntu') }}"
+#   become: true
+#   roles:
+#     - role: install-rustdesk-agent
+
+
+
+

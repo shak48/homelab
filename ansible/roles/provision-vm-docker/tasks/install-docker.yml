@@ -1,5 +1,6 @@
 #roles/tasks/create-vms/install-docker.yml
 
+
 - name: Ensure dependencies for Docker are installed
   apt:
     name:
@@ -14,16 +15,16 @@
     state: directory
     mode: '0755'
 
-- name: Download Docker GPG key
-  get_url:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    dest: /etc/apt/keyrings/docker.asc
-    mode: '0644'
+- name: Download Docker GPG key via curl
+  shell: curl -fsSLo /etc/apt/keyrings/docker.asc https://download.docker.com/linux/ubuntu/gpg
+  args:
+    creates: /etc/apt/keyrings/docker.asc
 
-- name: Set correct permissions for Docker GPG key
+- name: Set permissions for Docker GPG key
   file:
     path: /etc/apt/keyrings/docker.asc
     mode: '0644'
+
 
 - name: Add Docker apt repository
   shell: |
@@ -46,3 +47,18 @@
       - docker-buildx-plugin
       - docker-compose-plugin
     state: present
+
+
+- name: Enable and start Docker service
+  become: true
+  service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Add ansible-user to docker group
+  become: true
+  user:
+    name: remote_user
+    groups: docker
+    append: true

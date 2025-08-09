@@ -1,0 +1,7 @@
+# ansible/roles/common-tasks/tasks/main.yml
+
+- name: Change hostname
+  hostname:
+    name: "{{ hostvars[target_vm].hostname }}"
+    use: hostname
+  when: target_vm is defined

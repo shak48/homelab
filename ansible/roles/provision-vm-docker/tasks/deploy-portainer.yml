@@ -1,0 +1,18 @@
+- name: Ensure Portainer data volume exists
+  community.docker.docker_volume:
+    name: portainer_data
+    state: present
+
+- name: Deploy Portainer CE container
+  community.docker.docker_container:
+    name: portainer
+    image: portainer/portainer-ce:lts
+    restart_policy: always
+    published_ports:
+      - "8000:8000"
+      - "9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    detach: true
+    state: started

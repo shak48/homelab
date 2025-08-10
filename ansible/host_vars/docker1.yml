@@ -1,6 +1,8 @@
 # ansible/host_vars/docker1.yml
 vm_id: 122
 vm_name: docker-host1
-vm_cores: 2
-vm_memory: 4048
-vm_disk_size: 32G
+vm_cores: 4
+vm_memory: 4096
+vm_disk_size: 128G
+
+docker_project_dir:  /opt/docker

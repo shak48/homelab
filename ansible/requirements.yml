@@ -1,0 +1,7 @@
+collections:
+  - name: community.docker
+    version: ">=3.4.0"
+collections:
+  - name: community.docker
+    version: "==3.7.0"
+#ansible-galaxy collection install -r requirements.yml

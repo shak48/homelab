@@ -4,4 +4,4 @@
   become: true
 
   roles:
-    - create-vms
+    - provision-vm

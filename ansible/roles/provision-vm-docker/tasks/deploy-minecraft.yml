@@ -1,3 +1,34 @@
-- name: Deploy Minecraft server
-  shell: docker run -d -p 25565:25565 --name mc -v mc-data:/data -e EULA=TRUE itzg/minecraft-server
+#https://docker-minecraft-server.readthedocs.io/en/latest/#using-docker-compose
+
+- name: Ensure project and data directories exist
   become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  loop:
+    - "{{ minecraft_project_dir }}"
+    - "{{ minecraft_data_dir }}"
+
+
+- name: Render docker-compose.yml
+  become: true
+  template:
+    src: minecraft-docker-compose.yml.j2
+    dest: "{{ minecraft_project_dir }}/docker-compose.yml"
+    mode: "0644"
+
+- name: Validate compose file (nice error if bad YAML)
+  become: true
+  command: bash -lc "docker compose -f {{ minecraft_project_dir }}/docker-compose.yml config -q"
+
+
+
+- name: Bring up containers
+  become: true
+  community.docker.docker_compose_v2:
+    project_src: "{{ minecraft_project_dir }}"
+    state: present
+  

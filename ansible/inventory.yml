@@ -21,12 +21,15 @@ all:
     cloud1:
       ansible_host: 192.168.0.124
       hostname: cloud1
-    pbe1:
+    pve2:
       ansible_host: 192.168.0.222
-      hostname: pbe1
-    pbe-test1:
+      hostname: pve2
+    opnsense:
       ansible_host: 192.168.0.223
-      hostname: pbe-test1
+      hostname: opnsense-homelab
+    pve-test1:
+      ansible_host: 192.168.0.224
+      hostname: pve-test1
 
   children:
     bootstrap_servers:

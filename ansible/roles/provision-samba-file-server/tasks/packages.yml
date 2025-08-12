@@ -1,0 +1,24 @@
+- name: Ensure mount point exists
+  ansible.builtin.file:
+    path: "{{ samba_mount_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Add virtiofs mount to fstab (idempotent)
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    regexp: '^{{ samba_mount_src }}\s+{{ samba_mount_path }}\s+{{ samba_mount_fstype }}'
+    line: '{{ samba_mount_src }} {{ samba_mount_path }} {{ samba_mount_fstype }} {{ samba_mount_opts }} 0 0'
+    state: present
+    insertafter: EOF
+    create: yes
+
+- name: Mount share
+  ansible.builtin.mount:
+    path: "{{ samba_mount_path }}"
+    src: "{{ samba_mount_src }}"
+    fstype: "{{ samba_mount_fstype }}"
+    opts: "{{ samba_mount_opts }}"
+    state: mounted

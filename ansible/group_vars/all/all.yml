@@ -9,7 +9,7 @@ template_default_user : "{{ vault_default_user }}"
 template_default_password : "{{ vault_root_password }}"
 
 #VM configuration
-vm_gateway: 192.168.0.1
+vm_gateway: 192.168.10.1
 vm_dns: 1.1.1.1
 
 # Bootstrap user configuration

@@ -3,4 +3,4 @@
   hosts: samba1
   become: yes
   roles:
-    - create-samba-file-server
+    - provision-samba-file-server

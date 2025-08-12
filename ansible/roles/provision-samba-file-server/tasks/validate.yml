@@ -1,0 +1,9 @@
+- name: Check Samba config syntax
+  ansible.builtin.command: testparm -s
+  register: testparm_out
+  changed_when: false
+  failed_when: testparm_out.rc != 0
+
+- name: Debug success
+  ansible.builtin.debug:
+    msg: "Samba configuration validated successfully."

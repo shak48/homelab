@@ -1,7 +1,7 @@
 all:
   hosts:
     pve:
-      ansible_host: 192.168.0.111
+      ansible_host: 192.168.10.111
       hostname: pve
     pve-test1:
       ansible_host: 192.168.0.112
@@ -10,7 +10,7 @@ all:
       ansible_host: 192.168.0.115
       hostname: ws-ubuntu
     samba1:
-      ansible_host: 192.168.0.120
+      ansible_host: 192.168.10.120
       hostname: samba1
     cups1:
       ansible_host: 192.168.0.121

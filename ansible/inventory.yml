@@ -1,61 +1,65 @@
+# Router1:          192.168.0.1
+# LAN1 OPNsense:    192.168.10.1
+# WAN1 OPNsense:    192.168.0.223 
 all:
   hosts:
     pve:
       ansible_host: 192.168.10.111
       hostname: pve
-    pve-test1:
-      ansible_host: 192.168.0.112
-      hostname: pve-test1
+    # pve-test1:
+    #   ansible_host: 192.168.0.112
+    #   hostname: pve-test1
     ws-ubuntu:  # This is the workstation VM
-      ansible_host: 192.168.0.115
+      ansible_host: 192.168.10.115
       hostname: ws-ubuntu
     samba1:
       ansible_host: 192.168.10.120
       hostname: samba1
     cups1:
-      ansible_host: 192.168.0.121
+      ansible_host: 192.168.10.121
       hostname: cups1
     docker1:
-      ansible_host: 192.168.0.122
+      ansible_host: 192.168.10.122
       hostname: docker1
-    cloud1:
-      ansible_host: 192.168.0.124
-      hostname: cloud1
+    cups1:
+      ansible_host: 192.168.10.123
+      hostname: cups1
+    nextcloud1:
+      ansible_host: 192.168.10.124
+      hostname: nextcloud1
     pve2:
-      ansible_host: 192.168.0.222
+      ansible_host: 192.168.10.110
       hostname: pve2
-    opnsense:
-      ansible_host: 192.168.0.223
-      hostname: opnsense-homelab
-    pve-test1:
-      ansible_host: 192.168.0.224
-      hostname: pve-test1
+    # opnsense:
+    #   ansible_host: 192.168.10.1
+    #   hostname: opnsense-homelab
+    # pve-test1:
+    #   ansible_host: 192.168.10.224
+    #   hostname: pve-test1
 
   children:
-    bootstrap_servers:
-      hosts:
-        bootstrap1:
     pve_servers:
       hosts:
         pve:
-        pve-test1:
+        #pve-test1:
+        pve2:
     workstation_servers:
       hosts:
         ws-ubuntu:
     pbe_servers:
       hosts:
-        pbe1:
-        pbe-test1:
+        #pbe1:
+        #pbe-test1:
     file_servers:
       hosts:
         samba1:
-        cloud1:
+        nextcloud1:
     print_servers:
       hosts:
         cups1:
     scan_servers:
       hosts:
-        cups1:
+        sane1:
     # guest_vms:
     #   hosts:
     #     docker1:

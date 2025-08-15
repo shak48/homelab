@@ -59,3 +59,40 @@ ansible -i inventory/hosts.ini samba-server -m debug -a "var=samba_guest_user"
 #Copyfiles:
 
 sudo rsync -ah --info=progress2 --stats /src/ /dst/
+
+
+
+# Fix mounts
+
+Fix Mounts – USB Drives & Samba Shares
+Quick reference for mounting external drives read/write on Linux/Proxmox and copying into Samba shares with correct permissions.
+
+1️⃣ Identify the Device
+
+lsblk -f
+sde1  ntfs  SanDisk-4T  ...
+
+Replace /dev/sdX1 with your actual device name.
+
+2️⃣ Unmount if Mounted Read-Only
+umount /mount/point
+
+mount | grep /mount/point
+If you see ro or type ntfs (without ntfs-3g) → read-only.
+
+3️⃣ Mount External Drives Read/Write
+
+apt update && apt install -y ntfs-3g
+
+mount -t ntfs-3g -o rw,uid=0,gid=0,umask=022,big_writes,windows_names /dev/sdX1 /mount/point
+apt update && apt install -y exfatprogs
+mount -t exfat -o rw,uid=0,gid=0,umask=022 /dev/sdX1 /mount/point
+
+fsck -f -y /dev/sdX1
+mount /dev/sdX1 /mount/point
+4️⃣ Permanent Mount (Optional)
+
+blkid /dev/sdX1
+UUID=<uuid>  /media/sandisk-4T  ntfs-3g  rw,uid=0,gid=0,umask=022,big_writes,windows_names  0  0
+
+mount -a

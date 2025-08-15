@@ -1,0 +1,22 @@
+
+#
+- name: Set facts
+  include_tasks: set-facts.yml 
+  
+- name: Check parent dataset and create if missing
+  include_tasks: parent-dataset.yml 
+
+- name: Set mountpoint and set qiota
+  include_tasks: set-mountpoint.yml  
+
+- name: Set optional subdata set for nextcloud
+  include_tasks: sub-dataset.yml  
+
+
+
+
+
+
+
+
+

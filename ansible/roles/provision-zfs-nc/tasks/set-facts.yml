@@ -1,0 +1,21 @@
+
+- assert:
+    that: hostvars[target_vm] is defined
+    fail_msg: "target_vm='{{ target_vm }}' not found in inventory."
+
+- name: Resolve ZFS facts from hostvars with safe defaults
+  set_fact:
+    zfs_pool:     "{{ hostvars[target_vm].zfs_pool     | default(default_zfs_pool) }}"
+    zfs_ns:       "{{ hostvars[target_vm].zfs_ns       | default(default_zfs_ns) }}"
+    nc_instance:  "{{ hostvars[target_vm].nc_instance  | default(hostvars[target_vm].inventory_hostname | default(default_nc_instance)) }}"
+    zfs_quota:    "{{ hostvars[target_vm].zfs_quota    | default(default_zfs_quota) }}"
+
+- set_fact:
+    zfs_parent_ds:    "{{ zfs_pool }}/{{ zfs_ns }}/{{ nc_instance }}"
+    zfs_parent_mount: "/{{ zfs_pool }}/{{ zfs_ns }}/{{ nc_instance }}"
+
+    zfs_subs:
+      - { name: "data", props: "-o recordsize=128K" }
+      - { name: "db",   props: "-o recordsize=16K"  }
+      - { name: "html", props: ""                  }
+

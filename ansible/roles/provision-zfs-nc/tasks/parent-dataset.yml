@@ -1,0 +1,18 @@
+# Parent dataset
+- name: Check parent dataset
+  command: zfs list -H -o name {{ zfs_parent_ds }}
+  register: parent
+  changed_when: false
+  failed_when: parent.rc not in [0,1]
+
+
+- name: Create parent dataset if missing (mountpoint + props)
+  command: >
+    zfs create -p
+    -o mountpoint={{ zfs_parent_mount }}
+    -o compression=zstd
+    -o atime=off
+    -o xattr=sa
+    -o acltype=posixacl
+    {{ zfs_parent_ds }}
+  when: parent.rc == 1  

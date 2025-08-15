@@ -8,4 +8,6 @@ bootstrap_packages:
   - python3-pip
   - rsync
   - gnupg
+  - nyfs-3g
+  - exfatprogs
 bootstrap_timezone: America/New_York

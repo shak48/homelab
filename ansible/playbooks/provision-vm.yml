@@ -9,17 +9,21 @@
   hosts: "{{ target_hosts | default('pve') }}"
   become: true
   gather_facts: false
-
+  
+  vars:
+    target_vm: "{{ target_vm | mandatory }}"
+  
   roles:
-    - create-vm
+    - provision-vm
+
 
 - name: Bootstrap and Harden VM
-  hosts: "{{ target_vm | default('docker1') }}"
+  hosts: target_vm
   become: true
   gather_facts: true
 
   vars:
-    ansible_user: "{{vault_default_user}}"
+    ansible_user:                 "{{vault_default_user}}"
     ansible_ssh_private_key_file: "{{vault_ssh_private_key_file}}"
   roles:
     - bootstrap

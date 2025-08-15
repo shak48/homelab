@@ -9,11 +9,10 @@
     --ipconfig0 ip={{ vm_ip }}/24,gw={{ vm_gateway }}
     --nameserver {{ vm_dns }}
 
+# - name: Set hostname from inventory
+#   command: qm set {{ vm_id }} --name "{{ vm_hostname }}"
+#   debugger: on_failed
 
 - name: Regenerate cloud-init image
   command: qm cloudinit update {{ vm_id }}
 
-
-# - name: Set hostname from inventory
-#   command: qm set {{ vm_id }} --name "{{ vm_hostname }}"
-#   debugger: on_failed

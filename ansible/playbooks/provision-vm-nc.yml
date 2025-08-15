@@ -1,0 +1,20 @@
+# playbooks/provision-vm-nc.yml
+
+
+
+- name: PVE ZFS for Nextcloud
+  hosts: pve
+  become: true
+  gather_facts: false
+
+  vars:
+    target_vm: "{{target_vm | mandatory}}"
+
+  roles:
+    - role: provision-zfs-nc
+    # - role:    
+
+
+# ansible-playbook playbooks/provision-vm-nc.yml -e target_vm=nextcloud1 
+
+# Diag command for pve:  zfs list  -r tankmirror  |  zfs destroy  -r tankmirror/<dataset-to-destroy>

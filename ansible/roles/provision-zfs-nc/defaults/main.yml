@@ -1,0 +1,5 @@
+
+default_zfs_pool: "tankmirror"
+default_zfs_ns: "nc"
+default_nc_instance: "nc1"
+default_zfs_quota: "32G"

@@ -1,0 +1,4 @@
+# ansible/roles/create-vms/tasks/start-vm.yml
+
+- name: Start workstation VM
+  command: qm start {{ vm_id }}

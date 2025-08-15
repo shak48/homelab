@@ -1,0 +1,6 @@
+#host_vars/nextcloud.yml
+vm_id: 124
+vm_name: nextcloud1
+vm_cores: 2
+vm_memory: 1024
+vm_disk_size: 64G

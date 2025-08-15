@@ -1,7 +1,8 @@
 ---
 - name: Test Connectivity to PVE Main Nodes
   hosts: all
-  gather_facts: true
+  gather_facts: false
+  #ignore_unreachable: true
   become: false   
 
   tasks:

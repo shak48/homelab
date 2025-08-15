@@ -1,0 +1,19 @@
+# 1) check all sub-datasets
+- name: Check sub-datasets
+  vars:
+    sub_ds: "{{ zfs_parent_ds }}/{{ item.name }}"
+  command: zfs list -H -o name {{ sub_ds }}
+  register: sub_checks
+  changed_when: false
+  failed_when: sub_checks.rc not in [0,1]
+  loop: "{{ zfs_subs }}"
+  loop_control:
+    label: "{{ sub_ds }}"
+
+# 2) create only the missing ones
+- name: Create missing sub-datasets
+  command: zfs create {{ item.item.props }} {{ zfs_parent_ds }}/{{ item.item.name }}
+  when: item.rc == 1
+  loop: "{{ sub_checks.results }}"
+  loop_control:
+    label: "{{ zfs_parent_ds }}/{{ item.item.name }}"

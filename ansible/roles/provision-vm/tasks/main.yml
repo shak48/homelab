@@ -4,7 +4,6 @@
 - name: Set facts
   include_tasks: set-facts.yml 
 
-
 - name: Clone VM from template
   include_tasks: clone-vm.yml
 
@@ -12,9 +11,11 @@
 - name: Provision VM
   include_tasks: provision-vm.yml
 
+- name: Remove old SSH key
+  include_tasks: remove-old-key.yml
+
+
 - name: Start VM if not running
   include_tasks: check-status-vm.yml
 
-- name: Remove old SSH key
-  include_tasks: remove-old-key.yml
 

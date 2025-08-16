@@ -4,32 +4,33 @@
 all:
   hosts:
     pve:
-      ansible_host: 192.168.10.111
-      hostname: pve
+      ansible_host:   192.168.10.111
+      hostname:       pve
+    pve2:
+      ansible_host:   192.168.10.110
+      hostname:       pve2
+    ws-ubuntu:  # This is the workstation VM
+      ansible_host:   192.168.10.115
+      hostname:       ws-ubuntu
+    samba1:
+      ansible_host:   192.168.10.120
+      hostname:       samba1
+    cups1:
+      ansible_host:   192.168.10.121
+      hostname:       cups1
+    docker1:
+      ansible_host:   192.168.10.122
+      hostname:       docker1
+    sane1:
+      ansible_host:   192.168.10.123
+      hostname:       sane1
+    nextcloud1:
+      ansible_host:   192.168.10.124
+      hostname:       nextcloud1
     # pve-test1:
     #   ansible_host: 192.168.0.112
     #   hostname: pve-test1
-    ws-ubuntu:  # This is the workstation VM
-      ansible_host: 192.168.10.115
-      hostname: ws-ubuntu
-    samba1:
-      ansible_host: 192.168.10.120
-      hostname: samba1
-    cups1:
-      ansible_host: 192.168.10.121
-      hostname: cups1
-    docker1:
-      ansible_host: 192.168.10.122
-      hostname: docker1
-    cups1:
-      ansible_host: 192.168.10.123
-      hostname: cups1
-    nextcloud1:
-      ansible_host: 192.168.10.124
-      hostname: nextcloud1
-    pve2:
-      ansible_host: 192.168.10.110
-      hostname: pve2
+ 
     # opnsense:
     #   ansible_host: 192.168.10.1
     #   hostname: opnsense-homelab

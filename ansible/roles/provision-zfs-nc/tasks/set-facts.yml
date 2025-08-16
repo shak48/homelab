@@ -1,7 +1,5 @@
 
-- assert:
-    that: hostvars[target_vm] is defined
-    fail_msg: "target_vm='{{ target_vm }}' not found in inventory."
+
 
 - name: Resolve ZFS facts from hostvars with safe defaults
   set_fact:

@@ -18,7 +18,7 @@
 
 
 - name: Bootstrap and Harden VM
-  hosts: target_vm
+  hosts: "{{ target_vm }}"
   become: true
   gather_facts: true
 

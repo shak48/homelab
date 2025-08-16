@@ -4,6 +4,52 @@ export EDITOR=nano
 
 Proxmox api viewer: https://pve.proxmox.com/pve-docs-8/api-viewer/index.html
 
+# It you management IP,
+    Check:  getent hosts pve
+    cp -a /etc/hosts /etc/hosts.bak.$(date +%F)
+    and then update the IP here also
+
+# Does my CPU support virtualization?
+    To check if your CPU is virtualization compatible, check for the vmx or svm tag in this command output:
+
+    egrep '(vmx|svm)' /proc/cpuinfo
+
+#  apt update
+    apt dist-upgrade
+    pveversion
+# Debian Package
+    deb http://deb.debian.org/debian bookworm main contrib non-free-firmware
+    deb http://deb.debian.org/debian bookworm-updates main contrib non-free-firmware
+    deb http://security.debian.org/debian-security bookworm-security main contrib non-free-firmware
+
+# Full update
+    apt update
+    apt full-upgrade
+# Amd micro code 
+    apt update
+    apt install amd64-microcode
+
+# PVE 8 to 9 trixie
+
+ pve8to9
+
+ pve8to9 --full
+
+# Update Debian Base Repositories to Trixie
+    Update all Debian and Proxmox VE repository entries to Trixie.
+
+    sed -i 's/bookworm/trixie/g' /etc/apt/sources.list
+    sed -i 's/bookworm/trixie/g' /etc/apt/sources.list.d/pve-enterprise.list
+# Proxmox VE 9 no-subscription repository with this command:
+
+    cat > /etc/apt/sources.list.d/proxmox.sources << EOF
+    Types: deb
+    URIs: http://download.proxmox.com/debian/pve
+    Suites: trixie
+    Components: pve-no-subscription
+    Signed-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
+    EOF    
+
 # Boot tool status
     proxmox-boot-tool status
 

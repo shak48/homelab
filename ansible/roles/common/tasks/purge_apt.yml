@@ -1,5 +1,0 @@
-- name: Autoremove and autoclean packages
-  ansible.builtin.apt:
-    autoremove: yes
-    autoclean: yes
-  when: ansible_facts is defined and ansible_os_family == 'Debian'

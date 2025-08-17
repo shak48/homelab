@@ -1,67 +1,38 @@
 # Router1:          192.168.0.1
 # LAN1 OPNsense:    192.168.10.1
-# WAN1 OPNsense:    192.168.0.223 
+# WAN1 OPNsense:    192.168.0.223
 all:
   hosts:
-    pve:
-      ansible_host:   192.168.10.111
-      hostname:       pve
-    pve2:
-      ansible_host:   192.168.10.110
-      hostname:       pve2
-    ws-ubuntu:  # This is the workstation VM
-      ansible_host:   192.168.10.115
-      hostname:       ws-ubuntu
-    samba1:
-      ansible_host:   192.168.10.120
-      hostname:       samba1
-    cups1:
-      ansible_host:   192.168.10.121
-      hostname:       cups1
-    docker1:
-      ansible_host:   192.168.10.122
-      hostname:       docker1
-    sane1:
-      ansible_host:   192.168.10.123
-      hostname:       sane1
-    nextcloud1:
-      ansible_host:   192.168.10.124
-      hostname:       nextcloud1
-    # pve-test1:
-    #   ansible_host: 192.168.0.112
-    #   hostname: pve-test1
- 
-    # opnsense:
-    #   ansible_host: 192.168.10.1
-    #   hostname: opnsense-homelab
-    # pve-test1:
-    #   ansible_host: 192.168.10.224
-    #   hostname: pve-test1
+    pve:        { ansible_host: 192.168.10.111, hostname: pve }
+    pve2:       { ansible_host: 192.168.10.110, hostname: pve2 }
+    ws-ubuntu:  { ansible_host: 192.168.10.115, hostname: ws-ubuntu }
+    samba1:     { ansible_host: 192.168.10.120, hostname: samba1 }
+    cups1:      { ansible_host: 192.168.10.121, hostname: cups1 }
+    docker1:    { ansible_host: 192.168.10.122, hostname: docker1 }
+    sane1:      { ansible_host: 192.168.10.123, hostname: sane1 }
+    nextcloud1: { ansible_host: 192.168.10.124, hostname: nextcloud1 }
 
   children:
-    pve_servers:
+    pves:
       hosts:
         pve:
-        #pve-test1:
         pve2:
-    workstation_servers:
-      hosts:
-        ws-ubuntu:
-    pbe_servers:
-      hosts:
-        #pbe1:
-        #pbe-test1:
-    file_servers:
-      hosts:
-        samba1:
-        nextcloud1:
-    print_servers:
-      hosts:
-        cups1:
-    scan_servers:
-      hosts:
-        sane1:
-    # guest_vms:
-    #   hosts:
-    #     docker1:
-    #     cloud1: # This is the cloud VM
+
+    vms:
+      children:
+        workstation_servers:
+          hosts:
+            ws-ubuntu:
+        files:
+          hosts:
+            samba1:
+            nextcloud1:
+        prints:
+          hosts:
+            cups1:
+        scans:
+          hosts:
+            sane1:
+        dockers:
+          hosts:
+            docker1:

@@ -1,6 +1,0 @@
-- name: Update apt cache and upgrade packages
-  ansible.builtin.apt:
-    update_cache: yes
-    upgrade: dist
-    cache_valid_time: 3600
-  when: ansible_facts is defined and ansible_os_family == 'Debian'

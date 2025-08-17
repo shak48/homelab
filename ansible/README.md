@@ -28,7 +28,8 @@ Proxmox api viewer: https://pve.proxmox.com/pve-docs-8/api-viewer/index.html
     apt full-upgrade
 # Amd micro code 
     apt update
-    apt install amd64-microcode
+    apt install amd64-microcode 
+    apt install intel-microcode
 
 # PVE 8 to 9 trixie
 

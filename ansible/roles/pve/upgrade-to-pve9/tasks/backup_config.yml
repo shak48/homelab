@@ -1,0 +1,7 @@
+#/roles/upgrade/tasks/backup_config.yml
+- name: Backup Current Config (safe for any version)
+  shell: |
+    mkdir -p /root/backup-pve-config
+    rsync -a /etc/apt/ /root/backup-pve-config/apt/
+    rsync -a /etc/pve/ /root/backup-pve-config/pve/
+  tags: [backup_config]

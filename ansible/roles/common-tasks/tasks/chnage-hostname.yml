@@ -1,6 +1,0 @@
-# ansible/roles/common-tasks/tasks/main.yml
-
-- name: Change hostname
-  hostname:
-    name: "{{ hostname | default(inventory_hostname) }}"
-    use: hostname

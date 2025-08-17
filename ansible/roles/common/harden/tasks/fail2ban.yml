@@ -1,0 +1,6 @@
+- name: Install fail2ban (if enabled)
+  ansible.builtin.apt:
+    name: fail2ban
+    state: present
+    update_cache: yes
+  when: fail2ban_enabled

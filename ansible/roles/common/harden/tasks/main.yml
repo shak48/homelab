@@ -1,0 +1,11 @@
+
+- include_tasks: fail2ban.yml
+- include_tasks: harden-ssh.yml
+
+- block:
+    - include_tasks:  "{{ item }}"
+      loop:
+        - install-unattended-upgrades.yml
+        - automatic-updates.yml
+        - enable-timers.yml
+      when: unattended_upgrades_enabled | bool

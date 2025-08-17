@@ -1,0 +1,12 @@
+- name: Bootstrap PVE Main hosts
+  hosts: all
+  become: true
+
+  roles:
+    - bootstrap
+    - harden
+
+
+
+#For new server's this seems to bootstrap ansible user well. No need to manual copy keys, assuming root log in is still enabled.
+#ansible-playbook playbooks/bootstrap.yml -u root -l pve2 --ask-become-pass

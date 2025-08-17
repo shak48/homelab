@@ -1,6 +1,4 @@
----
 fail2ban_enabled: true
-ssh_server_package: openssh-server
 
 harden_ssh_settings:
   - { regexp: '^PermitRootLogin', line: 'PermitRootLogin no' }

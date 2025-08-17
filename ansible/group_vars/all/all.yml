@@ -1,7 +1,9 @@
 #ansible/group_vars/all
 
 fallback_root_password: "{{ vault_root_password }}"
+
 samba_users: "{{ vault_samba_users }}"
+
 cups_admins: "{{vault_cups_admins}}"
 
 #Template default/fallback user configuration
@@ -23,8 +25,3 @@ old_key_file_path_on_localhost: /home/rumie/.ssh/known_hosts
 # default_vm_cores:       1
 # default_vm_memory:      1024
 
-# Bootstrap user configuration
-#bootstrap_user: "{{ vault_default_user }}"
-#ansible_default_user: ansible
-#bootstrap_password: "{{ vault_default_password }}" 
-#bootstrap_ssh_private_key_file: ~/.ssh/id_ed25519

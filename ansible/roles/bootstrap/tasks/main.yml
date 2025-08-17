@@ -1,52 +1,16 @@
----
 # Install essential system packages
-- name: Ensure required packages are installed
-  ansible.builtin.apt:
-    name: "{{ bootstrap_packages }}"
-    state: present
-    update_cache: yes
-
 - name: Set timezone
-  community.general.timezone:
-    name: "{{ bootstrap_timezone }}"
+  include_tasks: timezone.yml
 
+- name: Install bootstrap packages
+  include_tasks: bootstrap-packages.yml
 
-- name: Create ansible user
-  ansible.builtin.user:
-    name: "{{ bootstrap_user }}"
-    shell: /bin/bash
-    groups: sudo
-    append: yes
-    create_home: yes
-    state: present
+- name: Create authorized users
+  include_tasks: authorized-users.yml
 
-- name: Ensure .ssh directory exists
-  file:
-    path: "/home/{{ bootstrap_user }}/.ssh"
-    state: directory
-    owner: "{{ bootstrap_user }}"
-    group: "{{ bootstrap_user }}"
-    mode: '0700'
+- name: Install authorized keys
+  include_tasks: authorized-keys.yml
 
-- name: Install public SSH key for ansible user
-  copy:
-    content: "{{ bootstrap_user_key }}"
-    dest: "/home/{{ bootstrap_user }}/.ssh/authorized_keys"
-    owner: "{{ bootstrap_user }}"
-    group: "{{ bootstrap_user }}"
-    mode: '0600'
-
-
-
-- name: Allow ansible user passwordless sudo
-  ansible.builtin.copy:
-    dest: "/etc/sudoers.d/{{ bootstrap_user }}"
-    content: "{{ bootstrap_user }} ALL=(ALL) NOPASSWD:ALL"
-    owner: root
-    group: root
-    mode: '0440'
-  notify:
-    - Restart sshd
-
-
+- name: Passwordless sudo
+  include_tasks: passwordless-sudo.yml
 

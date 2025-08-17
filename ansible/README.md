@@ -5,7 +5,8 @@ export EDITOR=nano
 Proxmox api viewer: https://pve.proxmox.com/pve-docs-8/api-viewer/index.html
 
 # It you management IP,
-    Check:  getent hosts pve
+    Check:  
+    getent hosts pve
     cp -a /etc/hosts /etc/hosts.bak.$(date +%F)
     and then update the IP here also
 

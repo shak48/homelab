@@ -1,0 +1,13 @@
+- name: Install authorized_keys for automation user
+  ansible.posix.authorized_key:
+    user: "{{ ansible_user }}"
+    key: "{{ ansible_user_key }}"
+    state: present
+    manage_dir: true
+
+- name: Install authorized_keys for fallback user
+  ansible.posix.authorized_key:
+    user: "{{ pve_fallback_user }}"
+    key: "{{ fallback_user_key }}"
+    state: present
+    manage_dir: true

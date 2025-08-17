@@ -1,0 +1,21 @@
+- name: Ensure ansible user exists (no home, passwordless sudo)
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    shell: /bin/bash
+    groups: sudo
+    append: true
+    create_home: false
+    state: present
+    update_password: on_create
+
+
+- name: Ensure fallback user exists (has home, password from vault)
+  ansible.builtin.user:
+    name: "{{ pve_fallback_user }}"
+    shell: /bin/bash
+    groups: sudo
+    append: true
+    create_home: true
+    state: present
+    password: "{{ pve_fallback_password | trim }}"
+    update_password: on_create

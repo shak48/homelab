@@ -3,8 +3,8 @@
   become: true
 
   roles:
-    - bootstrap
-    - harden
+    - common/bootstrap
+    - common/harden
 
 
 

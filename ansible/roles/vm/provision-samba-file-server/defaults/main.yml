@@ -6,9 +6,7 @@ samba_min_protocol: "SMB2"
 samba_guest_user: nobody
 samba_guest_group: nogroup
 
-samba_packages:
-  - samba
-  - smbclient
+
 
 # Mount defaults (can be overridden per host/group)
 samba_mount_enabled: true

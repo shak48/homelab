@@ -15,6 +15,7 @@ mount -t cifs //samba-server/Tahia /mnt/smb-tahia -o guest,vers=3.0
 Copy files through Samba mount
 
 rsync -avh --info=progress2 /mnt/usb/ /mnt/smb-tahia/
+rsync -avh --progress /tmp/dataset-backup.tar.gz /media/usb-drive/
 Unmount when done
 
 umount /mnt/usb

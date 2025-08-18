@@ -1,8 +1,0 @@
-- name: Ensure guest share directories (nobody:nogroup, 0777)
-  ansible.builtin.file:
-    path: "{{ item.path }}"
-    state: directory
-    owner: "{{ samba_guest_user }}"
-    group: "{{ samba_guest_group }}"
-    mode: '0777'
-  loop: "{{ samba_guest_shares }}"

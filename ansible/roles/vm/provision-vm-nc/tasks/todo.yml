@@ -1,0 +1,62 @@
+TBD:
+
+---
+# Variables you can override in host_vars/group_vars
+# compose_dir: /opt/docker/nextcloud
+# compose_file: "{{ compose_dir }}/docker-compose.yml"
+# nextcloud_html_dir: /tankmirror/nc/nextcloud1/html
+# nextcloud_container_name: nextcloud-app-1   # or whatever your container is named
+# ip_with_port: "192.168.10.124:8080"
+# ip_without_port: "192.168.10.124"
+
+- name: Ensure compose dir exists
+  file:
+    path: "{{ compose_dir | default('/opt/docker/nextcloud') }}"
+    state: directory
+    mode: "0755"
+
+- name: Deploy docker-compose template (Nextcloud)
+  template:
+    src: docker-compose.nextcloud.yml.j2
+    dest: "{{ compose_file | default((compose_dir | default('/opt/docker/nextcloud')) + '/docker-compose.yml') }}"
+    mode: "0644"
+
+- name: Validate compose file (nice error if bad YAML)
+  command: >
+    docker compose -f {{ compose_file | default((compose_dir | default('/opt/docker/nextcloud')) + '/docker-compose.yml') }} config -q
+  changed_when: false
+
+- name: Pull images
+  command: >
+    docker compose -f {{ compose_file | default((compose_dir | default('/opt/docker/nextcloud')) + '/docker-compose.yml') }} pull
+  register: pull_result
+  changed_when: "'Downloaded' in pull_result.stdout or 'Pulled' in pull_result.stdout"
+
+- name: Start/Update stack
+  command: >
+    docker compose -f {{ compose_file | default((compose_dir | default('/opt/docker/nextcloud')) + '/docker-compose.yml') }} up -d
+  register: up_result
+  changed_when: "'Creating' in up_result.stdout or 'Recreating' in up_result.stdout or 'Starting' in up_result.stdout or 'Restarting' in up_result.stdout"
+
+# ---------- Fix trusted_domains the clean way (on the host-mounted file) ----------
+- name: Ensure Nextcloud trusted_domains has IP without port (host edit)
+  replace:
+    path: "{{ nextcloud_html_dir | default('/tankmirror/nc/nextcloud1/html') }}/config/config.php"
+    regexp: "'{{ ip_with_port | default('192.168.10.124:8080') }}'"
+    replace: "'{{ ip_without_port | default('192.168.10.124') }}'"
+    backup: yes
+  notify: Restart Nextcloud app
+  when: ip_with_port is defined and ip_without_port is defined
+
+# ---------- Optional fallback using docker exec (if you insist on sed inside container) ----------
+- name: Fix trusted_domains via docker exec sed (fallback)
+  shell: |
+    docker exec {{ nextcloud_container_name | default('nextcloud-app-1') }} \
+      sed -i "s/'{{ ip_with_port | default('192.168.10.124:8080') }}'/'{{ ip_without_port | default('192.168.10.124') }}'/" /var/www/html/config/config.php
+  args:
+    warn: false
+  changed_when: true
+  when:
+    - ip_with_port is defined and ip_without_port is defined
+    - false  # set to true only if you want the fallback instead of host edit
+

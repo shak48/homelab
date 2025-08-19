@@ -1,23 +1,20 @@
-# playbooks/provision-vm-nc.yml
-
-
-
-- name: PVE ZFS for Nextcloud
+# play 1: runs ON PVE (host = pve)
+- name: Prepare ZFS dataset and attach to VM
   hosts: pve
   become: true
   gather_facts: false
 
   vars:
-    target_vm: "{{target_vm | mandatory}}"
+    target_vm: nextcloud1
 
   roles:
     - role: provision-zfs-nc
-    # - role:    
 
+# play 2: runs ON THE VM (host = target_vm)
+- name: Configure Nextcloud inside the VM
+  hosts: nextcloud1
+  become: true
+  gather_facts: true
 
-# ansible-playbook playbooks/provision-vm-nc.yml -e target_vm=nextcloud1 
-
-# Diag command for pve:  zfs list  -r tankmirror  |  zfs destroy  -r tankmirror/<dataset-to-destroy>
-
-
-
+  roles:
+    - role: provision-vm-nc

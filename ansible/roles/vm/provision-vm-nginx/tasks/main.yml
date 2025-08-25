@@ -1,0 +1,11 @@
+- name: (untested, may fail!!!) Create Self Cert on the Docker host 
+  include_tasks: generate-self-cert.yml
+
+- name: (untested, may fail!!!) Deploy Nginx RPM
+  include_tasks: deploy-nginx.yml
+
+- name: (Will fail !! Configure vars)
+  include_tasks: deploy-cert.yml  
+
+
+

@@ -1,0 +1,17 @@
+# site.yml (part 1)
+- name: Generate self-signed cert for NPM
+  hosts: docker1
+  become: true
+  roles:
+    - role: npm_selfcert
+      vars:
+        npm_cert_cn: "dummy.local"
+
+
+# site.yml (part 2)
+- name: Deploy Nginx Proxy Manager with Docker Compose
+  hosts: docker1
+  become: true
+  roles:
+    - role: npm_compose
+

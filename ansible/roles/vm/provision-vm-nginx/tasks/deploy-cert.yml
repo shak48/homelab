@@ -1,0 +1,42 @@
+# Wait for the API to be up (port 81 is the admin UI/API)
+- name: Wait for NPM API to respond
+  uri:
+    url: "http://127.0.0.1:81/api"
+    method: GET
+    status_code: 200
+  register: npm_ping
+  retries: 10
+  delay: 6
+  until: npm_ping.status == 200
+
+- name: Authenticate to NPM API
+  uri:
+    url: "http://127.0.0.1:81/api/tokens"
+    method: POST
+    body_format: json
+    body:
+      identity: "{{ npm_admin_email }}"
+      secret: "{{ npm_admin_password }}"
+    return_content: true
+  register: npm_auth
+
+- name: Set API token fact
+  set_fact:
+    npm_token: "{{ npm_auth.json.token }}"
+
+- name: Register self-signed cert with NPM API
+  uri:
+    url: "http://127.0.0.1:81/api/nginx/certificates"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ npm_token }}"
+    body_format: json
+    body:
+      provider: "custom"
+      nice_name: "{{ npm_cert_cn }}"
+      domain_names: ["{{ npm_cert_cn }}"]
+      certificate: "{{ lookup('file', '/opt/npm-certs/selfsigned.crt') }}"
+      certificate_key: "{{ lookup('file', '/opt/npm-certs/selfsigned.key') }}"
+    status_code: 201
+  register: npm_cert
+  failed_when: npm_cert.status not in [200,201]

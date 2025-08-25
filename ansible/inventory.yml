@@ -1,6 +1,13 @@
 # Router1:          192.168.0.1
+# Bridge AP:        192.168.10.3
+# WAN1 OPNsense:    192.168.0.10
 # LAN1 OPNsense:    192.168.10.1
-# WAN1 OPNsense:    192.168.0.223
+# FQDNs
+  # https://www.duckdns.org/domains      => shak48.duckdns.org
+  # https://freedns.afraid.org/domain/   => shak48.mooo.com
+  # https://my.noip.com/                 => *shak48.ddns.net
+# Windows Host File   =>  C:\Windows\System32\drivers\etc\host
+
 all:
   hosts:
     pve:        { ansible_host: 192.168.10.111, hostname: pve }

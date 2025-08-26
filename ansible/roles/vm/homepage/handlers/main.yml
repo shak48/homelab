@@ -1,0 +1,5 @@
+- name: Restart homepage
+  ansible.builtin.command:
+    cmd: docker compose -f "{{ homepage_compose_path }}" up -d
+  args:
+    chdir: "{{ homepage_root_dir }}"

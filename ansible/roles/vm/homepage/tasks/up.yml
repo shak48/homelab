@@ -1,0 +1,19 @@
+- name: Pull images
+  ansible.builtin.command:
+    cmd: docker compose -f "{{ homepage_compose_path }}" pull
+  args:
+    chdir: "{{ homepage_root_dir }}"
+  register: _pull
+  changed_when: "'Downloaded' in _pull.stdout or 'Status: Downloaded' in _pull.stdout"
+
+- name: Up (detached)
+  ansible.builtin.command:
+    cmd: docker compose -f "{{ homepage_compose_path }}" up -d
+  args:
+    chdir: "{{ homepage_root_dir }}"
+  register: _up
+  changed_when: "'Creating' in _up.stdout or 'Recreating' in _up.stdout or 'Starting' in _up.stdout"
+
+- name: Debug — Up complete
+  ansible.builtin.debug:
+    msg: "PASS: Homepage running on port {{ homepage_port }}"

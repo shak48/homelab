@@ -1,0 +1,6 @@
+title: "Home Lab"
+theme: dark      # or: dark, horizon, etc.
+
+layout:
+   - [ "Search", "Weather" ]
+   - [ "Bookmarks", "Services" ]

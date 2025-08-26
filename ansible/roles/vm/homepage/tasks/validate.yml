@@ -1,0 +1,20 @@
+- name: Fail if docker is missing
+  ansible.builtin.command: docker --version
+  register: _docker_ver
+  changed_when: false
+  failed_when: _docker_ver.rc != 0
+  ignore_errors: false
+
+- name: Check docker compose plugin
+  ansible.builtin.command: docker compose version
+  register: _compose_ver
+  changed_when: false
+  failed_when: _compose_ver.rc != 0
+
+- name: Debug — Docker OK
+  ansible.builtin.debug:
+    msg: "PASS: Docker is installed — {{ _docker_ver.stdout }}"
+
+- name: Debug — Docker Compose plugin OK
+  ansible.builtin.debug:
+    msg: "PASS: Docker Compose plugin is installed — {{ _compose_ver.stdout }}"

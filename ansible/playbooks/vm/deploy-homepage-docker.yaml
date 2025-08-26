@@ -1,0 +1,7 @@
+- name: Deploy Homepage
+  hosts: docker1
+  become: true
+  gather_facts: false
+
+  roles:
+    - role: roles/vm/homepage

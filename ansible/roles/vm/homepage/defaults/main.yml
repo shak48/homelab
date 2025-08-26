@@ -1,0 +1,38 @@
+homepage_image: "ghcr.io/gethomepage/homepage:latest"
+
+docker_project_dir:  /opt/docker
+
+# Where to store config and compose on the host
+homepage_root_dir: "{{docker_project_dir}}/homepage"
+homepage_config_dir: "{{ homepage_root_dir }}/config"
+
+# Network / ports
+homepage_port: 3000
+homepage_bind_addr: "0.0.0.0"
+
+# If you’re putting Homepage behind a reverse proxy or accessing via IP:PORT,
+# the Host header must be allowed here (comma-separated). Include :port if applicable.
+# Examples:
+# - "home.local" (if reverse proxy sets Host correctly)
+# - "home.local,home.local:3000,192.168.10.50:3000"
+homepage_allowed_hosts: "192.168.10.122,192.168.10.122:3000,home.local,home.local:3000"
+
+# Mount docker.sock to show containers on the dashboard
+homepage_docker_integration: true
+homepage_docker_sock: "/var/run/docker.sock"
+
+# Compose file path
+homepage_compose_path: "{{ homepage_root_dir }}/docker-compose.yml"
+
+# Container name (matches your example)
+homepage_container_name: "homepage"
+
+# Restart policy
+homepage_restart: "unless-stopped"
+
+# UID/GID to own config on host (adjust for your system)
+homepage_uid: 8888
+homepage_gid: 8888
+
+
+homepage_icon_dir: "../png"

@@ -1,0 +1,38 @@
+- name: Create root dir
+  ansible.builtin.file:
+    path: "{{ homepage_root_dir }}"
+    state: directory
+    owner: "{{ homepage_uid }}"
+    group: "{{ homepage_gid }}"
+    mode: "0755"
+
+- name: Create config dir
+  ansible.builtin.file:
+    path: "{{ homepage_config_dir }}"
+    state: directory
+    owner: "{{ homepage_uid }}"
+    group: "{{ homepage_gid }}"
+    mode: "0755"
+
+- name: Seed config files (only if missing)
+  ansible.builtin.copy:
+    src: "config/"
+    dest: "{{ homepage_config_dir }}/"
+    owner: "{{ homepage_uid }}"
+    group: "{{ homepage_gid }}"
+    mode: "0644"
+  register: _seeded
+  # copy will not overwrite if files already exist with same content; that’s fine for first-run
+
+- name: Template docker-compose.yml
+  ansible.builtin.template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ homepage_compose_path }}"
+    owner: "{{ homepage_uid }}"
+    group: "{{ homepage_gid }}"
+    mode: "0644"
+  notify: Restart homepage
+
+- name: Debug — Config present
+  ansible.builtin.debug:
+    msg: "PASS: Homepage config and compose are in place at {{ homepage_root_dir }}"

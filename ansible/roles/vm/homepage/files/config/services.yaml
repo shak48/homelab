@@ -1,8 +1,11 @@
 # Icons   https://dashboardicons.com/
 - Infra:
-  - Proxmox:
+  - Proxmox1:
       icon: proxmox
       href: http://192.168.10.111:8006
+  - Proxmox2:
+      icon: proxmox
+      href: http://192.168.10.110:8006
   - Portainer:
       icon: " {{homepage_icon_dir }}/portainer-alt.png"
       href: https://192.168.10.122:9443

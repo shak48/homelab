@@ -18,6 +18,7 @@ all:
     docker1:    { ansible_host: 192.168.10.122, hostname: docker1 }
     sane1:      { ansible_host: 192.168.10.123, hostname: sane1 }
     nextcloud1: { ansible_host: 192.168.10.124, hostname: nextcloud1 }
+    immich1:    { ansible_host: 192.168.10.125, hostname: immich1 }
 
   children:
     pves:
@@ -43,3 +44,5 @@ all:
         dockers:
           hosts:
             docker1:
+            nextcloud1:
+            immich1:

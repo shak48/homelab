@@ -16,4 +16,4 @@
 
 - name: Debug — Up complete
   ansible.builtin.debug:
-    msg: "PASS: Homepage running on port {{ homepage_port }}"
+    msg: "PASS: Homepage running on port {{ homepage_docker_port }}"

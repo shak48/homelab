@@ -6,7 +6,7 @@ services:
     container_name: {{ homepage_container_name }}
     restart: {{ homepage_restart }}
     ports:
-      - "{{ homepage_bind_addr }}:{{ homepage_port }}:3000"
+      - "{{ homepage_bind_addr }}:{{ homepage_docker_port | default(3000) }}:3000"  
     environment:
       HOMEPAGE_ALLOWED_HOSTS: "{{ homepage_allowed_hosts }}"
     volumes:

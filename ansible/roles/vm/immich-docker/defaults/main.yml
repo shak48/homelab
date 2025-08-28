@@ -1,0 +1,26 @@
+immich_project_dir: /opt/immich
+
+# SMB/NAS share with your photos
+smb_share: //192.168.10.5/photos
+smb_user: immich
+smb_pass: "CHANGE_ME"             # use Ansible Vault in prod
+smb_domain: ""                    # optional (e.g., WORKGROUP or AD domain)
+smb_uid: 1000                     # set to the host user that should own files
+smb_gid: 1000
+
+# Where the SMB share will be mounted on the host
+upload_location: /mnt/photos
+
+# Database data location on the host (SSD recommended; change path if needed)
+db_data_location: /opt/immich/db
+
+# Immich app port on host (must match compose’s 2283 mapping)
+immich_port: "2283"
+
+# Immich version tag (official compose uses ${IMMICH_VERSION:-release})
+immich_version: "release"
+
+# DB creds (store with Vault for real use)
+db_user: immich
+db_pass: "CHANGE_ME_DB"
+db_name: immich

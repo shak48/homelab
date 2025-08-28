@@ -19,7 +19,7 @@ services:
     image: nextcloud
     restart: always
     ports:
-      - 8080:80
+      - "{{ nextcloud_docker_port | default(8080) }}:80"
     links:
       - db
     volumes:

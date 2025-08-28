@@ -1,0 +1,8 @@
+#assigned ports
+homepage_docker_port:   3000
+minecraft_docker_port:  25565
+nextcloud_docker_port:  8080
+nginx_docker_port:      81
+portainer_docker_port:  9443
+
+docker_project_dir:  /opt/docker

@@ -28,3 +28,6 @@
   - Homepage:
       icon: homepage
       href: http://192.168.10.122:3000
+  - immich:
+      icon: immich
+      href: http://192.168.10.125:2283

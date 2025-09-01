@@ -1,2 +1,4 @@
 
 bootstrap_install_extras: false
+
+fallback_ansible_user: "{{ vault_default_user }}"

@@ -19,7 +19,7 @@ vm_gateway: "{{ vm_ip_prefix }}1"
 # vm_gateway: "{{ vm_ip_prefix ~ '1' }}"
 vm_dns: 9.9.9.9
 
-old_key_file_path_on_localhost: /home/rumie/.ssh/known_hosts
+old_key_file_path_on_localhost: ~/.ssh/known_hosts
 
 # default_vm_id:          999
 # default_vm_ip:          "{{ vm_ip_prefix }}100"

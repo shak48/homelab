@@ -1,12 +1,4 @@
-ansible_user:      "{{ vault_ansible_user }}"
-pve_fallback_user: "{{ vault_default_user }}"
-
-ssh_pubkey_path:            "{{ lookup('env','HOME') }}/.ssh"
-ansible_user_pubkey_file:   "{{vault_ansible_user_pubkey_file}}"
-fallback_user_pubkey_file:  "{{vault_default_user_pubkey_file}}"
-
-ansible_user_key:   "{{ lookup('file', ssh_pubkey_path + '/' + ansible_user_pubkey_file) }}"
-fallback_user_key:  "{{ lookup('file', ssh_pubkey_path + '/' + fallback_user_pubkey_file) }}"
-
-pve_fallback_password:  "{{ vault_default_password | password_hash('sha512')}}"
-
+bootstrap_user:                 "{{ vault_ansible_user }}"
+bootstrap_user_pubkey_filename: "{{ vault_ansible_user_pubkey_filename }}"
+ssh_pubkey_path:                "{{ lookup('env','HOME') }}/.ssh"
+bootstrap_user_pubkey_file:     "{{ lookup('file', ssh_pubkey_path + '/' + bootstrap_user_pubkey_filename) }}"

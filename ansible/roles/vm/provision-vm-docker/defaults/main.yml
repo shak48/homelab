@@ -46,8 +46,4 @@ adguard_bridge_ports:
 timezone: "America/New_York"
 
 
-#Homepage
 
-homepage_project_dir: "{{docker_project_dir}}/homepage"
-homepage_config_dir: "{{ homepage_project_dir }}/config"
-homepage_sock_dir: "{{ homepage_project_dir }}/var/run.docker.sock"

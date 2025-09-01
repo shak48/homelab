@@ -8,7 +8,6 @@
 # The compose file on main may not be compatible with the latest release.
 
 name: immich
-
 services:
   immich-server:
     container_name: immich_server
@@ -23,7 +22,7 @@ services:
     env_file:
       - .env
     ports:
-      - '2283:2283'
+      - "{{ immich_docker_port | default(2283) }}:2283"  
     depends_on:
       - redis
       - database

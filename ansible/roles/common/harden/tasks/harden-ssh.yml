@@ -7,4 +7,4 @@
     create: true
     backrefs: true
   loop: "{{ harden_ssh_settings }}"
-  notify: Restart SSH service
+  notify: Restart sshd

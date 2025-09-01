@@ -5,6 +5,8 @@
 ### -e "target_hosts=pve2" \
 ### -e "target_vm=devvm1"
 
+## Comment out vars prompt if neeeded
+
 - name: Create VM(s) on Proxmox
   hosts: "{{ target_hosts | default('pve') }}"
   become: true
@@ -19,14 +21,23 @@
 
 - name: Bootstrap and Harden VM
   hosts: "{{ target_vm }}"
-  become: true
   gather_facts: true
+  become: true
 
+  # vars_prompt:
+  #   - name: ssh_pass
+  #     prompt: "SSH password for {{ ansible_user }}"
+  #     private: yes
+  #   - name: sudo_pass
+  #     prompt: "Become password for {{ ansible_user }}"
+  #     private: yes
+  
   vars:
-    ansible_user:                 "{{vault_default_user}}"
-    ansible_ssh_private_key_file: "{{vault_ssh_private_key_file}}"
+    ansible_user: "{{ fallback_ansible_user }}"
+    ansible_ssh_private_key_file: ~/.ssh/id_ed25519   # Adjust if needed or try password auth
   roles:
+    - common-role
     - bootstrap
-    - common
     - harden
 
+# ansible-playbook playbooks/vm/provision-vm.yml -e target_vm=target-vm --check --diff 

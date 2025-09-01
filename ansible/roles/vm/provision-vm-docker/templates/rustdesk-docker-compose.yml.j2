@@ -5,7 +5,7 @@ services:
     command: hbbr
     volumes:
       - ./data:/root
-    network_mode: host
+    network_mode: "host"
     restart: unless-stopped
 
   hbbs:
@@ -15,7 +15,7 @@ services:
     command: hbbs
     volumes:
       - ./data:/root
-    network_mode: host
+    network_mode: "host"
     depends_on:
       - hbbr
     restart: unless-stopped

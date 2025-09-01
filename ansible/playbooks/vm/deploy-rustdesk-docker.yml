@@ -1,0 +1,7 @@
+- name: Install RustDesk agent
+  hosts: "{{ target_host | default('ws-ubuntu') }}"
+  become: true
+  roles:
+    - role: install-rustdesk-agent
+
+

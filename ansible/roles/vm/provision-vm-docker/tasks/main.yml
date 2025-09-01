@@ -7,14 +7,14 @@
 
 
 - name: Install Docker
-  include_tasks: install-docker.yml
+  # include_tasks: install-docker.yml
   include_tasks: deploy-rustdesk.yml
-  include_tasks: deploy-portainer.yml
-  include_tasks: deploy-portainer-agent.yml
-  include_tasks: deploy-npm.yml
-  include_tasks: deploy-veloren.yml
-  include_tasks: deploy-minecraft.yml
-  include_tasks: deploy-adguard.yml
+  # include_tasks: deploy-portainer.yml
+  # include_tasks: deploy-portainer-agent.yml
+  # include_tasks: deploy-npm.yml
+  # include_tasks: deploy-veloren.yml
+  # include_tasks: deploy-minecraft.yml
+  # include_tasks: deploy-adguard.yml
 
 # - name: Deploy CS:GO container
 #   include_tasks: deploy-counterstrike.yml

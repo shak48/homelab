@@ -3,4 +3,4 @@ rustdesk_version: "1.2.0"
 rustdesk_deb_url: "https://github.com/rustdesk/rustdesk/releases/download/{{ rustdesk_version }}/rustdesk-{{ rustdesk_version }}-x86_64.deb"
 rustdesk_pkg_path: "/tmp/rustdesk-{{ rustdesk_version }}.deb"
 
-rustdesk_server_ip: "{{ target_vm | default(hostvars['docker1'].ansible_host) }}"
+rustdesk_server_ip: "{{ target_host | default(hostvars['docker1'].ansible_host) }}"

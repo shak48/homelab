@@ -1,0 +1,45 @@
+# update-hosts.yml
+
+# # Play 1: update all remote hosts
+# - name: Update /etc/hosts on all inventory nodes
+#   hosts: all
+#   gather_facts: false
+#   become: true
+#   vars:
+#     hosts_block: |
+#       {% for h in groups['all']|sort if (hostvars[h].ansible_host is defined) -%}
+#       {{ "%-15s"|format(hostvars[h].ansible_host) }} {{ hostvars[h].hostname|default(h) }}{% if (hostvars[h].hostname|default(h)) != h %} {{ h }}{% endif %}
+#       {% endfor %}
+#   tasks:
+#     - name: Manage Ansible inventory block in /etc/hosts
+#       ansible.builtin.blockinfile:
+#         path: /etc/hosts
+#         create: true
+#         backup: true
+#         marker: "# {mark} ANSIBLE INVENTORY HOSTS"
+#         block: "{{ hosts_block | trim }}"
+
+# Play 2: update the controller itself
+- name: Update /etc/hosts on the control node (localhost)
+  hosts: localhost
+  gather_facts: false
+  become: true
+  vars:
+    hosts_block: |
+      {% for h in groups['all'] | sort if hostvars[h].ansible_host is defined %}
+      {{ "%-15s"|format(hostvars[h].ansible_host) }} {{ hostvars[h].hostname | default(h) }}{% if (hostvars[h].hostname | default(h)) != h %} {{ h }}{% endif %}
+      {% endfor %}
+
+  tasks:
+    - name: Manage Ansible inventory block in /etc/hosts (controller)
+      ansible.builtin.blockinfile:
+        path: /etc/hosts
+        create: true
+        backup: true
+        marker: "# {mark} ANSIBLE INVENTORY HOSTS"
+        block: "{{ hosts_block | trim ~ '\n' }}"
+    - name: ICMP ping pve
+      ansible.builtin.command: ping -c 1 pve ping docker1
+      register: ping_result
+      changed_when: false
+      failed_when: ping_result.rc != 0

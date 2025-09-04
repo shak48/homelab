@@ -1,5 +1,23 @@
-###Temporary change editor to edit secrets
-export EDITOR=nano
+## Temporary change editor to edit secrets
+    export EDITOR=nano
+    Persistent
+        set -euo pipefaail
+        FILE="$HOME/.bashrc"
+        BACKUP="$FILE.bak.$(date +%Y%m%d-%H%M%S)"
+        cp -a "$FILE" "$BACKUP" || true
+        #delete syntax sed -i /pattern/d file
+        sed -i '/export EDITOR=nano/d' $FILE 
+        sed -i '/export VISUAL=nano/d' $FILE
+        printf '%s\n' 'export EDITOR=nano' 'export VISUAL=nano' >> "$FILE"
+        source ~/.bashrc
+        # or the POSIX shorthand:
+        source ~/.bashrc
+        . ~/.bashrc
+
+        # Example -> search and replace
+            sed -i 's/bookworm/trixie/g' /etc/apt/sources.list
+
+
 
 
 Proxmox api viewer: https://pve.proxmox.com/pve-docs-8/api-viewer/index.html
@@ -202,3 +220,14 @@ Proxmox api viewer: https://pve.proxmox.com/pve-docs-8/api-viewer/index.html
     
     Exporting the volume local:103/vm-103-disk-0.qcow2 to the file target. This is mostly used internally with pvesm import. The stream format qcow2+size is different to the qcow2 format. Consequently, the exported file cannot simply be attached to a VM. This also holds for the other formats.
         pvesm export local:103/vm-103-disk-0.qcow2 qcow2+size target --with snapshots 1
+# Clusters
+    List all: 
+        qm list
+        pct list 
+        pvesm status
+        pvesm nodes
+    Prepare:
+        Either stop of trick PVE of no running containers with caution 
+            mv /etc/pve/nodes/pve-to-join-cluster/qemu-server/<vm-id>.conf <backup-location>
+    Join    
+        pvecm add <sever-ip-of-cluster-host>

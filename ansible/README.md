@@ -1,3 +1,5 @@
+## OS-INFO
+    . /etc/os-release && echo "$VERSION_CODENAME"
 ## Temporary change editor to edit secrets
     export EDITOR=nano
     Persistent
@@ -167,7 +169,7 @@ Proxmox api viewer: https://pve.proxmox.com/pve-docs-8/api-viewer/index.html
     backends encodes this ownership information into the volume name.
     When you remove a VM or Container, the system also removes all associated volumes which are owned by
     that VM or Container.
-
+# Promox Backup ser
 # Volume Examples
     Add storage pools
         pvesm add <TYPE> <STORAGE_ID> <OPTIONS>

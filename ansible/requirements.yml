@@ -1,7 +1,12 @@
-collections:
-  - name: community.docker
-    version: ">=3.4.0"
+# Check:  ansible-galaxy collection list | grep -E 'community\.general|community\.docker|ansible\.posix'
+
+
 collections:
   - name: community.docker
     version: ">=3.7.0"
-#ansible-galaxy collection install -r requirements.yml
+  - name: community.general
+    version: ">=8.5.0,<9.0.0"
+  - name: ansible.posix
+    version: ">=1.5.0,<2.0.0"
+
+# Run ansible-galaxy collection install -r requirements.yml

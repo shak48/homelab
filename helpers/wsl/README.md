@@ -1,5 +1,17 @@
 ### `bootstrap-control-node.sh`
 
+# Fix key related issues:
+    # correct owner and directory perms
+        chown -R "$USER:$USER" ~/.ssh
+        chmod 700 ~/.ssh
+    # private key must be 600 (or 400)
+        chmod 600 ~/.ssh/id_ansible_ed25519
+    # public/known_hosts can be 644
+        chmod 644 ~/.ssh/id_ansible_ed25519.pub 2>/dev/null || true
+        chmod 644 ~/.ssh/known_hosts 2>/dev/null || true
+
+
+
 This script generates a dedicated ED25519 SSH key for use by Ansible (`id_ansible_ed25519`) in the current user’s `~/.ssh` directory. It also archives any existing keypair with a timestamp in `~/.ssh/old-keys/`.
 
 #### ✅ Usage

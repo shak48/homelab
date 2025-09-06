@@ -19,6 +19,7 @@ all:
     sane1:      { ansible_host: 192.168.10.123, hostname: sane1 }
     nextcloud1: { ansible_host: 192.168.10.124, hostname: nextcloud1 }
     immich1:    { ansible_host: 192.168.10.125, hostname: immich1 }
+    pbs1:       { ansible_host: 192.168.10.251, hostname: pbs1 }
     pbs2:       { ansible_host: 192.168.10.250, hostname: pbs2 }
   children:
     pves:
@@ -27,6 +28,7 @@ all:
         pve2:
     pbss:
       hosts:
+        pbs1:
         pbs2:
     vms:
       children:

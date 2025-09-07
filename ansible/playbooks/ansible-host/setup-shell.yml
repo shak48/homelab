@@ -1,0 +1,7 @@
+# playbooks/setup-shell.yml
+- name: Setup homelab shell on localhost
+  hosts: localhost
+  gather_facts: true
+  become: false
+  roles:
+    - setup-shell

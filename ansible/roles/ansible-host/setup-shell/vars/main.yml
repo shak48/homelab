@@ -1,0 +1,9 @@
+bashrc_loader_snippet: |
+  # Load per-topic shell customizations
+  if [ -d "$HOME/.bashrc.d" ]; then
+    for f in "$HOME/.bashrc.d/"*.sh; do
+      [ -r "$f" ] && . "$f"
+    done
+  fi
+
+bashrc_dropin_filename: "10-homelab.sh"

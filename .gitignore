@@ -1,8 +1,6 @@
 # Ignore system-specific files
-.DS_Store       # macOS
 Thumbs.db       # Windows
 desktop.ini     # Windows
-.idea/          # JetBrains IDEs (e.g., PyCharm, IntelliJ)
 .vscode/        # VS Code workspace settings
 
 # Ignore temporary and lock files
@@ -15,7 +13,7 @@ desktop.ini     # Windows
 *.bak           # Backup files
 
 # Ignore Git-specific files
-.gitignore      # Ignore itself (not needed, but safe)
+.gitignore      
 
 # User folder
 *rchive*
@@ -23,4 +21,6 @@ desktop.ini     # Windows
 # User files
 BOM.txt 
 wsl2-move.ps1
-
+*.code-workspace
+ansible/ansible.log
+.ansible/*

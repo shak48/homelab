@@ -1,0 +1,11 @@
+---
+- name: Configure CUPS print server
+  hosts: print_servers
+  become: true
+
+  vars_files:
+    - ../roles/print-server/vars/main.yml  # correct relative path from 'playbooks/'
+
+  roles:
+    - harden
+    - print-server  # must match folder name under 'roles/'

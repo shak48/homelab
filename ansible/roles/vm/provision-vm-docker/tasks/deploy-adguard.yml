@@ -1,0 +1,50 @@
+#https://hub.docker.com/r/adguard/adguardhome#quickstart
+- name: Ensure project and data directories exist
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  loop:
+    - "{{ adguard_work_dir }}"
+    - "{{ adguard_conf_dir }}"
+
+
+- name: Render docker-compose.yml
+  become: true
+  template:
+    src: adguard-docker-compose.yml.j2
+    dest: "{{ adguard_project_dir }}/docker-compose.yml"
+    mode: "0644"
+
+# - name: Validate compose file (nice error if bad YAML)
+#   become: true
+#   command: bash -lc "docker compose -f {{ adguard_project_dir }}/docker-compose.yml config -q"
+
+
+
+- name: Bring up containers
+  become: true
+  community.docker.docker_compose_v2:
+    project_src: "{{ adguard_project_dir }}"
+    state: present
+  
+
+
+  
+# - name: Render docker-compose.yml for 
+#   become: true
+#   template:
+#     src: adguard-docker-compose.yml.j2
+#     dest: "{{ adguard_project_dir }}/docker-compose.yml"
+#     mode: "0644"
+
+# - name: Render AdGuard compose
+#   include_role:
+#     name: docker_common
+#     tasks_from: render_compose.yml
+#   vars:
+#     docker_project_dir: "{{ adguard_project_dir }}"
+#     docker_compose_template_src: "adguard-compose.yml.j2"

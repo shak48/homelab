@@ -1,0 +1,5 @@
+---
+# defaults file for ansible/roles/rsync-helper/
+rsync_src: "/mnt/source"
+rsync_dest: "/mnt/destination"
+rsync_log: "/var/log/rsync-transfer.log"

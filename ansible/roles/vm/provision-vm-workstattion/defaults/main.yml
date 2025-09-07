@@ -1,0 +1,8 @@
+# ansible/roles/create-vms/defaults/main.yml
+
+vm_name: change-me
+vm_ip : dhcp
+vm_id: 999
+vm_disk_size: 16G
+vm_cores: 1
+vm_memory: 512    

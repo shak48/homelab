@@ -1,6 +1,0 @@
----
-- name: Apply security hardening
-  hosts: all
-  become: true
-  roles:
-    - { role: harden, tags: [harden] }

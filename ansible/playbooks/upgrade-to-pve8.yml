@@ -1,9 +1,0 @@
----
-
-- name: Upgrade Proxmox VE from 7.x to 8.x
-  hosts: all
-  become: true
-  gather_facts: false
-  roles:
-    - upgrade
-

@@ -1,0 +1,23 @@
+- name: Ensure certs directory exists
+  file:
+    path: /opt/npm-certs
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Generate a private key
+  community.crypto.openssl_privatekey:
+    path: /opt/npm-certs/selfsigned.key
+    size: 2048
+    type: RSA
+    mode: '0600'
+
+- name: Generate a self-signed certificate
+  community.crypto.openssl_certificate:
+    path: /opt/npm-certs/selfsigned.crt
+    privatekey_path: /opt/npm-certs/selfsigned.key
+    provider: selfsigned
+    not_after: +3650d
+    subject:
+      commonName: "{{ npm_cert_cn | default('dummy.local') }}"

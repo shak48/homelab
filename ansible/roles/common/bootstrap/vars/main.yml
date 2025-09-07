@@ -1,0 +1,4 @@
+bootstrap_user:                 "{{ vault_ansible_user }}"
+bootstrap_user_pubkey_filename: "{{ vault_ansible_user_pubkey_filename }}"
+ssh_pubkey_path:                "{{ lookup('env','HOME') }}/.ssh"
+bootstrap_user_pubkey_file:     "{{ lookup('file', ssh_pubkey_path + '/' + bootstrap_user_pubkey_filename) }}"

@@ -1,0 +1,5 @@
+# host_vars/pve-test1.yml
+env: testing
+tags:
+  - pve
+  - test

@@ -1,0 +1,29 @@
+- name: Ensure RustDesk root dir exists
+  become: true
+  file:
+    path: "{{ rustdesk_root }}/data"
+    state: directory
+    mode: '0755'
+
+- name: Deploy docker-compose.yml
+  become: true
+  template:
+    src: rustdesk-docker-compose.yml.j2
+    dest: "{{ rustdesk_root }}/docker-compose.yml"
+    mode: '0644'
+
+- name: Bring up RustDesk stack
+  become: true
+  command: bash -lc "cd {{ rustdesk_root }} && docker compose up -d"
+
+# # (Optional) Quick validate
+# - name: Check hbbs/hbbr ports listening
+#   become: true
+#   command: bash -lc "ss -ltnup | egrep '21115|21116|21117' || true"
+#   register: ss_out
+# - name: Confirm hbbs/hbbr listening
+#   fail:
+#     msg: "Missing listeners. Got:\n{{ ss_out.stdout }}"
+#   when: "'21116' not in ss_out.stdout"
+# - debug:
+#     msg: "OK: hbbs/hbbr up on {{ rustdesk_server_ip }} (host network)."

@@ -1,0 +1,12 @@
+- name: Copy docker-compose.yml template
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/npm/docker-compose.yml
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Deploy NPM stack
+  community.docker.docker_compose:
+    project_src: /opt/npm
+    state: present

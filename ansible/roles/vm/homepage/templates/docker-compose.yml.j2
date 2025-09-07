@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  homepage:
+    image: {{ homepage_image }}
+    container_name: {{ homepage_container_name }}
+    restart: {{ homepage_restart }}
+    ports:
+      - "{{ homepage_bind_addr }}:{{ homepage_docker_port | default(3000) }}:3000"  
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: "{{ homepage_allowed_hosts }}"
+    volumes:
+      - "{{ homepage_config_dir }}:/app/config"
+      - "{{ homepage_docker_sock }}:/var/run/docker.sock"

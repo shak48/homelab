@@ -1,0 +1,37 @@
+#/roles/upgrade/tasks/main.yml
+---
+- name: Disable enterprise repo
+  ansible.builtin.import_tasks: disable_enterprise.yml
+  tags: [disable_enterprise]
+
+- name: Backup PVE config
+  import_tasks: backup_config.yml
+  tags: [backup_config]
+
+- name: Configure sources
+  import_tasks: configure_sources.yml
+  tags: [configure_sources]
+
+- name: Install Bookworm keyring
+  import_tasks: install_keyring.yml
+  tags: [install_keyring]
+
+- name: Run full upgrade
+  import_tasks: dist_upgrade.yml
+  tags: [upgrade]
+
+- name: Cleanup packages and leftover files
+  import_tasks: cleanup.yml
+  tags: [cleanup]
+
+- name: Patch no-subscription popup
+  import_tasks: no_subscription_popup.yml
+  tags: [no_subscription_popup]
+
+- name: Notify reboot
+  import_tasks: notify_reboot.yml
+  tags: [notify_reboot]
+
+- name: Validate active APT sources
+  import_tasks: validate.yml
+  tags: [validate]

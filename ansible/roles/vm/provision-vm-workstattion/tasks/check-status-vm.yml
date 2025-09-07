@@ -1,0 +1,19 @@
+# roles/create-vms/tasks/main.yml
+
+- name: Check VM {{ vm_id }} status
+  command: qm status {{ vm_id }}
+  register: vm_status
+  changed_when: false
+
+- name: Start VM {{ vm_id }} if it is stopped
+  command: qm start {{ vm_id }}
+  when: "'status: stopped' in vm_status.stdout"
+
+- name: Wait for VM {{ vm_id }} to respond to ping
+  wait_for:
+    host: "{{ hostvars[target_hosts].ansible_host }}"
+    port: 22
+    state: started
+    timeout: 300
+  delegate_to: localhost
+  become: false

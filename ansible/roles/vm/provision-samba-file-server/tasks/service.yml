@@ -1,0 +1,5 @@
+- name: Ensure smbd is enabled and started
+  ansible.builtin.service:
+    name: smbd
+    state: started
+    enabled: yes

@@ -1,0 +1,99 @@
+- name: Ensure service account
+  user:
+    name: immich
+    groups: docker
+    append: true
+
+- name: Ensure project dir exists
+  file:
+    path: "{{ container_project_dir }}"
+    state: directory
+    owner: immich
+    group: docker
+    mode: "0750"        
+
+- name: Render compose (validated)
+  template:
+    src: templates/immich/docker-compose.yml.j2
+    dest: "{{ container_project_dir }}/docker-compose.yml"
+    owner: immich
+    group: docker
+    mode: "0640"        
+
+- name: Render .env (contains secrets)
+  template:
+    src: templates/immich/docker.env.j2
+    dest: "{{ container_project_dir }}/.env"
+    owner: immich
+    group: docker
+    mode: "0640"        
+  no_log: true          
+
+- name: Being up container stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ container_project_dir }}"
+    files: ["docker-compose.yml"]
+    project_name: "immich"
+    state: present
+    remove_orphans: true
+  environment:
+    COMPOSE_HTTP_TIMEOUT: "600"
+    DOCKER_CLIENT_TIMEOUT: "600"
+  register: immich_compose
+  notify: Show Immich logs
+
+
+
+# # - name: Bring up docker stack
+#   become: true
+#   command: bash -lc "cd {{ container_project_dir }} && docker compose up -d"
+
+# - name: Render docker-compose.yml
+#   become: true
+#   template:
+#     src: minecraft-docker-compose.yml.j2
+#     dest: "{{ minecraft_project_dir }}/docker-compose.yml"
+#     mode: "0644"
+
+
+
+
+# - name: Bring up containers
+#   become: true
+#   community.docker.docker_compose_v2:
+#     project_src: "{{ minecraft_project_dir }}"
+#     state: present
+  
+
+
+# - name: Apply Immich stack
+#   community.docker.docker_compose_v2:
+#     project_src: "{{ container_project_dir }}"
+#     files:
+#       - "immich.yml"               # any name works
+#       - "immich.override.yml"      # optional override layer
+#     project_name: "immich"         # keeps names stable regardless of folder name
+#     state: present
+#     remove_orphans: true
+#   become: true
+# # tasks/main.yml
+# - name: Render docker-compose (validated)
+#   template:
+#     src: templates/immich/docker-compose.yml.j2
+#     dest: "{{ container_project_dir }}/docker-compose.yml"
+#     mode: '0644'
+#     validate: 'docker compose --project-directory {{ container_project_dir }} -f "%s" config'
+#   notify: Apply Immich stack
+#   become: true
+
+# # handlers/main.yml
+# - name: Apply Immich stack
+#   community.docker.docker_compose_v2:
+#     project_src: "{{ container_project_dir }}"
+#     files: ["docker-compose.yml"]
+#     state: present
+#     remove_orphans: true
+#   environment:
+#     COMPOSE_HTTP_TIMEOUT: "600"
+#     DOCKER_CLIENT_TIMEOUT: "600"
+#   become: true

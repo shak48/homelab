@@ -1,0 +1,8 @@
+# --- Deploy configuration ---
+- name: Configure CUPS daemon settings
+  template:
+    src: cupsd.conf.j2
+    dest: /etc/cups/cupsd.conf
+    mode: '0644'
+  notify: Restart CUPS
+  tags: [cups, config]

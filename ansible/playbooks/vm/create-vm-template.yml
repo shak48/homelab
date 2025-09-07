@@ -1,0 +1,8 @@
+# playbook/create-vm-template.yml
+- name: Create Cloud VM Template
+  hosts: pve_servers
+  become: true
+
+  roles:
+    - create-vm-template
+    

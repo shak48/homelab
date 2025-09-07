@@ -1,0 +1,6 @@
+# playbook/create-workstation-ubuntu.yml
+- name: Configure Workstation Ubuntu
+  hosts: ws-ubuntu
+  become: yes
+  roles:
+    - create-workstation-ubuntu

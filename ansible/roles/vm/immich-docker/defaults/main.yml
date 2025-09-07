@@ -1,0 +1,28 @@
+# Immich version tag (official compose uses ${IMMICH_VERSION:-release})
+immich_version: "release"
+
+# Where the Immich project will live
+container_project_dir: "{{ docker_project_dir }}/immich"
+
+# Where the SMB share will be mounted on the host
+upload_location: "{{ container_project_dir }}/library" 
+
+# Database data location on the host (SSD recommended; change path if needed)
+db_data_location: "{{ container_project_dir }}/postgres" 
+
+
+# DB creds (store with Vault for real use)
+db_username: "{{ vault_immich_db_user | default('postgres') }}"
+db_password: "{{ vault_immich_db_pass }}"
+db_database_name: "{{ vault_immich_db_name | default('immich') }}"
+
+
+# Samba mount point on the host
+samba_server: "{{ hostvars['samba1'].ansible_host }}"
+samba_share: "Common"
+samba_user: "shahriar"
+samba_pass: "{{ vault_default_password }}"
+cred_file: "/root/.smb_cred"
+samba_mount_point: "/mnt/immich"
+mount_uid: 1000          # user that needs access (Docker user)
+mount_gid: 1000

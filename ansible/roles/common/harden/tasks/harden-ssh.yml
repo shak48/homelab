@@ -1,0 +1,10 @@
+- name: Harden SSH configuration
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+    create: true
+    backrefs: true
+  loop: "{{ harden_ssh_settings }}"
+  notify: Restart sshd

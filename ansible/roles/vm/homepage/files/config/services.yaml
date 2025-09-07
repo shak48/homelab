@@ -1,0 +1,33 @@
+# Icons   https://dashboardicons.com/
+- Infra:
+  - Proxmox1:
+      icon: proxmox
+      href: http://192.168.10.111:8006
+  - Proxmox2:
+      icon: proxmox
+      href: http://192.168.10.110:8006
+  - Portainer:
+      icon: " {{homepage_icon_dir }}/portainer-alt.png"
+      href: https://192.168.10.122:9443
+  - Nginx-RMP:
+      icon: "{{ homepage_icon_dir }}/nginx-proxy-manager.png"
+      href: http://192.168.10.122:81
+  - OPNsense:
+      icon: opnsense
+      href: http://192.168.10.1
+  - lyncSys-AP:
+      icon: router
+      href: http://192.168.10.3
+  - Moto570-Gateway:
+      icon: router
+      href: http://192.168.0.1
+- Apps:
+  - Nextcloud:
+      icon: nextcloud
+      href: https://shak48.mooo.com
+  - Homepage:
+      icon: homepage
+      href: http://192.168.10.122:3000
+  - immich:
+      icon: immich
+      href: http://192.168.10.125:2283

@@ -1,0 +1,21 @@
+# Define VM IDs for specific VMs
+#TODO others
+opnsense1_vm_id:  1
+#ws_ubuntu_vm_id:  115 
+#pve2_vm_id:       110
+# pve1_vm_id:       111
+# samba1_vm_id:     120
+# cups1_vm_id:      121
+# docker1_vm_id:    122
+# sane1_vm_id:      123
+# nextcloud1_vm_id: 124
+
+
+
+# Default VM settings for creating new VMs
+vm_gateway: 192.168.10.1
+vm_net_bridge: vmbr0
+vm_dns: 9.9.9.9
+ 
+
+

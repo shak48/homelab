@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  db:
+    image: mariadb:10.6
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
+    volumes:
+      - /tankmirror/nc/nextcloud1/db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD="{{mysql_root_password}}"
+      - MYSQL_PASSWORD="{{mysql_root_password}}"
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+
+  app:
+    image: nextcloud
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    volumes:
+      - /tankmirror/nc/nextcloud1/html:/var/www/html
+      - /tankmirror/nc/nextcloud1/data:/var/www/html/data
+    environment:
+      - MYSQL_PASSWORD="{{mysql_root_password}}"
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_HOST=db

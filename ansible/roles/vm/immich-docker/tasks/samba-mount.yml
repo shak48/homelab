@@ -1,0 +1,66 @@
+- name: Create CIFS credentials file
+  copy:
+    dest: "{{ cred_file }}"
+    content: |
+      username="{{ samba_user }}"
+      password="{{ samba_pass }}"
+      domain=WORKGROUP
+    owner: root
+    group: root
+    mode: "0600"
+    
+- name: Ensure required packeges are installed for Samba mount
+  apt:
+    name:
+      - cifs-utils
+      - keyutils
+      - "linux-modules-extra-{{ ansible_kernel }}"
+    state: present
+    update_cache: true
+  register: pkgs
+
+- name: Load cifs module now (ok if already loaded)
+  modprobe:
+    name: cifs
+    state: present
+  register: mprobe
+  failed_when: false
+
+- name: Create mount point
+  file:
+    path: "{{ samba_mount_point }}"
+    state: directory
+    mode: "0755"
+
+# - name: Mount CIFS now (runtime-only opts)
+#   ansible.posix.mount:
+#     path: "/mnt/immich"
+#     src: "//192.168.10.120/Common"
+#     fstype: cifs
+#     opts: "credentials=/root/.smb_cred,vers=3.1.1,sec=ntlmssp,uid=1000,gid=1000,dir_mode=0775,file_mode=0664,iocharset=utf8,noserverino"
+#   state: mounted
+- name: Persist and mount CIFS share
+  ansible.posix.mount:
+    path: "{{ samba_mount_point }}"
+    src: "//{{ samba_server }}/{{ samba_share }}"
+    fstype: cifs
+    opts: >-
+      credentials={{ cred_file }},
+      vers=3.0,
+      sec=ntlmssp,
+      uid={{ mount_uid }},
+      gid={{ mount_gid }},
+      dir_mode=0775,
+      file_mode=0664,
+      iocharset=utf8,
+      noserverino,
+      _netdev,
+      x-systemd.automount,
+      nofail
+    state: mounted
+
+- name: Validate mount present
+  shell: "mount | grep -q ' {{ samba_mount_point }} '"
+  register: mountcheck
+  changed_when: false
+  failed_when: mountcheck.rc != 0

@@ -1,0 +1,6 @@
+- name: Install authorized_keys for ansible user
+  ansible.posix.authorized_key:
+    user: "{{ bootstrap_user }}"
+    key: "{{ bootstrap_user_pubkey_file }}"
+    state: present
+    manage_dir: true

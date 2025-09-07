@@ -1,0 +1,49 @@
+docker_project_dir:  /opt/docker
+
+
+
+docker_compose_file: "docker_compose_file.yml.j2"
+
+rustdesk_root: /opt/rustdesk
+
+veloren_root: /opt/veloren
+#rustdesk_server_ip: " {{target_vm | default=ansible_host }}"
+
+
+
+
+#NPM
+npm_project_dir:     "{{docker_project_dir}}/npm"
+npm_data_dir:        "{{npm_project_dir}}/data"
+npm_letsencrypt_dir: "{{npm_project_dir}}/letsencrypt"
+
+
+#Minecraft
+minecraft_project_dir: "{{docker_project_dir}}/minecraft"
+minecraft_data_dir: "{{minecraft_project_dir}}/data"
+
+
+#ADGUARD
+adguard_project_dir: "{{docker_project_dir}}/adguard"
+adguard_work_dir: "{{ adguard_project_dir }}/work"
+adguard_conf_dir: "{{ adguard_project_dir }}/conf"
+
+# Networking: bridge mode with required ports (includes :3000 for first-time setup UI)
+adguard_bridge_ports:
+  - "53:53/tcp"
+  - "53:53/udp"
+  - "67:67/udp"
+  - "80:80/tcp"
+  - "443:443/tcp"
+  - "3000:3000/tcp"
+  - "853:853/tcp"
+  - "784:784/udp"
+  - "853:853/udp"
+  - "8853:8853/udp"
+  - "5443:5443/tcp"
+  - "5443:5443/udp"
+
+timezone: "America/New_York"
+
+
+

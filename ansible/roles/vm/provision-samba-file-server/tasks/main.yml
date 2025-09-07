@@ -1,0 +1,26 @@
+# roles/samba-file-server/tasks/main.yml
+
+- name: Install packages
+  ansible.builtin.import_tasks: packages.yml
+  tags: [samba, packages]
+
+- name: Configure mount
+  ansible.builtin.import_tasks: mount.yml
+  when: samba_mount_enabled
+  tags: [samba, mount]
+
+- name: Ensure share directories
+  ansible.builtin.import_tasks: shares.yml
+  tags: [samba, shares]
+
+- name: Deploy configuration
+  ansible.builtin.import_tasks: config.yml
+  tags: [samba, config]
+
+- name: Enable / start services
+  ansible.builtin.import_tasks: service.yml
+  tags: [samba, service]
+
+- name: Validate Samba
+  ansible.builtin.import_tasks: validate.yml
+  tags: [samba, validate]

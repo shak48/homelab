@@ -1,0 +1,5 @@
+# --- Set hostname ---
+- name: Set system hostname to print-server
+  hostname:
+    name: print-server
+  tags: [cups, setup]

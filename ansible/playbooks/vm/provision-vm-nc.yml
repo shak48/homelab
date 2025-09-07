@@ -1,0 +1,20 @@
+# play 1: runs ON PVE (host = pve)
+- name: Prepare ZFS dataset and attach to VM
+  hosts: pve
+  become: true
+  gather_facts: false
+
+  vars:
+    target_vm: nextcloud1
+
+  roles:
+    - role: provision-zfs-nc
+
+# play 2: runs ON THE VM (host = target_vm)
+- name: Configure Nextcloud inside the VM
+  hosts: nextcloud1
+  become: true
+  gather_facts: true
+
+  roles:
+    - role: provision-vm-nc

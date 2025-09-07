@@ -1,0 +1,17 @@
+#roles/sleep/tasks/poweroff.yml
+
+- name: Deploy nightly poweroff(S5) script with logging
+  template:
+    src: poweroff.sh.j2
+    dest: "{{ sleep_poweroff_script_path }}"
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Schedule Shutdown
+  cron:
+    name: "Poweroff overnight daily"
+    minute: "{{ sleep_poweroff_cron_minute }}"
+    hour: "{{ sleep_poweroff_cron_hour }}"
+    user: root
+    job: "{{ sleep_poweroff_script_path }}"

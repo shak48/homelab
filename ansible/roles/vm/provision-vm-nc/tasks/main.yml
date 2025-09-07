@@ -1,0 +1,83 @@
+#roles/tasks/create-vms/install-docker.yml
+
+
+- name: Ensure dependencies for Docker are installed
+  apt:
+    name:
+      - ca-certificates
+      - curl
+    state: present
+    update_cache: yes
+
+- name: Create Docker keyrings directory
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Download Docker GPG key via curl
+  shell: curl -fsSLo /etc/apt/keyrings/docker.asc https://download.docker.com/linux/ubuntu/gpg
+  args:
+    creates: /etc/apt/keyrings/docker.asc
+
+- name: Set permissions for Docker GPG key
+  file:
+    path: /etc/apt/keyrings/docker.asc
+    mode: '0644'
+
+
+- name: Add Docker apt repository
+  shell: |
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo \"${UBUNTU_CODENAME:-$VERSION_CODENAME}\") stable" > /etc/apt/sources.list.d/docker.list
+  args:
+    executable: /bin/bash
+    creates: /etc/apt/sources.list.d/docker.list
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install Docker packages
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+
+
+- name: Enable and start Docker service
+  become: true
+  service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Add ansible-user to docker group
+  become: true
+  user:
+    name: remote_user
+    groups: docker
+    append: true
+
+
+- name: Ensure directory for Nextcloud compose
+  file:
+    path: /opt/nextcloud
+    state: directory
+    mode: "0755"
+
+- name: Copy docker-compose.yml for Nextcloud
+  copy:
+    src: files/nextcloud-compose.yml
+    dest: /opt/nextcloud/docker-compose.yml
+    mode: "0644"
+
+- name: Start Nextcloud stack
+  community.docker.docker_compose_v2:
+    project_src: /opt/nextcloud
+    state: present
+

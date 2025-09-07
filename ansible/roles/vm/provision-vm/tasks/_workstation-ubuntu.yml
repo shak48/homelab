@@ -1,0 +1,52 @@
+# roles/tasks/create-vms/workstation-ubuntu.yml
+
+- name: Set facts for Workstation VM
+  set_fact:
+    vm_ip: "{{ hostvars['ws-ubuntu'].ansible_host }}/24"
+    vm_id: "{{ ws_ubuntu_vm_id }}"
+    vm_name: "{{ hostvars['ws-ubuntu'].hostname }}"
+  tags: ws-ubuntu
+
+- name: Clone VM from template
+  command: >
+    qm clone {{ ws_ubuntu_template_vm_id }} {{ vm_id }} --name {{ vm_name | default('change-me') }}
+  args:
+    creates: "/etc/pve/qemu-server/{{ vm_id }}.conf"
+  tags: ws-ubuntu
+
+- name: Resize disk
+  command: >
+    qm resize {{ vm_id }} scsi0 {{ vm_disk_size }}
+  tags: ws-ubuntu
+
+- name: Set CPU cores
+  command: >
+    qm set {{ vm_id }} --cores {{ vm_cores }}
+  tags: ws-ubuntu
+
+- name: Set memory
+  command: >
+    qm set {{ vm_id }} --memory {{ vm_memory }}
+  tags: ws-ubuntu
+
+
+- name: Enable autostart for workstation VM
+  command: qm set {{ vm_id }} --onboot 1
+  tags: ws-ubuntu
+
+- name: Start workstation VM
+  command: qm start {{ vm_id }}
+  tags: ws-ubuntu
+
+
+### Does not work with cloud-init, so manually configure IP.
+# - name: Set static IP via cloud-init
+#   command: >
+#     qm set {{ vm_id }}
+#     --ipconfig0 ip={{ vm_ip }},gw={{ vm_gateway }}
+#     --nameserver {{ vm_dns }}
+#   tags: ws-ubuntu
+
+# - name: Regenerate cloud-init image
+#   command: qm cloudinit update {{ vm_id }}
+#   tags: ws-ubuntu

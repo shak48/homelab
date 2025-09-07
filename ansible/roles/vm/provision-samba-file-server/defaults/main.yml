@@ -1,0 +1,19 @@
+# Default variables for the file-server role
+
+# Safe, overridable defaults
+samba_workgroup: "WORKGROUP"
+samba_min_protocol: "SMB2"
+samba_guest_user: nobody
+samba_guest_group: nogroup
+
+
+
+# Mount defaults (can be overridden per host/group)
+samba_mount_enabled: true
+samba_mount_src: "hdd-share"
+samba_mount_path: "/mnt/share"
+samba_mount_fstype: "virtiofs"
+samba_mount_opts: "defaults"
+
+# Default shares (OK to leave empty if you always override via vault)
+samba_guest_shares: []

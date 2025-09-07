@@ -1,0 +1,7 @@
+# playbook/create-vms.yml
+- name: Create VMs
+  hosts: pve
+  become: true
+
+  roles:
+    - provision-vm

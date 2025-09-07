@@ -1,0 +1,30 @@
+#/rolers/print-server/tasks/scan.yaml
+- name: Install scanner dependencies
+  apt:
+    name:
+      - sane-utils
+      - ipp-usb
+      - sane-airscan
+      - curl
+    state: present
+    update_cache: yes
+
+- name: Ensure www-data user has scanner access
+  user:
+    name: www-data
+    groups: [scanner, lp]
+    append: yes
+
+- name: Install scanservjs via bootstrap
+  shell: |
+    curl -s https://raw.githubusercontent.com/sbs20/scanservjs/master/bootstrap.sh | bash -s -- -v latest
+  args:
+    creates: /opt/scanservjs
+
+- name: Override scanservjs port (optional)
+  systemd:
+    name: scanservjs
+    enabled: yes
+    state: started
+  environment:
+    PORT: "{{ scanservjs_port | default('8080') }}"

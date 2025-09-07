@@ -1,0 +1,11 @@
+# tasks file for ansible/roles/create-workstation-ubuntu/tasks/cleanup-temp-files.yml
+- name: Remove specific leftover installer and GPG files
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /tmp/edge.deb
+    - /tmp/vscode.deb
+    - /tmp/npp_installer.exe
+    - /tmp/microsoft.gpg
+    - /tmp/brave-browser-archive-keyring.gpg

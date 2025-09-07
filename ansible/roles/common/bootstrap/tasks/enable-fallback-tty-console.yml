@@ -1,0 +1,5 @@
+- name: Enable TTY1 console login for fallback access
+  ansible.builtin.systemd:
+    name: getty@tty1.service
+    enabled: true
+    state: started

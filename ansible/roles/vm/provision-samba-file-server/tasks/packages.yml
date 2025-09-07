@@ -1,0 +1,3 @@
+# samba_packages:
+#   - samba
+#   - smbclient

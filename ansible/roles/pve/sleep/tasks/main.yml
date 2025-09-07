@@ -1,0 +1,19 @@
+# roles/sleep/tasks/main.yml
+
+- name: Include suspend tasks
+  include_tasks: suspend.yml
+  tags:
+    - sleep
+    - suspend
+
+- name: Include poweroff tasks
+  include_tasks: poweroff.yml
+  tags:
+    - sleep
+    - poweroff
+
+- name: Include validate tasks
+  include_tasks: validate.yml
+  tags:
+    - sleep
+    - validate

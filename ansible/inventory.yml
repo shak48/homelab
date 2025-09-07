@@ -1,0 +1,52 @@
+# Router1:          192.168.0.1
+# Bridge AP:        192.168.10.3
+# WAN1 OPNsense:    192.168.0.10
+# LAN1 OPNsense:    192.168.10.1
+# FQDNs
+  # https://www.duckdns.org/domains      => shak48.duckdns.org
+  # https://freedns.afraid.org/domain/   => shak48.mooo.com
+  # https://my.noip.com/                 => *shak48.ddns.net
+# Windows Host File   =>  C:\Windows\System32\drivers\etc\host
+
+all:
+  hosts:
+    pve:        { ansible_host: 192.168.10.111, hostname: pve }
+    pve2:       { ansible_host: 192.168.10.110, hostname: pve2 }
+    ws-ubuntu:  { ansible_host: 192.168.10.115, hostname: ws-ubuntu }
+    samba1:     { ansible_host: 192.168.10.120, hostname: samba1 }
+    cups1:      { ansible_host: 192.168.10.121, hostname: cups1 }
+    docker1:    { ansible_host: 192.168.10.122, hostname: docker1 }
+    sane1:      { ansible_host: 192.168.10.123, hostname: sane1 }
+    nextcloud1: { ansible_host: 192.168.10.124, hostname: nextcloud1 }
+    immich1:    { ansible_host: 192.168.10.125, hostname: immich1 }
+    pbs1:       { ansible_host: 192.168.10.251, hostname: pbs1 }
+    pbs2:       { ansible_host: 192.168.10.250, hostname: pbs2 }
+  children:
+    pves:
+      hosts:
+        pve:
+        pve2:
+    pbss:
+      hosts:
+        pbs1:
+        pbs2:
+    vms:
+      children:
+        workstation_servers:
+          hosts:
+            ws-ubuntu:
+        files:
+          hosts:
+            samba1:
+            nextcloud1:
+        prints:
+          hosts:
+            cups1:
+        scans:
+          hosts:
+            sane1:
+        dockers:
+          hosts:
+            docker1:
+            nextcloud1:
+            immich1:

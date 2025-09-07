@@ -1,0 +1,41 @@
+# tasks file for ansible/roles/create-workstation-ubuntu/tasks/packages-base.yml
+- name: Ensure apt cache is updated
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install Base tools
+  apt:
+    name: "{{ base_packages }}"
+    state: present
+    update_cache: yes
+- name: Install additional GUI tools
+  apt:
+    name: "{{ gui_packages }}"
+    state: present
+    update_cache: yes
+
+- name: Install office tools 
+  apt:
+    name: "{{ office_packages }}"
+    state: present
+    update_cache: yes       
+
+- name: Install media tools
+  apt:
+    name: "{{ media_packages }}"
+    state: present
+    update_cache: yes  
+
+
+- name: Install engineering tools
+  apt:
+    name: "{{ engineering_packages }}"
+    state: present
+    update_cache: yes  
+
+- name: Install development tools
+  apt:
+    name: "{{ development_packages }}"
+    state: present
+    update_cache: yes 

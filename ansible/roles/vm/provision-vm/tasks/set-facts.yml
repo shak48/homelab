@@ -1,0 +1,15 @@
+# resolve hostvars
+- assert:
+    that: hostvars[target_vm] is defined
+    fail_msg: "target_vm='{{ target_vm }}' not found in inventory."
+
+- name: Resolve variables
+  set_fact:
+    vm_id:        "{{ hostvars[target_vm].vm_id                 | default(default_vm_id) }}"
+    vm_gateway:   "{{ vm_gateway                                | default(default_vm_gateway) }}"
+    vm_ip :       "{{ hostvars[target_vm].ansible_host          | default(default_vm_ip) }}"
+    vm_name:      "{{ hostvars[target_vm].inventory_hostname    | default(default_vm_name) }}"
+    vm_disk_size: "{{ hostvars[target_vm].vm_disk_size          | default(default_vm_disk_size) }}"
+    vm_cores:     "{{ hostvars[target_vm].vm_disk_cores         | default(default_vm_cores) }}"
+    vm_memory:    "{{ hostvars[target_vm].vm_disk_memory        | default(default_vm_memory) }}" 
+    

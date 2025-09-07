@@ -1,0 +1,9 @@
+- name: Deploy docker stack
+  hosts: immich1
+  become: true
+  gather_facts: true
+
+  roles:
+    - common-role
+    - common-docker-role
+    - immich-docker

@@ -1,0 +1,7 @@
+- name: Upgrade Proxmox VE 
+  hosts: pve2
+  become: true
+  gather_facts: false
+  roles:
+    - upgrade-to-pve9
+

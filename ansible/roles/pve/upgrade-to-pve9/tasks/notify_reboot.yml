@@ -1,0 +1,5 @@
+#/roles/upgrade/tasks/notify_reboot.yml
+- name: Notify Manual Reboot
+  debug:
+    msg: "Proxmox VE upgrade complete — reboot manually to finalize."
+  tags: [notify_reboot]

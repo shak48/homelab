@@ -1,0 +1,8 @@
+#/roles/upgrade/tasks/dist_upgrade.yml
+---
+- name: Perform Full System Upgrade
+  apt:
+    update_cache: yes
+    upgrade: dist
+  tags: [dist_upgrade]
+

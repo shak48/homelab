@@ -1,0 +1,2 @@
+- name: Install Docker and dependencies
+  import_tasks: install-docker.yml

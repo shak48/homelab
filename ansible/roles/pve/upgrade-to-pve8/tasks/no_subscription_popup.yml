@@ -1,0 +1,23 @@
+#/roles/upgrade/tasks/no_subscription_popup.yml
+---
+- name: Disable Proxmox subscription popup (Ext.Msg.show block)
+  ansible.builtin.blockinfile:
+    path: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+    marker: "// {mark} ANSIBLE MANAGED BLOCK - DISABLE SUBSCRIPTION POPUP"
+    insertafter: 'if \\(res === null .*\\) {'
+    block: |
+      //Ext.Msg.show({
+      //    title: gettext('No valid subscription'),
+      //    message: Proxmox.Utils.getNoSubKeyHtml(res.data),
+      //    buttons: Ext.Msg.OK,
+      //    callback: function(btn) {
+      //        if (btn !== 'ok') {
+      //            return;
+      //        }
+      //        orig_cmd();
+      //    },
+      //});
+  tags: [no_subscription_popup]
+  become: true
+
+  ##Did not work. TODO: find a better way to disable the popup

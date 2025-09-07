@@ -1,0 +1,39 @@
+- name: Copy the latest Proxmox VE ISO to Proxmox Server
+  hosts: pve-lan  #From inventory file.
+  gather_facts: yes
+  vars_files:
+    - ../vars.yml
+
+  tasks:
+    - name: Find all ISO files
+      ansible.builtin.find:
+        paths: "{{ iso_dir }}"
+        patterns: "*.iso"
+        recurse: no
+        file_type: file
+      register: iso_files
+
+    - name: Fail if no ISO file is found
+      ansible.builtin.fail:
+        msg: "No ISO files found in the specified directory!"
+      when: iso_files.matched == 0
+
+    - name: Check if the latest ISO already exists on Proxmox
+      ansible.builtin.stat:
+        path: "{{ proxmox_iso_dir }}/{{ iso_files.files[0].path | basename }}"
+      register: existing_iso
+
+    - name: Copy the latest ISO file to the Proxmox server
+      ansible.builtin.copy:
+        src: "{{ iso_files.files[0].path }}"
+        dest: "{{ proxmox_iso_dir }}/"
+        owner: root
+        group: root
+        mode: '0644'
+      when: not existing_iso.stat.exists
+      register: copy_result
+
+    - name: Notify if the ISO already exists
+      ansible.builtin.debug:
+        msg: "The latest ISO {{ iso_files.files[0].path | basename }} is already present on Proxmox. Skipping copy."
+      when: existing_iso.stat.exists

@@ -1,0 +1,40 @@
+# roles/print-server/tasks/test-print.yml
+
+- name: Ensure CUPS test page exists
+  stat:
+    path: /usr/share/cups/data/testprint
+  register: cups_testprint
+
+- name: Fail if test page is missing
+  fail:
+    msg: "CUPS test page not found at /usr/share/cups/data/testprint"
+  when: not cups_testprint.stat.exists
+
+- name: Deploy weekly print script
+  copy:
+    dest: /usr/local/bin/weekly-print.sh
+    mode: '0755'
+    owner: root
+    group: root
+    content: |
+      #!/bin/bash
+      PRINTER="{{ print_test_printer }}"
+      FILE="/usr/share/cups/data/testprint"
+      WEEK=$(date +%U)
+
+      if (( WEEK % 4 == 0 )); then
+        echo "[WEEK $WEEK] Sending color test print"
+        lp -d "$PRINTER" "$FILE"
+      else
+        echo "[WEEK $WEEK] Sending grayscale test print"
+        lp -o print-color-mode=monochrome -d "$PRINTER" "$FILE"
+      fi
+
+- name: Schedule dynamic weekly test print (Wednesdays @ 6PM)
+  cron:
+    name: "Dynamic CUPS Test Print (3wk gray, 1wk color)"
+    weekday: "3"
+    hour: "18"
+    minute: "0"
+    user: root
+    job: "/usr/local/bin/weekly-print.sh"

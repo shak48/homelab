@@ -1,0 +1,18 @@
+#roles/sleep/tasks/suspend.yml
+- name: Deploy suspend(S3) script with logging
+  template:
+    src: suspend.sh.j2
+    dest: "{{ sleep_suspend_script_path }}"
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Schedule Suspend
+  cron:
+    name: "Suspend daily"
+    minute: "{{ sleep_suspend_cron_minute }}"
+    hour: "{{ sleep_suspend_cron_hour }}"
+    weekday: "{{ sleep_suspend_cron_weekday }}"
+    user: root
+    job: "{{ sleep_suspend_script_path }}"
+

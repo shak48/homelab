@@ -1,0 +1,12 @@
+fail2ban_enabled: true
+
+harden_ssh_settings:
+  - { regexp: '^PermitRootLogin', line: 'PermitRootLogin no' }
+  - { regexp: '^PasswordAuthentication', line: 'PasswordAuthentication no' }
+  - { regexp: '^MaxAuthTries', line: 'MaxAuthTries 3' }
+  - { regexp: '^LoginGraceTime', line: 'LoginGraceTime 30' }
+  - { regexp: '^PermitEmptyPasswords', line: 'PermitEmptyPasswords no' }
+
+unattended_upgrades_enabled: true
+
+unattended_upgrade_reboot: true

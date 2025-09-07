@@ -1,0 +1,5 @@
+#host_vars/cups1.yml
+env: production
+tags:
+  - print
+  - cups

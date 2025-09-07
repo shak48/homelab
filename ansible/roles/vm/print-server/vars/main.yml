@@ -1,0 +1,4 @@
+#vars/main
+cups_allow_network: "Allow @LOCAL"
+cups_listen: Listen 0.0.0.0:631
+cups_browsing: "Browsing On"

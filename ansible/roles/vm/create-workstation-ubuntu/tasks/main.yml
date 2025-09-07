@@ -1,0 +1,40 @@
+# main.yml — Dispatcher for create-vm-desktop role with global tag
+
+- name: Set system hostname
+  import_tasks: set-hostname.yml
+  tags: create_vm_desktop
+
+- name: Install system packages and base tools
+  import_tasks: packages-base.yml
+  tags: create_vm_desktop
+
+- name: Install Visual Studio Code via Snap
+  import_tasks: install-vscode-snap.yml
+  tags: create_vm_desktop
+
+- name: Install Brave browser
+  import_tasks: install-brave.yml
+  tags: create_vm_desktop
+
+- name: Install FreeCAD
+  import_tasks: install-freecad.yml
+  tags: create_vm_desktop
+
+- name: Install Microsoft Edge browser
+  import_tasks: install-edge.yml
+  tags: create_vm_desktop
+  
+- name: Clean up temp installer files
+  import_tasks: cleanup-temp-files.yml
+  tags: create_vm_desktop
+
+- name: Install RustDesk agent
+  import_tasks: install-rustdesk-agent.yml
+  tags: rustdesk_agent
+
+- name: Trigger reboot if needed after applications install
+  debug:
+    msg: "GUI installed, requesting reboot"
+  notify: Ensure reboot after desktop install
+  tags: create_vm_desktop
+

@@ -1,0 +1,5 @@
+# Cloud-Init User credentials
+template_user: "{{ template_default_user }}"
+template_password: "{{ template_default_password }}"
+template_ssh_key_file: "{{ template_user }}.pub"
+template_ssh_key: "{{ lookup('file', playbook_dir + '/../files/' + template_ssh_key_file) }}"

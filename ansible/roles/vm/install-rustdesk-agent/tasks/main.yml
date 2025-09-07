@@ -1,0 +1,49 @@
+
+- name: Map architecture for RustDesk release names
+  set_fact:
+    rustdesk_arch_map:
+      x86_64: "x86_64"
+      amd64:  "x86_64"
+      aarch64: "aarch64"
+      arm64:  "aarch64"
+
+- name: Pick arch string
+  set_fact:
+    rustdesk_arch: "{{ rustdesk_arch_map.get(ansible_architecture, 'x86_64') }}"
+
+- name: Build download URL
+  set_fact:
+    rustdesk_deb_url: "https://github.com/rustdesk/rustdesk/releases/download/{{ rustdesk_version }}/rustdesk-{{ rustdesk_version }}-{{ rustdesk_arch }}.deb"
+
+- name: Ensure prerequisites
+  apt:
+    name:
+      - curl
+      - ca-certificates
+    state: present
+    update_cache: true
+
+- name: Download RustDesk .deb via curl
+  shell: |
+    curl -fsSLo "{{ rustdesk_pkg_path }}" "{{ rustdesk_deb_url }}"
+  args:
+    creates: "{{ rustdesk_pkg_path }}"
+
+
+- shell: dpkg -i "{{ rustdesk_pkg_path }}" || apt-get -y -f install
+  become: true
+- shell: dpkg -i "{{ rustdesk_pkg_path }}"
+  become: true
+
+
+
+- name: Verify RustDesk
+  command: rustdesk --version
+  register: rustdesk_ver
+  changed_when: false
+
+- debug:
+    msg: "RustDesk installed: {{ rustdesk_ver.stdout }}"
+
+
+# Service might not exist; GUI app will still work

@@ -1,0 +1,6 @@
+- name: Ensure mountpoint matches (idempotent)
+  command: zfs set mountpoint={{ zfs_parent_mount }} {{ zfs_parent_ds }}
+
+- name: Set quota on parent (optional)
+  command: zfs set quota={{ zfs_quota }} {{ zfs_parent_ds }}
+  when: zfs_quota | length > 0

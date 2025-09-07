@@ -1,0 +1,29 @@
+#ansible/group_vars/all
+
+fallback_root_password: "{{ vault_root_password }}"
+mysql_root_password: "{{ vault_root_password }}"
+
+
+samba_users: "{{ vault_samba_users }}"
+
+cups_admins: "{{vault_cups_admins}}"
+
+#Template default/fallback user configuration
+template_default_user :     "{{ vault_default_user }}"
+template_default_password : "{{ vault_root_password }}"
+
+#VM configuration
+vm_ip_prefix: "192.168.10."
+vm_gateway: "{{ vm_ip_prefix }}1"
+# or
+# vm_gateway: "{{ vm_ip_prefix ~ '1' }}"
+vm_dns: 9.9.9.9
+
+old_key_file_path_on_localhost: ~/.ssh/known_hosts
+
+# default_vm_id:          999
+# default_vm_ip:          "{{ vm_ip_prefix }}100"
+# default_vm_disk_size:   16G
+# default_vm_cores:       1
+# default_vm_memory:      1024
+

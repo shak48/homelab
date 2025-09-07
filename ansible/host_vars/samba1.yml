@@ -1,0 +1,9 @@
+# Samba share configuration (host-specific)
+samba_mount_enabled: true
+samba_mount_src: "hdd-share"
+samba_mount_path: "/mnt/share"
+samba_mount_fstype: "virtiofs"
+samba_mount_opts: "defaults"
+
+# Pull real share list from vault (clean, no secrets in repo)
+samba_guest_shares: "{{ vault_samba_guest_shares }}"

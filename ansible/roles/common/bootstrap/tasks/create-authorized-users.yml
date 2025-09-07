@@ -1,0 +1,9 @@
+- name: Ensure ansible user exists 
+  ansible.builtin.user:
+    name: "{{ bootstrap_user }}"
+    shell: /bin/bash
+    groups: sudo
+    append: true
+    create_home: true
+    state: present
+    update_password: on_create

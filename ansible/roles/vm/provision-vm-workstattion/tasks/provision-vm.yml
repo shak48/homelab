@@ -1,0 +1,18 @@
+#roles/tasks/create-vms/provision-vm.yml
+
+- name: Enable autostart for workstation VM
+  command: qm set {{ vm_id }} --onboot 1
+
+- name: Set static IP via cloud-init
+  command: >
+    qm set {{ vm_id }}
+    --ipconfig0 ip={{ vm_ip }}/24,gw={{ vm_gateway }}
+    --nameserver {{ vm_dns }}
+
+# - name: Set hostname from inventory
+#   command: qm set {{ vm_id }} --name "{{ vm_hostname }}"
+#   debugger: on_failed
+
+- name: Regenerate cloud-init image
+  command: qm cloudinit update {{ vm_id }}
+

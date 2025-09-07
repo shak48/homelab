@@ -1,0 +1,18 @@
+#/roles/upgrade/tasks/disable_enterprise.yml
+- name: Comment out enterprise repo line
+  ansible.builtin.lineinfile:
+    path: /etc/apt/sources.list.d/pve-enterprise.list
+    regexp: '^deb'
+    line: '# deb https://enterprise.proxmox.com/debian/pve trixie pve-enterprise'
+    state: present
+    create: false
+  tags: [disable_enterprise]
+
+- name: Disable Ceph Enterprise Repo if exists
+  lineinfile:
+    path: /etc/apt/sources.list.d/ceph.list
+    regexp: '^deb'
+    state: absent
+  ignore_errors: true
+  tags: [disable_enterprise]
+

@@ -1,0 +1,18 @@
+# Packages & timezone
+default_bootstrap_timezone: "America/New_York"
+
+default_bootstrap_core_packages:
+  - curl
+  - gnupg
+  - openssh-server
+  - python3
+  - python3-pip
+  - rsync
+  - sudo
+  - unzip
+  - wget
+
+default_bootstrap_extra_packages:
+  - htop
+  - nano
+  - tmux

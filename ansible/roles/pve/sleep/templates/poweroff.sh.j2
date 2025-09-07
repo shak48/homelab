@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+
+LOG_FILE="{{ sleep_poweroff_log_file }}"
+WAKE_HOURS={{ sleep_poweroff_wake_hours | int }}
+WAKE_SECONDS=$((WAKE_HOURS * 3600))
+DELAY_SECONDS={{ poweroff_delay_seconds | default(300) }}
+
+echo "[$(date)] Starting poweroff + RTC wake cycle" >> "$LOG_FILE"
+echo "[$(date)] Clearing RTC alarm." >> "$LOG_FILE"
+/usr/sbin/rtcwake -m disable
+
+echo "[$(date)] Scheduling RTC wake in ${WAKE_HOURS} hours (= ${WAKE_SECONDS} sec)" >> "$LOG_FILE"
+/usr/sbin/rtcwake -m no -s "${WAKE_SECONDS}" >> "$LOG_FILE" 2>&1
+
+wall "The system will power off in $((${DELAY_SECONDS} / 60)) minutes. Please save your work now!"
+
+(
+    echo "[$(date)] Waiting ${DELAY_SECONDS} seconds before shutdown..." >> "$LOG_FILE"
+    sleep "${DELAY_SECONDS}"
+
+    echo "[$(date)] System shutting down" >> "$LOG_FILE"
+    systemctl poweroff
+) & disown

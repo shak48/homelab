@@ -1,0 +1,10 @@
+- name: Validate compose
+  shell: docker compose -f /opt/docker/nextcloud/docker-compose.yml config -q
+  args: { chdir: /opt/docker/nextcloud }
+  register: validate
+  changed_when: false
+  failed_when: validate.rc != 0
+
+- name: Up stack
+  shell: docker compose up -d
+  args: { chdir: /opt/docker/nextcloud }

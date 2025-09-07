@@ -1,0 +1,13 @@
+- name: Validate RustDesk server
+  hosts: docker1
+  gather_facts: false
+  tasks:
+    - name: Check ports listening
+      command: bash -lc "ss -ltnup | egrep '21115|21116|21117' || true"
+      register: ss_out
+
+    - name: Print docker status
+      command: docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+      register: dps
+    - debug:
+        var: dps.stdout

@@ -1,0 +1,7 @@
+# File: ansible/roles/create-vm/tasks/remove-old-key.yml
+# roles/create-vm/tasks/remove-old-key.yml
+- name: Remove known_hosts entry for this host (run on controller)
+  delegate_to: localhost
+  become: false
+  ansible.builtin.command: >
+    ssh-keygen -f {{ lookup('env','HOME') }}/.ssh/known_hosts -R {{ ansible_host }}

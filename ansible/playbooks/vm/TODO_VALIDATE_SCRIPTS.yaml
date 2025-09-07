@@ -1,0 +1,39 @@
+- name: Collect installed packages
+  package_facts:
+  become: true
+
+- name: Validate common configs
+  vars:
+    checks:
+      - { name: "nginx",   when: "'nginx' in ansible_facts.packages",
+          cmd: "nginx -t" }
+      - { name: "sshd",    when: "true",
+          cmd: "sshd -t -f /etc/ssh/sshd_config" }
+      - { name: "sudoers", when: "true",
+          cmd: "visudo -cf /etc/sudoers" }
+      - { name: "haproxy", when: "'haproxy' in ansible_facts.packages",
+          cmd: "haproxy -c -f /etc/haproxy/haproxy.cfg" }
+      - { name: "nftables", when: "'nftables' in ansible_facts.packages",
+          cmd: "nft -c -f /etc/nftables.conf" }
+      - { name: "fstab",   when: "true",
+          cmd: "mount -a -f -v" }
+      - { name: "sysctl",  when: "true",
+          cmd: "sysctl --system" }
+      - { name: "compose", when: "true",
+          cmd: "docker compose -f {{ container_project_dir | default('/opt/immich') }}/docker-compose.yml config" }
+  loop: "{{ checks }}"
+  loop_control: { label: "{{ item.name }}" }
+  when: item.when | bool
+  block:
+    - name: "Check {{ item.name }}"
+      command: "{{ item.cmd }}"
+      register: out
+      changed_when: false
+      become: true
+    - debug:
+        msg: "OK: {{ item.name }} valid"
+  rescue:
+    - debug:
+        var: out.stderr
+    - fail:
+        msg: "FAILED: {{ item.name }} validation"

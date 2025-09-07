@@ -1,0 +1,20 @@
+#roles/sleep/validate/validate.yml
+- name: Validate poweroff (S5) script exists and is executable
+  stat:
+    path: "{{ sleep_poweroff_script_path }}"
+  register: poweroff_script
+
+- name: Fail if poweroff script is missing or not executable
+  fail:
+    msg: "Poweroff script is missing or not executable!"
+  when: not (poweroff_script.stat.exists and poweroff_script.stat.mode|int(base=8) >= 0o755)
+
+- name: Validate suspend (S3) script exists and is executable
+  stat:
+    path: "{{ sleep_suspend_script_path }}"
+  register: suspend_script
+
+- name: Fail if suspend script is missing or not executable
+  fail:
+    msg: "Suspend script is missing or not executable!"
+  when: not (suspend_script.stat.exists and suspend_script.stat.mode|int(base=8) >= 0o755)

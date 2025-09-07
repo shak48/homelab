@@ -1,0 +1,23 @@
+[wsl2]
+# Resource caps (keeps Windows responsive while Ansible runs)
+memory=8GB
+processors=4
+swap=0
+
+# Networking
+localhostForwarding=true
+# (Optional if available on your build)
+# networkingMode=mirrored
+
+# Disk behavior
+# Increase default VHD size for *new* distros (64–128 GB is comfy)
+defaultVhdSize=33554432000
+# Optional on newer WSL builds; keeps sparse VHDs efficient
+sparseVhd=true
+
+# Virtualization
+nestedVirtualization=true
+
+# UI / Debug
+guiApplications=false
+debugConsole=false

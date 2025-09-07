@@ -1,0 +1,27 @@
+- name: Ensure ~/.bashrc.d exists
+  file:
+    path: "{{ ansible_env.HOME }}/.bashrc.d"
+    state: directory
+    mode: "0755"
+
+- name: Drop homelab shell snippet
+  template:
+    src:  "10-homelab.sh.j2"
+    dest: "{{ ansible_env.HOME }}/.bashrc.d/{{ bashrc_dropin_filename }}"
+    mode: "0644"
+
+- name: Ensure ~/.bashrc exists
+  copy:
+    dest: "{{ ansible_env.HOME }}/.bashrc"
+    content: |
+      # ~/.bashrc (created by Ansible)
+      # Put personalizations in ~/.bashrc.d/*.sh
+    mode: "0644"
+  when: not lookup('ansible.builtin.fileglob', ansible_env.HOME + '/.bashrc', errors='ignore')
+
+- name: Ensure .bashrc loads ~/.bashrc.d/*.sh
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    insertafter: EOF
+    line: "{{ bashrc_loader_snippet }}"
+    state: present

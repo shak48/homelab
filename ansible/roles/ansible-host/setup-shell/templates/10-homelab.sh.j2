@@ -3,24 +3,33 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 alias grep='grep --color=auto'
-alias e='nano'
+alias n='nano'
+alias c='clear'
+alias e='exit'
 
 # --- Git ---
 alias gs='git status'
 alias ga='git add'
+alias gaa='git add -A'
 alias gc='git commit'
 alias gcm='git commit -m '
 alias gp='git pull --ff-only'
 alias gpu='git push'
+alias gpl='git pull'
 alias gl='git log --oneline --graph --decorate --all'
 
 # --- Ansible ---
 ap()  { ansible-playbook "$@"; }
+app()  { ansible-playbook "./ansible/playbooks/$@"; }
 apd() { local inv="./inventory.yml"; [ -f "$inv" ] && ansible-playbook -i "$inv" "$@" || ansible-playbook "$@"; }
 alias av='ansible-vault'
+alias ave='ansible-vault edit group_vars/all/vault.yml'
 alias ag='ansible-galaxy'
 apc() { ansible-playbook --check "$@"; }
 apl() { ansible-playbook "$1" -l "$2" -vv; }
 
+
 # --- PVE/ZFS (edit later per host) ---
 alias zpves='watch -n 2 "zpool status; echo; zfs list -o name,used,avail,mountpoint"'
+
+

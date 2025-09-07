@@ -1,6 +1,6 @@
 #/roles/sleep/defaults/main.yml
-sleep_suspend_wake_hours: 8   #duration of suspenstion
-sleep_poweroff_wake_hours: 9  #duration of pwr off
+sleep_suspend_wake_hours: 7   #duration of suspenstion
+sleep_poweroff_wake_hours: 8  #duration of pwr off
 
 sleep_poweroff_timer_seconds: 300
 sleep_suspend_timer_seconds: 60
@@ -9,7 +9,7 @@ sleep_suspend_cron_minute: "00"
 sleep_suspend_cron_hour: "08"     # when to suspend in the morning
 sleep_suspend_cron_weekday: "1-5" 
 
-sleep_poweroff_cron_minute: "30"
+sleep_poweroff_cron_minute: "00"
 sleep_poweroff_cron_hour: "23"    # When (hr) to power off
 
 sleep_suspend_script_path: "/usr/local/bin/suspend.sh"

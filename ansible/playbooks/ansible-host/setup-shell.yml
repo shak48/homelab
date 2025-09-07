@@ -2,6 +2,10 @@
 - name: Setup homelab shell on localhost
   hosts: localhost
   gather_facts: true
-  become: false
+  become: true
   roles:
     - setup-shell
+
+
+# ansible-playbook  playbooks/ansible-host/setup-shell.yml
+# Test: source ~/.bashrc

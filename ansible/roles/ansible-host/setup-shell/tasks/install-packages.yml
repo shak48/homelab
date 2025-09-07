@@ -1,0 +1,22 @@
+- name: Ensure control node packages are installed
+  apt:
+    name:
+      - software-properties-common
+      - git
+      - python3-pip
+      - python3-venv
+      - ansible
+      - python3-argcomplete
+      - openssh-server
+    state: present
+    update_cache: true
+    
+- name: Enable global python3 argcomplete
+  command: activate-global-python-argcomplete
+  args:
+    creates: /etc/bash_completion.d/python-argcomplete.sh
+
+- name: Remove unused packages and clean apt cache
+  apt:
+    autoremove: yes
+    autoclean: yes

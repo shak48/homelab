@@ -25,7 +25,7 @@
 #>
 
 param(
-  [string]$DistroName = "Ubuntu"
+  [string]$DistroName = "debian"
 )
 
 $ErrorActionPreference = "Stop"
@@ -107,6 +107,6 @@ if ($distroList -match "^\s*\*?\s*$([regex]::Escape($DistroName))\s" -or
 
 # 7) Apply .wslconfig changes cleanly (safe even if not needed)
 wsl --shutdown
-Write-Host "WSL is ready. Launch with:  wsl -d $DistroName"
+Write-Host "WSL is ready. Launch with:  wsl -d $DistroName -- bash lc '.code'"
 
 

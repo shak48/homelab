@@ -1,34 +1,10 @@
-<# Idempotent WSL bootstrap
-		try: 	wsl --install
-				wsl -u root
-				    -l
-				    --list --online 
-				    --set-default-version <1|2>
-				    --set-version <Distro> <1|2>
-				     --set-version <distribution name> <versionNumber>
-				     --set-default <Distribution Name>
-				     ~ # Starts in user home
-				     --user <Username>
-				     --mount <DiskPath>
-				     --unmount <DiskPath>
-				     --terminate <Distribution Name>
-				     --unregister <DistributionName>
-				     --export <Distribution Name> <FileName>
-				     --import <Distribution Name> <InstallLocation> <FileName>
-             --import-in-place <Distribution Name> <FileName>
-        wsl -d <debian> -- bash -lc '. code'  
-				
-   - Ensures WSL + VirtualMachinePlatform features
-   - Ensures WSL2 is the default
-   - Ensures latest WSL engine
-   - Ensures target distro is installed (skips if present)
-#>
-
 param(
-  [string]$DistroName = "debian"
+  [string]$DistroName = "Debian",   # default to proper-cased display name
+  [string]$WslUser    = "rumie"
 )
 
 $ErrorActionPreference = "Stop"
+$script:rebootNeeded = $false
 
 function Ensure-Feature {
   param([string]$Name)
@@ -42,33 +18,24 @@ function Ensure-Feature {
   }
 }
 
-# 1) Make sure Windows features are on (no-op if already)
+# 1) Windows features
 Ensure-Feature -Name "Microsoft-Windows-Subsystem-Linux"
 Ensure-Feature -Name "VirtualMachinePlatform"
 
-# 2) Update WSL engine (safe if already current)
-try {
-  wsl --update | Out-Null
-  Write-Host "WSL engine updated (or already current)."
-} catch {
-  Write-Host "WSL engine update skipped/failed; continuing..." -ForegroundColor Yellow
-}
+# 2) Update WSL engine (best effort)
+try { wsl --update | Out-Null; Write-Host "WSL engine updated (or already current)." }
+catch { Write-Host "WSL engine update skipped/failed; continuing..." -ForegroundColor Yellow }
 
-# 3) Ensure default version is 2 (no-op if already)
+# 3) Ensure WSL2 default
 try {
   $status = wsl --status 2>&1
-  if ($status -match 'Default Version:\s*2') {
-    Write-Host "WSL default version already set to 2."
-  } else {
-    Write-Host "Setting WSL default version to 2..."
-    wsl --set-default-version 2
-  }
+  if ($status -match 'Default Version:\s*2') { Write-Host "WSL default version already set to 2." }
+  else { Write-Host "Setting WSL default version to 2..."; wsl --set-default-version 2 }
 } catch {
-  Write-Host "Could not determine default version; forcing WSL2 default..."
-  wsl --set-default-version 2
+  Write-Host "Could not determine default version; forcing WSL2 default..."; wsl --set-default-version 2
 }
 
-# 4) Optional: drop a sane .wslconfig (only if missing)
+# 4) .wslconfig (only if missing)
 $wslcfg = Join-Path $env:USERPROFILE ".wslconfig"
 if (-not (Test-Path $wslcfg)) {
 @"
@@ -87,7 +54,7 @@ debugConsole=false
   Write-Host "$wslcfg already exists; leaving as-is."
 }
 
-# 5) If we enabled features, ask for a reboot (idempotent safety)
+# 5) Reboot if features changed
 if ($script:rebootNeeded) {
   Write-Host "`nA reboot is required to finalize Windows features."
   Write-Host "Please reboot, then run this script again. Exiting now."
@@ -103,10 +70,27 @@ if ($distroList -match "^\s*\*?\s*$([regex]::Escape($DistroName))\s" -or
   Write-Host "Installing distro '$DistroName'..."
   wsl --install -d $DistroName
   Write-Host "When the distro window appears the first time, create your Linux user/password."
+  Write-Host "Re-run this script after initial user setup so file copy can succeed."
+  return
 }
 
-# 7) Apply .wslconfig changes cleanly (safe even if not needed)
+# 7) Apply .wslconfig and ensure distro session is initialized
 wsl --shutdown
-Write-Host "WSL is ready. Launch with:  wsl -d $DistroName -- bash -lc '.code'"
+# Start the distro once so \\wsl$ path is available
+wsl -d $DistroName -- bash -lc 'echo WSL session initialized' | Out-Null
+Write-Host "WSL is ready. Launch with:  wsl -d $DistroName -- bash -lc ""code ."""
 
+# 8) Copy keys (audit only; overwrites if present)
+$Src = "\\192.168.10.120\Shahriar\.ssh.bak\"
+$Dst = "\\wsl$\$DistroName\home\$WslUser\.ssh\"
 
+# Ensure destination exists (create .ssh if user home exists)
+try {
+  New-Item -ItemType Directory -Path $Dst -Force | Out-Null
+} catch {
+  Write-Host "Could not create $Dst. Does the user '$WslUser' exist in $DistroName and has it been launched at least once?" -ForegroundColor Yellow
+  throw
+}
+
+Copy-Item -Path (Join-Path $Src '*') -Destination $Dst -Recurse -Force
+Write-Host "Copied SSH files from $Src to $Dst."

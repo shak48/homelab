@@ -13,7 +13,7 @@ desktop.ini     # Windows
 *.bak           # Backup files
 
 # Ignore Git-specific files
-.gitignore      
+#.gitignore      
 
 # User folder
 *rchive*

@@ -76,7 +76,8 @@ log "Verifying Ansible…"
 ansible --version
 
 # --- copy ~/.ssh from Windows mapped drive (fix perms after copy) ---
-WIN_SRC="Y:\.ssh.bak"
+WIN_SRC='\\192.168.10.120\Shahriar\.ssh.bak'
+
 SRC_WSL="$(wslpath -u "$WIN_SRC")"
 DEST="$HOME/.ssh"
 
@@ -103,7 +104,7 @@ git -C "$REPO_DIR" fetch origin "$REPO_BRANCH" 2>/dev/null \
   || { rm -rf "$REPO_DIR"; git clone --depth=1 --branch "$REPO_BRANCH" "$REPO_URL" "$REPO_DIR"; }
 
 cd "$REPO_DIR"
-
+ls -al
 # --- open in VS Code if available (WSL) ---
 if command -v code >/dev/null 2>&1; then
   log "Opening folder in VS Code (WSL)…"

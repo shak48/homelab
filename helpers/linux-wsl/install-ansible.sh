@@ -23,6 +23,7 @@ pipx ensurepath >/dev/null 2>&1 || true
 pipx uninstall ansible >/dev/null 2>&1 || true
 pipx install --include-deps ansible --force
 
+source ~/.bashrc
 # 4) Verify
 ansible --version
 

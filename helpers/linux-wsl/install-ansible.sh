@@ -85,12 +85,12 @@ sudo mount -t drvfs "$WIN_SHARE" "$MNT"
 mkdir -p "$HOME/.ssh"
 cp -a "$MNT/.ssh.bak"/. "$HOME/.ssh"/
 
-# # fix permissions so SSH won't complain
-# chmod 700 "$DEST" || true
-# find "$DEST" -type f -exec chmod 600 {} \; || true
-# find "$DEST" -type f -name '*.pub' -exec chmod 644 {} \; || true
-# [ -f "$DEST/known_hosts" ] && chmod 644 "$DEST/known_hosts" || true
-# log "~/.ssh permissions normalized."
+# fix permissions so SSH won't complain
+chmod 700 "$DEST" || true
+find "$DEST" -type f -exec chmod 600 {} \; || true
+find "$DEST" -type f -name '*.pub' -exec chmod 644 {} \; || true
+[ -f "$DEST/known_hosts" ] && chmod 644 "$DEST/known_hosts" || true
+log "~/.ssh permissions normalized."
 
 # --- fetch repo (dev branch) ---
 REPO_URL="${REPO_URL:-git@github.com:shak48/homelab.git}"

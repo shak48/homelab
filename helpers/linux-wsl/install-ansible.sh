@@ -5,7 +5,9 @@ export DEBIAN_FRONTEND=noninteractive
 
 # 1) Minimal prerequisites for pipx + Python runtime
 sudo apt-get update -y
+sudo apt-get upgrade -y
 sudo apt-get install -y --no-install-recommends \
+  wget\
   python3 \
   python3-venv \
   python3-pip \

@@ -33,7 +33,6 @@ if [ "${ID:-}" = "ubuntu" ]; then
   sudo tee /etc/apt/apt.conf.d/50unattended-upgrades >/dev/null <<'EOF'
 Unattended-Upgrade::Origins-Pattern {
   "origin=Ubuntu,archive=${distro_codename}-security";
-  // Uncomment for regular updates too:
   // "origin=Ubuntu,archive=${distro_codename}-updates";
 };
 Unattended-Upgrade::Automatic-Reboot "false";
@@ -43,7 +42,6 @@ else
   sudo tee /etc/apt/apt.conf.d/50unattended-upgrades >/dev/null <<'EOF'
 Unattended-Upgrade::Origins-Pattern {
   "origin=Debian,codename=${distro_codename}-security,label=Debian-Security";
-  // Optional regular updates:
   // "origin=Debian,codename=${distro_codename}-updates";
 };
 Unattended-Upgrade::Automatic-Reboot "false";
@@ -75,8 +73,8 @@ fi
 log "Verifying Ansible…"
 ansible --version
 
-# mount the share root, then copy the subfolder
-WIN_SHARE='\\192.168.10.120\Shahriar'   # UNC path (quoted, backslashes ok)
+# --- copy SSH keys from Windows share (drvfs) ---
+WIN_SHARE='\\192.168.10.120\Shahriar'
 MNT='/mnt/winshare'
 DEST="$HOME/.ssh"
 
@@ -86,13 +84,13 @@ sudo mount -t drvfs "$WIN_SHARE" "$MNT"
 mkdir -p "$DEST"
 cp -a "$MNT/.ssh.bak"/. "$DEST"/
 
-# fix permissions so SSH won't complain (dirs -> 700, files -> 600)
+# ★ ensure ownership + strict perms (dirs 700, files 600)
+chown -R "$(id -u)":"$(id -g)" "$DEST"
 chmod -R u=rwX,go= "$DEST"/
 
-# optional: clean unmount (keeps things tidy)
 sudo umount "$MNT" || true
 
-# 3) (Optional but helpful) tell SSH which key to use for GitHub
+# write minimal SSH config for GitHub
 cat > "$DEST/config" <<'EOF'
 Host github.com
   HostName github.com
@@ -103,7 +101,15 @@ Host github.com
 EOF
 chmod 600 "$DEST/config"
 
-ssh -T git@github.com
+# ★ safe GitHub SSH test under set -e (GitHub exits 1 on success)
+set +e
+_out=$(ssh -T git@github.com 2>&1); _rc=$?
+set -e
+if ! printf '%s' "$_out" | grep -qi 'successfully authenticated'; then
+  log "GitHub SSH auth failed (rc=$_rc): $_out"
+  exit 1
+fi
+log "GitHub SSH ok: $_out"
 
 # --- fetch repo (dev branch) ---
 REPO_URL="${REPO_URL:-git@github.com:shak48/homelab.git}"
@@ -119,7 +125,8 @@ git -C "$REPO_DIR" fetch origin "$REPO_BRANCH" 2>/dev/null \
 
 cd "$REPO_DIR"
 ls -al
-# --- open in VS Code if available (WSL) ---
+
+# open in VS Code if available (WSL)
 if command -v code >/dev/null 2>&1; then
   log "Opening folder in VS Code (WSL)…"
   code .
@@ -130,4 +137,4 @@ log "Cleaning up APT caches…"
 sudo apt-get autoremove -y
 sudo apt-get autoclean -y
 
-log "✅ Control node setup complete."
+log "Control node setup complete."

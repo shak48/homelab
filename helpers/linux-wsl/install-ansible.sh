@@ -77,13 +77,12 @@ ansible --version
 
 # --- copy ~/.ssh from Windows mapped drive (fix perms after copy) ---
 WIN_SRC='\\192.168.10.120\Shahriar\.ssh.bak'
-
-SRC_WSL="$(wslpath -u "$WIN_SRC")"
+#SRC_WSL="$(wslpath -u "$WIN_SRC")"
 DEST="$HOME/.ssh"
 
 log "Syncing SSH keys from $WIN_SRC → $DEST …"
 mkdir -p "$DEST"
-cp -a "$SRC_WSL"/ "$DEST"/ || true
+cp -a "$WIN_SRC"/ "$DEST"/ || true
 # fix permissions so SSH won't complain
 chmod 700 "$DEST" || true
 find "$DEST" -type f -exec chmod 600 {} \; || true

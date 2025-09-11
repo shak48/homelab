@@ -15,9 +15,12 @@ sudo apt-get install -y --no-install-recommends \
   ca-certificates
 # 3) Install Ansible (latest stable) in an isolated environment
 #    --include-deps avoids partial installs on some distros
-pipx ensurepath >/dev/null 2>&1 || true
-pipx install --include-deps ansible
-echo "Bootstrap completed."
+# 3) Install Ansible as YOUR user (not root)
+pipx ensurepath
+pipx install --include-deps ansible --force
+
+# 4) Verify
+which ansible
 ansible --version
 
 # Enable VSCODE wsl extension

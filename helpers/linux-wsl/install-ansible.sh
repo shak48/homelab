@@ -75,20 +75,22 @@ fi
 log "Verifying Ansible…"
 ansible --version
 
-# --- copy ~/.ssh from Windows mapped drive (fix perms after copy) ---
-WIN_SRC='\\192.168.10.120\Shahriar\.ssh.bak'
-#SRC_WSL="$(wslpath -u "$WIN_SRC")"
-DEST="$HOME/.ssh"
+# mount the share root, then copy the subfolder
+WIN_SHARE='\\192.168.10.120\Shahriar'
+MNT='/mnt/winshare'
 
-log "Syncing SSH keys from $WIN_SRC → $DEST …"
-mkdir -p "$DEST"
-cp -a "$WIN_SRC"/ "$DEST"/ || true
-# fix permissions so SSH won't complain
-chmod 700 "$DEST" || true
-find "$DEST" -type f -exec chmod 600 {} \; || true
-find "$DEST" -type f -name '*.pub' -exec chmod 644 {} \; || true
-[ -f "$DEST/known_hosts" ] && chmod 644 "$DEST/known_hosts" || true
-log "~/.ssh permissions normalized."
+sudo mkdir -p "$MNT"
+sudo mount -t drvfs "$WIN_SHARE" "$MNT"
+
+mkdir -p "$HOME/.ssh"
+cp -a "$MNT/.ssh.bak"/. "$HOME/.ssh"/
+
+# # fix permissions so SSH won't complain
+# chmod 700 "$DEST" || true
+# find "$DEST" -type f -exec chmod 600 {} \; || true
+# find "$DEST" -type f -name '*.pub' -exec chmod 644 {} \; || true
+# [ -f "$DEST/known_hosts" ] && chmod 644 "$DEST/known_hosts" || true
+# log "~/.ssh permissions normalized."
 
 # --- fetch repo (dev branch) ---
 REPO_URL="${REPO_URL:-git@github.com:shak48/homelab.git}"

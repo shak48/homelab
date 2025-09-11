@@ -76,21 +76,22 @@ log "Verifying Ansible…"
 ansible --version
 
 # mount the share root, then copy the subfolder
-WIN_SHARE='\\192.168.10.120\Shahriar'
+WIN_SHARE='\\192.168.10.120\Shahriar'   # UNC path (quoted, backslashes ok)
 MNT='/mnt/winshare'
+DEST="$HOME/.ssh"
 
 sudo mkdir -p "$MNT"
 sudo mount -t drvfs "$WIN_SHARE" "$MNT"
 
-mkdir -p "$HOME/.ssh"
-cp -a "$MNT/.ssh.bak"/. "$HOME/.ssh"/
+mkdir -p "$DEST"
+cp -a "$MNT/.ssh.bak"/. "$DEST"/
 
-# fix permissions so SSH won't complain
-chmod 700 "$DEST" || true
-find "$DEST" -type f -exec chmod 600 {} \; || true
-find "$DEST" -type f -name '*.pub' -exec chmod 644 {} \; || true
-[ -f "$DEST/known_hosts" ] && chmod 644 "$DEST/known_hosts" || true
-log "~/.ssh permissions normalized."
+# fix permissions so SSH won't complain (dirs -> 700, files -> 600)
+chmod -R u=rwX,go= "$DEST"/
+
+# optional: clean unmount (keeps things tidy)
+sudo umount "$MNT" || true
+
 
 # --- fetch repo (dev branch) ---
 REPO_URL="${REPO_URL:-git@github.com:shak48/homelab.git}"

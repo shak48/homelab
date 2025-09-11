@@ -13,11 +13,24 @@ sudo apt-get install -y --no-install-recommends \
   python3-pip \
   pipx \
   ca-certificates
-# 3) Install Ansible (latest stable) in an isolated environment
-#    --include-deps avoids partial installs on some distros
-# 3) Install Ansible as YOUR user (not root)
-pipx ensurepath
-pipx install --include-deps ansible --force
+# 2) Determine the REAL user (handles if script run with or without sudo)
+TARGET_USER="${SUDO_USER:-$USER}"
+
+# 3) Do user-scoped work as the real user
+sudo -u "$TARGET_USER" -H bash -lc '
+  set -euo pipefail
+  # Ensure ~/.local/bin on PATH for future logins and now
+  grep -q '\''export PATH="$HOME/.local/bin:$PATH"'\'' "$HOME/.profile" || \
+    echo '\''export PATH="$HOME/.local/bin:$PATH"'\'' >> "$HOME/.profile"
+  export PATH="$HOME/.local/bin:$PATH"
+
+  # Clean any stale installs and (re)install Ansible
+  pipx ensurepath >/dev/null 2>&1 || true
+  pipx uninstall ansible >/dev/null 2>&1 || true
+  pipx install --include-deps ansible
+
+  ansible --version
+'
 
 source ~/.bashrc
 

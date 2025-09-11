@@ -18,7 +18,7 @@ sudo apt-get update -y
 sudo apt-get upgrade -y
 sudo apt-get install -y --no-install-recommends \
   unattended-upgrades apt-listchanges fail2ban \
-  ansible openssh-client git rsync \
+  ansible openssh-client git \
   ca-certificates
 
 # --- unattended upgrades ---
@@ -82,7 +82,7 @@ DEST="$HOME/.ssh"
 
 log "Syncing SSH keys from $WIN_SRC → $DEST …"
 mkdir -p "$DEST"
-rsync -a "$SRC_WSL"/ "$DEST"/ || true
+cp -a "$SRC_WSL"/ "$DEST"/ || true
 # fix permissions so SSH won't complain
 chmod 700 "$DEST" || true
 find "$DEST" -type f -exec chmod 600 {} \; || true

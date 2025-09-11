@@ -92,6 +92,18 @@ chmod -R u=rwX,go= "$DEST"/
 # optional: clean unmount (keeps things tidy)
 sudo umount "$MNT" || true
 
+# 3) (Optional but helpful) tell SSH which key to use for GitHub
+cat > "$DEST/config" <<'EOF'
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519
+  IdentitiesOnly yes
+  StrictHostKeyChecking accept-new
+EOF
+chmod 600 "$DEST/config"
+
+ssh -T git@github.com
 
 # --- fetch repo (dev branch) ---
 REPO_URL="${REPO_URL:-git@github.com:shak48/homelab.git}"

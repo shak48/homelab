@@ -19,6 +19,8 @@ sudo apt-get install -y --no-install-recommends \
 pipx ensurepath
 pipx install --include-deps ansible --force
 
+source ~/.bashrc
+
 # 4) Verify
 which ansible
 ansible --version

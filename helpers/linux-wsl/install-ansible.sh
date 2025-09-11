@@ -19,3 +19,6 @@ pipx ensurepath >/dev/null 2>&1 || true
 pipx install --include-deps ansible
 echo "Bootstrap completed."
 ansible --version
+
+# Enable VSCODE wsl extension
+code .

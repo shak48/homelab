@@ -3,42 +3,28 @@ set -euo pipefail
 
 export DEBIAN_FRONTEND=noninteractive
 
-echo "Installing base packages..."
+# 1) Minimal prerequisites for pipx + Python runtime
 sudo apt-get update -y
-sudo apt-get install -yq \
-  ca-certificates \
-  curl \
-  git \
-  bash-completion \
+sudo apt-get upgrade -y
+sudo apt-get install -y --no-install-recommends \
+  curl\
+  wget\
   python3 \
   python3-venv \
   python3-pip \
   pipx \
-  openssh-client \
-  wget \
-  tar \
-  xz-utils \
-  unzip \
-  apt-transport-https \
-  lsb-release \
-  gnupg
+  ca-certificates
 
-echo "Configuring pipx path..."
-pipx ensurepath || true
-# shellcheck disable=SC1090
-. ~/.bashrc 2>/dev/null || true
+# 0) Make sure we're NOT root
+whoami
 
-echo "Installing Ansible user-scoped with pipx..."
-if ! command -v ansible >/dev/null 2>&1; then
-  pipx install ansible
-  pipx inject ansible argcomplete || true
-  activate-global-python-argcomplete || true
-fi
+# 3) (Re)install Ansible for YOUR user with pipx
+pipx ensurepath >/dev/null 2>&1 || true
+pipx uninstall ansible >/dev/null 2>&1 || true
+pipx install --include-deps ansible --force
 
-echo "Installing Ansible collections (if requirements.yml exists)..."
-if [[ -f requirements.yml ]]; then
-  ansible-galaxy collection install -r requirements.yml --force
-fi
-
-echo "Bootstrap completed."
+# 4) Verify
 ansible --version
+
+# Enable VSCODE wsl extension
+code .

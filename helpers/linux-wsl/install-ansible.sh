@@ -111,6 +111,17 @@ if ! printf '%s' "$_out" | grep -qi 'successfully authenticated'; then
 fi
 log "GitHub SSH ok: $_out"
 
+
+# Ensure Git identity is set up
+if ! git config --global user.email >/dev/null 2>&1; then
+  echo "[hint] Run: git config --global user.email \"rumie.kabir@gmail.com\""
+fi
+
+if ! git config --global user.name >/dev/null 2>&1; then
+  echo "[hint] Run: git config --global user.name \"Shahriar Kabir\""
+fi
+
+
 # --- fetch repo (dev branch) ---
 REPO_URL="${REPO_URL:-git@github.com:shak48/homelab.git}"
 REPO_DIR="${REPO_DIR:-$HOME/src/home-lab}"

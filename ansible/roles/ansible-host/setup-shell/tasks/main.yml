@@ -1,11 +1,11 @@
 - name: Bootstrap Basrc (test source ~/.bashrc)
   include_tasks: bashrc.yml
 
-- name: Ensure Vault password file exists
-  include_tasks: vault-pass.yml
+# - name: Ensure Vault password file exists
+#   include_tasks: vault-pass.yml
 
-- name: Install Packages For Ansible to Work!
-  include_tasks: install-packages.yml
+# - name: Install Packages For Ansible to Work!
+#   include_tasks: install-packages.yml
 
-- name: Vault-pass  
-  include_tasks: vault-pass.yml
+# - name: Fix SSS permission
+#   include_tasks: verify-ssh-permission.yml

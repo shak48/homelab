@@ -148,6 +148,7 @@ log "Cleaning up APT caches…"
 sudo apt-get autoremove -y
 sudo apt-get autoclean -y
 
+log "Run Ansible to bootsrtap user .bashrc"
 cd ansible
 ansible-playbook  playbooks/ansible-host/setup-shell.yml -K
 

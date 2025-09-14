@@ -114,17 +114,14 @@ REPO_URL="${REPO_URL:-git@github.com:shak48/homelab.git}"
 REPO_DIR="${REPO_DIR:-$HOME/src/homelab}"
 mkdir -p "$(dirname "$REPO_DIR")"
 
-if [ -d "$REPO_DIR/.git" ]; then
-  log "Updating repo…"
-  git -C "$REPO_DIR" pull --ff-only
-else
-  log "Cloning repo…"
-  trap 'rm -rf "$REPO_DIR"; exit 1' ERR
-  git clone --depth=1 "$REPO_URL" "$REPO_DIR"
-  trap - ERR
+git clone git@github.com:shak48/homelab.git "$REPO_DIR"
+
+# Make a local tracking dev if it exists remotely
+if git -C "$REPO_DIR" ls-remote --exit-code --heads origin dev >/dev/null 2>&1; then
+  git -C "$REPO_DIR" rev-parse --verify dev >/dev/null 2>&1 || \
+    git -C "$REPO_DIR" switch -c dev --track origin/dev
 fi
 
-cd "$REPO_DIR"
 ls -al
 
 # --- cleanup ---

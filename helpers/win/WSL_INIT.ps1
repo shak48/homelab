@@ -30,6 +30,9 @@ param(
   [string]$BootstrapUri = "https://raw.githubusercontent.com/shak48/homelab/main/helpers/linux-wsl/install-ansible.sh"
 )
 
+## Uncomment if cleanup needed
+# wsl --unregister $DistroName
+
 # --- tiny helpers ---
 function Write-Step($msg) { Write-Host "[*] $msg" -ForegroundColor Cyan }
 
@@ -97,6 +100,9 @@ function Show-WSLStatus {
 }
 
 # -------- main flow --------
+
+
+
 Set-WSL2Default
 Install-DistroIfMissing
 Set-DefaultDistro

@@ -17,14 +17,17 @@ alias gp='git pull --ff-only'
 alias gpu='git push'
 alias gpl='git pull'
 alias gl='git log --oneline --graph --decorate --all'
+alias gd='git diff'
+alias gda='git diff .'
+
 
 # --- Ansible ---
-ap()  { ansible-playbook "$@"; }
-app()  { ansible-playbook "./ansible/playbooks/$@"; }
-apd() { local inv="./inventory.yml"; [ -f "$inv" ] && ansible-playbook -i "$inv" "$@" || ansible-playbook "$@"; }
 alias av='ansible-vault'
 alias ave='ansible-vault edit group_vars/all/vault.yml'
 alias ag='ansible-galaxy'
+ap()  { ansible-playbook "$@"; }
+app()  { ansible-playbook "./ansible/playbooks/$@"; }
+apd() { local inv="./inventory.yml"; [ -f "$inv" ] && ansible-playbook -i "$inv" "$@" || ansible-playbook "$@"; }
 apc() { ansible-playbook --check "$@"; }
 apl() { ansible-playbook "$1" -l "$2" -vv; }
 

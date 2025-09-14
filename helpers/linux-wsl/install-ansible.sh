@@ -17,7 +17,7 @@ log "Updating and installing base tools…"
 sudo apt-get update -y
 sudo apt-get upgrade -y
 sudo apt-get install -y --no-install-recommends \
-  unattended-upgrades apt-listchanges fail2ban \
+  unattended-upgrades \
   ansible openssh-client git \
   ca-certificates
 
@@ -52,21 +52,11 @@ fi
 # --- enable services (if systemd available) ---
 log "Enabling services if systemd is available…"
 if command -v systemctl >/dev/null 2>&1; then
-  sudo systemctl enable --now unattended-upgrades || true
-  sudo systemctl enable --now fail2ban || true
+  # On systemd systems the timers run upgrades; start them if present.
+  sudo systemctl enable --now apt-daily.timer apt-daily-upgrade.timer || true
+  sudo systemctl start unattended-upgrades.service || true
 else
-  log "systemd not detected; skipping service enable/now."
-fi
-
-# --- minimal fail2ban hardening for SSH (if SSH present) ---
-if [ -f /etc/ssh/sshd_config ]; then
-  sudo mkdir -p /etc/fail2ban/jail.d
-  sudo tee /etc/fail2ban/jail.d/sshd.local >/dev/null <<'EOF'
-[sshd]
-enabled = true
-# tune bantime/findtime/maxretry as needed
-EOF
-  command -v systemctl >/dev/null 2>&1 && sudo systemctl restart fail2ban || true
+  log "systemd not detected; skipping timer/service enables."
 fi
 
 # --- verify ansible (system-wide) ---
@@ -74,21 +64,21 @@ log "Verifying Ansible…"
 ansible --version
 
 # --- copy SSH keys from Windows share (drvfs) ---
-WIN_SHARE='\\192.168.10.120\Shahriar'
+WIN_SHARE='\\\\192.168.10.120\\Shahriar'
 MNT='/mnt/winshare'
 DEST="$HOME/.ssh"
 
 sudo mkdir -p "$MNT"
 sudo mount -t drvfs "$WIN_SHARE" "$MNT"
+cleanup() { sudo umount "$MNT" 2>/dev/null || true; }
+trap cleanup EXIT
 
 mkdir -p "$DEST"
 cp -a "$MNT/.ssh.bak"/. "$DEST"/
 
-# ★ ensure ownership + strict perms (dirs 700, files 600)
+# ensure ownership + strict perms (dirs 700, files 600)
 chown -R "$(id -u)":"$(id -g)" "$DEST"
 chmod -R u=rwX,go= "$DEST"/
-
-sudo umount "$MNT" || true
 
 # write minimal SSH config for GitHub
 cat > "$DEST/config" <<'EOF'
@@ -101,7 +91,7 @@ Host github.com
 EOF
 chmod 600 "$DEST/config"
 
-# ★ safe GitHub SSH test under set -e (GitHub exits 1 on success)
+# safe GitHub SSH test under set -e (GitHub exits 1 on success)
 set +e
 _out=$(ssh -T git@github.com 2>&1); _rc=$?
 set -e
@@ -111,28 +101,28 @@ if ! printf '%s' "$_out" | grep -qi 'successfully authenticated'; then
 fi
 log "GitHub SSH ok: $_out"
 
-
 # Ensure Git identity is set up
 if ! git config --global user.email >/dev/null 2>&1; then
   echo "[hint] Run: git config --global user.email \"rumie.kabir@gmail.com\""
 fi
-
 if ! git config --global user.name >/dev/null 2>&1; then
   echo "[hint] Run: git config --global user.name \"Shahriar Kabir\""
 fi
 
-
-# --- fetch repo (dev branch) ---
+# --- fetch repo (default branch) ---
 REPO_URL="${REPO_URL:-git@github.com:shak48/homelab.git}"
-REPO_DIR="${REPO_DIR:-$HOME/src/home-lab}"
-REPO_BRANCH="${REPO_BRANCH:-dev}"
-
-log "Fetching repo $REPO_URL → $REPO_DIR (branch: $REPO_BRANCH)…"
+REPO_DIR="${REPO_DIR:-$HOME/src/homelab}"
 mkdir -p "$(dirname "$REPO_DIR")"
-git -C "$REPO_DIR" fetch origin "$REPO_BRANCH" 2>/dev/null \
-  && git -C "$REPO_DIR" checkout -B "$REPO_BRANCH" --track "origin/$REPO_BRANCH" \
-  && git -C "$REPO_DIR" pull --ff-only \
-  || { rm -rf "$REPO_DIR"; git clone --depth=1 --branch "$REPO_BRANCH" "$REPO_URL" "$REPO_DIR"; }
+
+if [ -d "$REPO_DIR/.git" ]; then
+  log "Updating repo…"
+  git -C "$REPO_DIR" pull --ff-only
+else
+  log "Cloning repo…"
+  trap 'rm -rf "$REPO_DIR"; exit 1' ERR
+  git clone --depth=1 "$REPO_URL" "$REPO_DIR"
+  trap - ERR
+fi
 
 cd "$REPO_DIR"
 ls -al
@@ -148,8 +138,8 @@ log "Cleaning up APT caches…"
 sudo apt-get autoremove -y
 sudo apt-get autoclean -y
 
-log "Run Ansible to bootsrtap user .bashrc"
+log "Run Ansible to bootstrap user .bashrc"
 cd ansible
-ansible-playbook  playbooks/ansible-host/setup-shell.yml -K
+ansible-playbook playbooks/ansible-host/setup-shell.yml -K
 
 log "Control node setup complete."

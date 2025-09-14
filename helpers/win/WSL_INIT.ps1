@@ -30,19 +30,71 @@ param(
   [string]$BootstrapUri = "https://raw.githubusercontent.com/shak48/homelab/main/helpers/linux-wsl/install-ansible.sh"
 )
 
-# 1. Download script in Windows TEMP
-$WinTmp = Join-Path $env:TEMP 'install-ansible.sh'
-Invoke-WebRequest -Uri $BootstrapUri -OutFile $WinTmp -UseBasicParsing
+# --- tiny helpers ---
+function Write-Step($msg) { Write-Host "[*] $msg" -ForegroundColor Cyan }
 
-# 2. Copy into distro home (~/.tmp)
-$payload = @"
-set -euo pipefail
-cp /mnt/c/Users/$env:USERNAME/AppData/Local/Temp/install-ansible.sh \/tmp/
-cd "\/tmp"
-chmod +x ./install-ansible.sh
-bash ./install-ansible.sh
-"@
+function Ensure-WSL2Default {
+  Write-Step "Ensuring WSL2 is default…"
+  wsl --set-default-version 2 | Out-Null
+}
 
-& wsl.exe -d $DistroName -- bash -lc $payload
+function Is-Installed {
+  (wsl -l -q 2>$null | ForEach-Object { $_.Trim() }) -contains $DistroName
+}
 
-Write-Host "Done. Verify: wsl -d $DistroName -- bash -lc 'ansible --version'"
+function Is-Initialized {
+  # returns $true only after user has completed first-run
+  $out = & wsl.exe -d $DistroName -- bash -lc "id -un" 2>$null
+  ($LASTEXITCODE -eq 0) -and ($out) -and ($out.Trim().Length -gt 0)
+}
+
+function Install-DistroIfMissing {
+  if (-not (Is-Installed)) {
+    Write-Step "Installing $DistroName (this will launch first-run in a separate window)…"
+    Start-Process -FilePath "wsl.exe" -ArgumentList "--install","-d",$DistroName -Wait
+  }
+
+  # If the distro isn’t initialized yet, open its first-run shell for user creation and wait for it to close.
+  if (-not (Is-Initialized)) {
+    Write-Step "Opening $DistroName to complete first-run (create user, then type 'exit')…"
+    Start-Process -FilePath "wsl.exe" -ArgumentList "-d",$DistroName -Wait
+  }
+
+  # Double-check init (user might have closed without completing)
+  if (-not (Is-Initialized)) {
+    throw "WSL distro '$DistroName' is not initialized. Re-run this script after completing first-run."
+  }
+}
+
+function Run-BootstrapInWSL {
+  Write-Step "Bootstrapping inside $DistroName…"
+  $payload = @"
+			set -euo pipefail
+			sudo apt-get update -y >/dev/null
+			sudo apt-get install -y wget >/dev/null
+			wget -qO /tmp/install-ansible.sh '$BootstrapUri'
+			chmod +x /tmp/install-ansible.sh
+			bash /tmp/install-ansible.sh
+			"@
+  & wsl.exe -d $DistroName -- bash -lc $payload
+
+  Write-Step "Done. Verify:"
+  Write-Host "wsl -d $DistroName -- bash -lc 'ansible --version'"
+}
+
+function Set-DefaultDistro {
+  Write-Step "Setting default distro: $DistroName"
+  wsl --set-default $DistroName
+}
+
+function Show-WSLStatus {
+  Write-Step "WSL status:"
+  wsl --status
+}
+
+# -------- main flow --------
+Ensure-WSL2Default
+Install-DistroIfMissing
+Set-DefaultDistro
+Show-WSLStatus
+Run-BootstrapInWSL

@@ -1,16 +1,20 @@
 #cloud-config
 users:
-  - name: {{ template_user }}
+  - name: "{{ template_fallback_user }}"
     shell: /bin/bash
     sudo: ALL=(ALL) NOPASSWD:ALL
     lock_passwd: false
+    passwd: "{{ template_fallback_user_password_hash }}"
     ssh_authorized_keys:
-      - {{ template_ssh_key }}
+      - "{{ template_fallback_ssh_key }}"
 
-chpasswd:
-  list: |
-    {{ template_user }}:{{ template_password }}
-  expire: false
+package_update: true
+packages:
+  - qemu-guest-agent
+  - cloud-guest-utils
 
-ssh_pwauth: true
+runcmd:
+  - systemctl enable --now qemu-guest-agent
+
+ssh_pwauth: true        
 disable_root: true

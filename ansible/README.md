@@ -19,6 +19,8 @@
         # Example -> search and replace
             sed -i 's/bookworm/trixie/g' /etc/apt/sources.list
 
+## Destroy a vm
+    qm destroy vm_number --purge 1 --destroy-unreferenced-disks 1
 
 
 

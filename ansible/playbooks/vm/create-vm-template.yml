@@ -1,8 +1,9 @@
 # playbook/create-vm-template.yml
 - name: Create Cloud VM Template
-  hosts: pve_servers
+  hosts: pve
   become: true
 
   roles:
     - create-vm-template
-    
+
+# qm destroy 901 --purge 1 --destroy-unreferenced-disks 1

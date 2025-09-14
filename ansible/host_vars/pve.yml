@@ -1,7 +1,7 @@
 # host_vars/pve.yml
 
 #Default template ID to be used for creating new VMs 
-template_vm_id: 900
+template_vm_id: 901
 ws_ubuntu_template_vm_id: 1000
 
 

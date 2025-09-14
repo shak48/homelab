@@ -1,5 +1,4 @@
-# Cloud-Init User credentials
-template_user: "{{ template_default_user }}"
-template_password: "{{ template_default_password }}"
-template_ssh_key_file: "{{ template_user }}.pub"
-template_ssh_key: "{{ lookup('file', playbook_dir + '/../files/' + template_ssh_key_file) }}"
+template_fallback_user: "{{ vault_default_user }}"
+# Hash:  printf '%s' 'secret_phrase' | openssl passwd -6 -stdin
+template_fallback_user_password_hash: "{{ vault_default_password }}"
+template_fallback_ssh_key: "{{ lookup('file', ('~/.ssh/' ~ vault_default_user_pubkey_filename)) | trim }}"

@@ -140,6 +140,6 @@ sudo apt-get autoclean -y
 
 log "Run Ansible to bootstrap user .bashrc"
 cd ansible
-ansible-playbook playbooks/ansible-host/setup-shell.yml -b -K 
+ansible-playbook playbooks/ansible-host/setup-shell.yml -b --ask-vault-pass 
 
 log "Control node setup complete."

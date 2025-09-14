@@ -132,12 +132,12 @@ test_github_ssh(){
 # ===============
 # Git identity
 # ===============
-git_identity_hint(){
+git_identity(){
   if ! git config --global user.email >/dev/null 2>&1; then
-    echo "[hint] Run: git config --global user.email \"rumie.kabir@gmail.com\""
+    git config --global user.email \"rumie.kabir@gmail.com\""
   fi
   if ! git config --global user.name >/dev/null 2>&1; then
-    echo "[hint] Run: git config --global user.name \"Shahriar Kabir\""
+    git config --global user.name \"Shahriar Kabir\""
   fi
 }
 
@@ -188,6 +188,12 @@ run_ansible_and_open_vscode(){
   fi
 }
 
+create_vault_pass(){
+  log "Creating ansible/.ansible/vault-pass…"
+  mkdir -p "$REPO_DIR/ansible/.ansible"
+  touch "$REPO_DIR/ansible/.ansible/vault-pass"
+}
+
 # =========
 # Main
 # =========
@@ -200,13 +206,14 @@ main(){
   trap umount_win_share EXIT
   copy_ssh_keys
   test_github_ssh
-  git_identity_hint
+  git_identity
 
   clone_or_update_repo
   checkout_dev_if_exists
 
   ls -al "$REPO_DIR" || true
   apt_cleanup
+  create_vault_pass
   run_ansible_and_open_vscode
 
   log "Control node setup complete."

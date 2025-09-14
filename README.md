@@ -15,3 +15,4 @@ Invoke-WebRequest `
 
 wsl -d debian -- bash -lc "chmod +x /mnt/c/Users/$env:USERNAME/AppData/Local/Temp/bootstrap.sh && sudo /mnt/c/Users/$env:USERNAME/AppData/Local/Temp/bootstrap.sh"
 
+  

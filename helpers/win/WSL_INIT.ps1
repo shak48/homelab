@@ -33,49 +33,53 @@ param(
 # --- tiny helpers ---
 function Write-Step($msg) { Write-Host "[*] $msg" -ForegroundColor Cyan }
 
-function Ensure-WSL2Default {
+function Set-WSL2Default {
   Write-Step "Ensuring WSL2 is default…"
+      $current = wsl --status 2>$null | Select-String "Default Version" | ForEach-Object { $_.ToString().Split(':')[1].Trim() }
+    if ($current -ne "2") {
+        wsl --set-default-version 2 | Out-Null
   wsl --set-default-version 2 | Out-Null
 }
 
-function Is-Installed {
+function Test-Installed {
   (wsl -l -q 2>$null | ForEach-Object { $_.Trim() }) -contains $DistroName
 }
 
-function Is-Initialized {
+
+function Test-Initialized {
   # returns $true only after user has completed first-run
   $out = & wsl.exe -d $DistroName -- bash -lc "id -un" 2>$null
   ($LASTEXITCODE -eq 0) -and ($out) -and ($out.Trim().Length -gt 0)
 }
 
 function Install-DistroIfMissing {
-  if (-not (Is-Installed)) {
+  if (-not (Test-Installed)) {
     Write-Step "Installing $DistroName (this will launch first-run in a separate window)…"
     Start-Process -FilePath "wsl.exe" -ArgumentList "--install","-d",$DistroName -Wait
   }
 
   # If the distro isn’t initialized yet, open its first-run shell for user creation and wait for it to close.
-  if (-not (Is-Initialized)) {
+  if (-not (Test-Initialized)) {
     Write-Step "Opening $DistroName to complete first-run (create user, then type 'exit')…"
     Start-Process -FilePath "wsl.exe" -ArgumentList "-d",$DistroName -Wait
   }
 
   # Double-check init (user might have closed without completing)
-  if (-not (Is-Initialized)) {
+  if (-not (Test-Initialized)) {
     throw "WSL distro '$DistroName' is not initialized. Re-run this script after completing first-run."
   }
 }
 
-function Run-BootstrapInWSL {
+function Invoke-BootstrapInWSL {
   Write-Step "Bootstrapping inside $DistroName…"
   $payload = @"
-			set -euo pipefail
-			sudo apt-get update -y >/dev/null
-			sudo apt-get install -y wget >/dev/null
-			wget -qO /tmp/install-ansible.sh '$BootstrapUri'
-			chmod +x /tmp/install-ansible.sh
-			bash /tmp/install-ansible.sh
-			"@
+set -euo pipefail
+sudo apt-get update -y >/dev/null
+sudo apt-get install -y wget >/dev/null
+wget -qO /tmp/install-ansible.sh '$BootstrapUri'
+chmod +x /tmp/install-ansible.sh
+bash /tmp/install-ansible.sh
+"@
   & wsl.exe -d $DistroName -- bash -lc $payload
 
   Write-Step "Done. Verify:"
@@ -93,8 +97,8 @@ function Show-WSLStatus {
 }
 
 # -------- main flow --------
-Ensure-WSL2Default
+Set-WSL2Default
 Install-DistroIfMissing
 Set-DefaultDistro
 Show-WSLStatus
-Run-BootstrapInWSL
+Invoke-BootstrapInWSL

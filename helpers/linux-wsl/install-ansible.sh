@@ -127,12 +127,6 @@ fi
 cd "$REPO_DIR"
 ls -al
 
-# open in VS Code if available (WSL)
-if command -v code >/dev/null 2>&1; then
-  log "Opening folder in VS Code (WSL)…"
-  code .
-fi
-
 # --- cleanup ---
 log "Cleaning up APT caches…"
 sudo apt-get autoremove -y
@@ -140,6 +134,12 @@ sudo apt-get autoclean -y
 
 log "Run Ansible to bootstrap user .bashrc"
 cd ansible
-ansible-playbook playbooks/ansible-host/setup-shell.yml -b --ask-vault-pass 
+ansible-playbook playbooks/ansible-host/setup-shell.yml --ask-vault-pass 
+
+# open in VS Code if available (WSL)
+if command -v code >/dev/null 2>&1; then
+  log "Opening folder in VS Code (WSL)…"
+  code .
+fi
 
 log "Control node setup complete."

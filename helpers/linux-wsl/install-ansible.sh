@@ -134,10 +134,10 @@ test_github_ssh(){
 # ===============
 git_identity(){
   if ! git config --global user.email >/dev/null 2>&1; then
-    git config --global user.email \"rumie.kabir@gmail.com\""
+    git config --global user.email \"rumie.kabir@gmail.com\"
   fi
   if ! git config --global user.name >/dev/null 2>&1; then
-    git config --global user.name \"Shahriar Kabir\""
+    git config --global user.name \"Shahriar Kabir\"
   fi
 }
 

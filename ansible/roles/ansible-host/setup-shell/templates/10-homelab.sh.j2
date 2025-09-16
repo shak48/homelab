@@ -9,35 +9,34 @@ alias e='exit'
 
 # --- Git ---
 alias gs='git status'
-alias ga='git add'
 alias gaa='git add -A'
-alias gc='git commit'
-alias gcm='git commit -m '
-alias gp='git pull --ff-only'
+alias gplff='git pull --ff-only'
 alias gpu='git push'
 alias gpl='git pull'
 alias gl='git log --oneline --graph --decorate --all'
-alias gd='git diff'
 alias gda='git diff .'
-alias gsw='git switch'
-alias gswm='git switch main'
-alias gswd='git switch dev'
+alias gsm='git switch main'
+alias gsd='git switch dev'
 alias gm='git merge'
 alias gmd='git merge dev'
+#alias gcm='git commit -m '
+gitcm() { git commit -m "$*"; }
+gitsw() { git switch "$@"; }
+gita() { git add "$@"; }
+gitd() { git diff "$@"; }
 
 
 # --- Ansible ---
 alias av='ansible-vault'
 alias ave='ansible-vault edit group_vars/all/vault.yml'
-alias ag='ansible-galaxy'
 ap()  { ansible-playbook "$@"; }
-app()  { ansible-playbook "./ansible/playbooks/$@"; }
-apd() { local inv="./inventory.yml"; [ -f "$inv" ] && ansible-playbook -i "$inv" "$@" || ansible-playbook "$@"; }
 apc() { ansible-playbook --check "$@"; }
 apl() { ansible-playbook "$1" -l "$2" -vv; }
+agri() { ansible-galaxy init "$@"; }
 
 
 # --- PVE/ZFS (edit later per host) ---
 alias zpves='watch -n 2 "zpool status; echo; zfs list -o name,used,avail,mountpoint"'
 
-
+# --- Reload Bashrc ---
+alias rlb='source ~/.bashrc'

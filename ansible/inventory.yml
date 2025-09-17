@@ -21,11 +21,13 @@ all:
     immich1:    { ansible_host: 192.168.10.125, hostname: immich1 }
     pbs1:       { ansible_host: 192.168.10.251, hostname: pbs1 }
     pbs2:       { ansible_host: 192.168.10.250, hostname: pbs2 }
+    pve1-test:  { ansible_host: 192.168.10.101, hostname: pve1-test }
   children:
     pves:
       hosts:
         pve:
         pve2:
+        pve1-test:
     pbss:
       hosts:
         pbs1:

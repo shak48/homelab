@@ -2,9 +2,9 @@
 set -e
 
 LOG_FILE="{{ sleep_poweroff_log_file }}"
-WAKE_HOURS={{ sleep_poweroff_wake_hours | int }}
+WAKE_HOURS="${WAKE_HOURS:-{{ sleep_poweroff_wake_hours | int }}}"
 WAKE_SECONDS=$((WAKE_HOURS * 3600))
-DELAY_SECONDS={{ poweroff_delay_seconds | default(300) }}
+DELAY_SECONDS={{ sleep_poweroff_timer_seconds | default(300) }}
 
 echo "[$(date)] Starting poweroff + RTC wake cycle" >> "$LOG_FILE"
 echo "[$(date)] Clearing RTC alarm." >> "$LOG_FILE"

@@ -1,6 +1,6 @@
 #playbooks/sleep.yml
 
-- hosts: pves
+- hosts: pve
   become: true
   roles:
     - sleep

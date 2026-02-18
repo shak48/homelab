@@ -5,12 +5,14 @@
   tags:
     - sleep
     - suspend
+  when: sleep_enable_suspend | bool
 
 - name: Include poweroff tasks
   include_tasks: poweroff.yml
   tags:
     - sleep
     - poweroff
+  when: sleep_enable_poweroff | bool
 
 - name: Include validate tasks
   include_tasks: validate.yml

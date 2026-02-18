@@ -2,8 +2,9 @@
 set -e
 
 LOG_FILE="{{ sleep_suspend_log_file }}"
-WAKE_HOURS={{ sleep_suspend_cron_hour | int }}
+WAKE_HOURS="${WAKE_HOURS:-{{ sleep_suspend_wake_hours | int }}}"
 WAKE_SECONDS=$((WAKE_HOURS * 3600))
+DELAY_SECONDS={{ sleep_suspend_timer_seconds | default(60) }}
 
 echo "[$(date)] Starting suspend + RTC wake cycle" >> "$LOG_FILE"
 
@@ -14,10 +15,10 @@ echo "[$(date)] Scheduling RTC wake in ${WAKE_HOURS} hours (= ${WAKE_SECONDS} se
 /usr/sbin/rtcwake -m no -s "$WAKE_SECONDS" >> "$LOG_FILE" 2>&1
 
 
-wall "The system will suspend in 1 minute... Please save your work now!"
+wall "The system will suspend in $((${DELAY_SECONDS} / 60)) minutes... Please save your work now!"
 (
-    echo "[$(date)] Waiting 60 seconds before suspend..." >> "$LOG_FILE"
-    sleep 60
+    echo "[$(date)] Waiting ${DELAY_SECONDS} seconds before suspend..." >> "$LOG_FILE"
+    sleep "${DELAY_SECONDS}"
 
     echo "[$(date)] System suspending now..." >> "$LOG_FILE"
     systemctl suspend

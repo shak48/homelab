@@ -8,10 +8,19 @@
     owner: root
     group: root
 
+- name: Remove legacy poweroff schedules
+  cron:
+    name: "{{ item }}"
+    state: absent
+    user: root
+  loop:
+    - "Poweroff overnight weekdays"
+    - "Poweroff overnight weekend"
+
 - name: Schedule Shutdown
   cron:
     name: "Poweroff overnight daily"
     minute: "{{ sleep_poweroff_cron_minute }}"
     hour: "{{ sleep_poweroff_cron_hour }}"
     user: root
-    job: "{{ sleep_poweroff_script_path }}"
+    job: "WAKE_HOURS={{ sleep_poweroff_wake_hours }} {{ sleep_poweroff_script_path }}"

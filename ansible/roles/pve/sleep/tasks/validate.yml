@@ -1,14 +1,4 @@
 #roles/sleep/validate/validate.yml
-- name: Validate poweroff (S5) script exists and is executable
-  stat:
-    path: "{{ sleep_poweroff_script_path }}"
-  register: poweroff_script
-
-- name: Fail if poweroff script is missing or not executable
-  fail:
-    msg: "Poweroff script is missing or not executable!"
-  when: not (poweroff_script.stat.exists and poweroff_script.stat.mode|int(base=8) >= 0o755)
-
 - name: Validate suspend (S3) script exists and is executable
   stat:
     path: "{{ sleep_suspend_script_path }}"
@@ -18,3 +8,38 @@
   fail:
     msg: "Suspend script is missing or not executable!"
   when: not (suspend_script.stat.exists and suspend_script.stat.mode|int(base=8) >= 0o755)
+
+- name: Validate poweroff (S5) script exists and is executable
+  stat:
+    path: "{{ sleep_poweroff_script_path }}"
+  register: poweroff_script
+  when: sleep_enable_poweroff | bool
+
+- name: Fail if poweroff script is missing or not executable
+  fail:
+    msg: "Poweroff script is missing or not executable!"
+  when:
+    - sleep_enable_poweroff | bool
+    - not (poweroff_script.stat.exists and poweroff_script.stat.mode|int(base=8) >= 0o755)
+
+- name: Read back root crontab
+  command: crontab -l -u root
+  register: root_crontab
+  changed_when: false
+  failed_when: false
+
+- name: Fail if suspend cron is missing
+  fail:
+    msg: "Suspend cron entry not found in root crontab."
+  when:
+    - sleep_enable_suspend | bool
+    - root_crontab.rc == 0
+    - root_crontab.stdout is not search("Suspend daily")
+
+- name: Fail if poweroff cron is missing
+  fail:
+    msg: "Poweroff cron entry not found in root crontab."
+  when:
+    - sleep_enable_poweroff | bool
+    - root_crontab.rc == 0
+    - root_crontab.stdout is not search("Poweroff overnight daily")

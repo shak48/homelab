@@ -4,3 +4,5 @@
   become: true
   roles:
     - sleep
+
+# ansible-playbook ansible/playbooks/pve/sleep.yml

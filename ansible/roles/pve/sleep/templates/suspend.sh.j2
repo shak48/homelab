@@ -3,15 +3,32 @@ set -e
 
 LOG_FILE="{{ sleep_suspend_log_file }}"
 WAKE_HOURS="${WAKE_HOURS:-{{ sleep_suspend_wake_hours | int }}}"
-WAKE_SECONDS=$((WAKE_HOURS * 3600))
+if [ -z "${WAKE_OFFSET_HOURS+x}" ] || [ -z "$WAKE_OFFSET_HOURS" ]; then
+  WAKE_OFFSET_HOURS={{ sleep_rtc_offset_hours | int }}
+fi
+WAKE_TOTAL_HOURS=$((WAKE_HOURS + WAKE_OFFSET_HOURS))
+if [ "$WAKE_TOTAL_HOURS" -lt 0 ]; then
+  WAKE_TOTAL_HOURS=0
+fi
+WAKE_SECONDS=$((WAKE_TOTAL_HOURS * 3600))
+if [ -n "${WAKE_SECONDS_OVERRIDE:-}" ]; then
+  WAKE_SECONDS="${WAKE_SECONDS_OVERRIDE}"
+fi
 DELAY_SECONDS={{ sleep_suspend_timer_seconds | default(60) }}
+if [ -n "${DELAY_SECONDS_OVERRIDE:-}" ]; then
+  DELAY_SECONDS="${DELAY_SECONDS_OVERRIDE}"
+fi
 
 echo "[$(date)] Starting suspend + RTC wake cycle" >> "$LOG_FILE"
+echo "[UTC $(date -u)] System UTC time at start" >> "$LOG_FILE"
 
 echo "[$(date)] Clearing RTC alarm." >> "$LOG_FILE"
 /usr/sbin/rtcwake -m disable
 
-echo "[$(date)] Scheduling RTC wake in ${WAKE_HOURS} hours (= ${WAKE_SECONDS} seconds)." >> "$LOG_FILE"
+echo "[$(date)] Scheduling RTC wake in ${WAKE_HOURS}h (+offset ${WAKE_OFFSET_HOURS}h) = ${WAKE_TOTAL_HOURS}h (${WAKE_SECONDS}s)." >> "$LOG_FILE"
+if [ -n "${WAKE_SECONDS_OVERRIDE:-}" ]; then
+  echo "[$(date)] WAKE_SECONDS_OVERRIDE=${WAKE_SECONDS_OVERRIDE}" >> "$LOG_FILE"
+fi
 /usr/sbin/rtcwake -m no -s "$WAKE_SECONDS" >> "$LOG_FILE" 2>&1
 
 

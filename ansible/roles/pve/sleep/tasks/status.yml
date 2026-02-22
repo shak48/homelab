@@ -1,0 +1,31 @@
+# roles/sleep/tasks/status.yml
+
+- name: Show root crontab entries for sleep
+  command: crontab -l -u root
+  register: root_crontab
+  changed_when: false
+  failed_when: false
+
+- name: Print root crontab lines related to sleep
+  debug:
+    msg: "{{ root_crontab.stdout_lines | select('search', 'Suspend daily|Poweroff overnight daily') | list }}"
+
+- name: Show recent suspend log (if present)
+  command: tail -n 20 {{ sleep_suspend_log_file }}
+  register: suspend_tail
+  changed_when: false
+  failed_when: false
+
+- name: Print suspend log tail
+  debug:
+    msg: "{{ suspend_tail.stdout_lines }}"
+
+- name: Show recent poweroff log (if present)
+  command: tail -n 20 {{ sleep_poweroff_log_file }}
+  register: poweroff_tail
+  changed_when: false
+  failed_when: false
+
+- name: Print poweroff log tail
+  debug:
+    msg: "{{ poweroff_tail.stdout_lines }}"

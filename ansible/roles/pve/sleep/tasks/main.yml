@@ -19,3 +19,9 @@
   tags:
     - sleep
     - validate
+
+- name: Include status tasks
+  include_tasks: status.yml
+  tags:
+    - sleep
+    - status
